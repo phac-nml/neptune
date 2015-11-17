@@ -1,0 +1,318 @@
+% ==============================================================================
+% Copyright Government of Canada 2015
+%
+% Written by: Eric Marinier, Public Health Agency of Canada,
+%     National Microbiology Laboratory
+%
+% Funded by the National Micriobiology Laboratory and the Genome Canada / Alberta
+%     Innovates Bio Solutions project "Listeria Detection and Surveillance
+%     using Next Generation Genomics"
+%
+% Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+% this file except in compliance with the License. You may obtain a copy of the
+% License at:
+%
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software distributed
+% under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+% CONDITIONS OF ANY KIND, either express or implied. See the License for the
+% specific language governing permissions and limitations under the License.
+% ==============================================================================
+
+\documentclass{article}
+\usepackage{amssymb,amsmath}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{1em}
+
+\title{Neptune Math}
+\author{Eric Marinier}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+  
+\section{Arbitrary Matching}
+  
+Let \(P(X = Y)_{A}\) be the probability that any two arbitrary nucleotide bases, \(X\) and \(Y\), match given a known environmental GC-content. Let \(\lambda\) be the GC-content such that \(0 \leq \lambda \leq 1\); subscript \(A\) denote arbitrary; and \(A\), \(C\), \(G\), \(T\) denote the four DNA bases.
+  
+\begin{equation}
+\begin{split}
+  P(X = Y)_{A} &= P(X = Y = A)_A + P(X = Y = T)_A \\
+    &+ P(X = Y = C)_A + P(X = Y = G)_A\\
+  P(X = Y)_{A} &= \left(\frac{1 - \lambda}{2}\right)^2 + \left(\frac{1 - \lambda}{2}\right)^2 + \left(\frac{\lambda}{2}\right)^2 + \left(\frac{\lambda}{2}\right)^2 \\
+  P(X = Y)_{A} &= 2 \left(\frac{1 - \lambda}{2}\right)^2 + 2 \left(\frac{\lambda}{2}\right)^2 \\
+\end{split}
+\end{equation}
+  
+When GC-content is 0.50:
+  
+\begin{equation}
+\begin{split}  
+  P(X = Y)_{A} = 0.25 \\
+\end{split}
+\end{equation}
+  
+When GC-content is 0.25:
+  
+\begin{equation}
+\begin{split}  
+  P(X = Y)_{A} = 0.3125 \\
+\end{split}
+\end{equation}
+  
+The probability that any two \textbf{arbitrary} \textit{k}-mers, \(k_X\) and \(k_Y\), match exactly:
+  
+\begin{equation}
+\begin{split}  
+  P(k_X = k_Y)_{A} = \left(2 \left(\frac{1 - \lambda}{2}\right)^2 + 2 \left(\frac{\lambda}{2}\right)^2 \right)^k\\
+\end{split}
+\end{equation}
+  
+\section{Homologous Matching}
+  
+Let \(P(X_{M} = Y_{M})_{H}\) be the probability that two homologous bases, \(X\) and \(Y\), mutate to the same base. Let subscript \(M\) denote a mutation; subscript \(H\) denote homology; and \(A\), \(C\), \(G\), \(T\) denote the four DNA bases. 
+  
+\begin{equation}
+\begin{split}
+  P(X_{M} = Y_{M})_{H} = &P(X_{M} = Y_{M}| X = Y = A) \cdot P(A) \\
+    + &P(X_{M} = Y_{M}| X = Y = C) \cdot P(C) \\
+    + &P(X_{M} = Y_{M}| X = Y = G) \cdot P(G) \\
+    + &P(X_{M} = Y_{M}| X = Y = T) \cdot P(T) \\
+\end{split}
+\end{equation}
+  
+Let \(P(C|A)\) be shorthand for \(P(X_{M} = C | X = A)\). That is, the probability of a base mutating to a C nucleotide given that it was an A nucleotide before the mutation event. 
+
+\begin{equation}
+\begin{split}
+  P(X_{M} = Y_{M})_{H} = &(P(C|A)^2 + P(G|A)^2 + P(T|A)^2) \cdot P(A) \\
+    + &(P(A|C)^2 + P(G|C)^2 + P(T|C)^2) \cdot P(C) \\
+    + &(P(A|G)^2 + P(C|G)^2 + P(T|G)^2) \cdot P(G) \\
+    + &(P(A|T)^2 + P(C|T)^2 + P(G|T)^2) \cdot P(T) \\
+\end{split}
+\end{equation}
+  
+Note that because of GC-content symmetry: 
+  
+\begin{equation}
+\begin{split}
+  P(A) &= P(T) \\
+  P(C) &= P(G) \\
+  P(C|G) &= P(G|C)\\
+  P(A|T) &= P(T|A)\\
+  P(A|C) = P(T|C) &= P(A|G) = P(T|G)\\
+  P(C|A) = P(C|T) &= P(G|A) = P(G|T)\\
+\end{split}
+\end{equation}
+  
+Making substitutions:
+  
+\begin{equation}
+\begin{split}
+  P(X_{M} = Y_{M})_{H} = &(2P(C|A)^2 + P(T|A)^2) \cdot P(A) \\
+    + &(2P(A|C)^2 + P(G|C)^2) \cdot P(C) \\
+    + &(2P(A|C)^2 + P(G|C)^2) \cdot P(G) \\
+    + &(2P(C|A)^2 + P(T|A)^2) \cdot P(T) \\
+\end{split}
+\end{equation}
+  
+Simplifying:  
+
+\begin{equation}
+\begin{split}
+  P(X_{M} = Y_{M})_{H} &= 2 (2 P(C|A)^2 + P(T|A)^2) P(A) \\
+    &+ 2 (2 P(A|C)^2 + P(G|C)^2) P(C)
+\end{split}
+\label{eq:prob-mutate-match-simplify}
+\end{equation}
+  
+Let \(\lambda\) be the GC-content such that \(0 \leq \lambda \leq 1\).
+
+\begin{equation}
+\begin{split}
+  P(A) &= P(T) = \frac{(1 - \lambda)}{2}\\
+  P(C) &= P(G) = \frac{\lambda}{2}\\
+\end{split}
+\end{equation}
+  
+We assume that the probability of all mutation events are independent and do not account for transitions being more likely than transversions. The mutation probabilities are determined entirely by the GC-content. We define \(P(C|A)\), \(P(A|C)\), \(P(T|A)\), and \(P(G|C)\) as follows:
+
+\begin{equation}
+\begin{split}
+  P(C|A) &= \frac{P(C)}{P(C) + P(G) + P(T)} \\
+    &= \frac{\frac{\lambda}{2}}{\frac{\lambda}{2} + \frac{\lambda}{2} + \frac{(1 - \lambda)}{2}} \\
+    &= \frac{\lambda}{\lambda + 1}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  P(A|C) &= \frac{P(A)}{P(A) + P(G) + P(T)} \\
+    &= \frac{\frac{(1 - \lambda)}{2}}{\frac{(1 - \lambda)}{2} + \frac{\lambda}{2} + \frac{(1 - \lambda)}{2}} \\
+    &= \frac{1 - \lambda}{2 - \lambda}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  P(T|A) &= \frac{P(T)}{P(C) + P(G) + P(T)} \\
+    &= \frac{\frac{(1 - \lambda)}{2}}{\frac{\lambda}{2} + \frac{\lambda}{2} + \frac{(1 - \lambda)}{2}} \\
+    &= \frac{1 - \lambda}{\lambda + 1}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  P(G|C) &= \frac{P(G)}{P(A) + P(G) + P(T)} \\
+    &= \frac{\frac{\lambda}{2}}{\frac{(1 - \lambda)}{2} + \frac{\lambda}{2} + \frac{(1 - \lambda)}{2}} \\
+    &= \frac{\lambda}{2 - \lambda}
+\end{split}
+\end{equation}
+  
+Subbing these equations into Equation \ref{eq:prob-mutate-match-simplify}:
+
+\begin{equation}
+\begin{split}
+  P(X_{M} = Y_{M})_{H} = &\left(2 \left(\frac{\lambda}{\lambda + 1}\right)^2 + \left(\frac{1 - \lambda}{\lambda + 1}\right)^2\right)(1 - \lambda) \\
+  + &\left(2 \left(\frac{1 - \lambda}{2 - \lambda}\right)^2 + \left(\frac{\lambda}{2 - \lambda}\right)^2\right)(\lambda)
+\end{split}
+\end{equation}
+  
+When GC-content is 0.50:
+  
+\begin{equation}
+\begin{split}  
+  P(X_{M} = Y_{M})_{H} = 0.3333 \\
+\end{split}
+\end{equation}
+  
+When GC-content is 0.25:
+  
+\begin{equation}
+\begin{split}  
+  P(X_{M} = Y_{M})_{H} = 0.4269 \\
+\end{split}
+\end{equation}
+  
+We can now determine the probability of two homologous bases, X and Y, matching. These bases match when neither mutates or both mutate to the same base. Let \(\varepsilon\) be the probability that two homologous bases do not match exactly.
+  
+\begin{equation}
+\begin{split}
+  P(X = Y)_{H} = (1 - \varepsilon)^2 + (\varepsilon)^2 \cdot P(X_{M} = Y_{M})_{H}
+\end{split}
+\end{equation}
+  
+The probability that any two homologous \textit{k}-mers, \(k_X\) and \(k_Y\), match exactly:
+  
+\begin{equation}
+\begin{split}  
+  P(k_X = k_Y)_{H} =  (Pr(X = Y)_{H})^k\\
+\end{split}
+\end{equation}
+
+\section{Size of k}
+  
+We select a \(k\) such that the expected number of arbitrary \textit{k}-mer matches within a single is sufficiently small. Let \(\omega\) be the length of the genome; \(\lambda\) be the GC-content; and \(x\) and \(y\) be positions in the genome, such that \(x \neq y\). We approximate the expected number of matches by assuming the probability of all \textit{k}-mer matches is independent. However, these \textit{k}-mers are produced using a sliding window and are therefore not independent. We recommend using a large enough \(k\) such that:
+
+\begin{equation}
+\begin{split}  
+  \sum_{x < y} P(k_X = k_Y) \approx \binom{\omega - k + 1}{2} \cdot P(k_X = k_Y)_{A} < 0.05 \\
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}  
+  \frac{(\omega - k + 1)(\omega - k)}{2} \cdot \left(2 \left(\frac{1 - \lambda}{2}\right)^2 + 2 \left(\frac{\lambda}{2}\right)^2 \right)^k < 0.05 \\
+\end{split}
+\end{equation}
+  
+A summary of some recommended \textit{k}-mer sizes for various targets can be found in Table~\ref{table:kmer-sizes}.
+
+\begin{table}
+\centering
+\begin{tabular}{ | c | c | c | c | }
+  \hline
+  \textbf{Genome Size} & \textbf{GC-Content} & \textbf{\textit{k}} & \textbf{Expected Mismatches} \\ \hline
+  1,000,000 & 0.25 & 27 & 0.01\\
+  1,000,000 & 0.50 & 23 & 0.01\\
+  5,000,000 & 0.25 & 29 & 0.03\\
+  5,000,000 & 0.50 & 25 & 0.01\\
+  5,000,000,000 & 0.25 & 41 & 0.02\\
+  5,000,000,000 & 0.50 & 35 & 0.01\\ \hline
+\end{tabular}
+\caption{A summary of recommended \textit{k}-mer values for various targets. We recommend using \textit{k}-mers of odd size, as this avoids \textit{k}-mers being their own reverse complement. As GC-content is symmetric, a target with a GC-content of 0.25 or 0.75 will require the same size of \textit{k}.}
+\label{table:kmer-sizes}
+\end{table}
+
+\section{Minimum Inclusion Hits}
+
+We model the process of homologous \textit{k}-mer matches with a binomial distribution. If we are observing a true signature region, we expect that corresponding homologous \textit{k}-mers should exist in all inclusion targets. These \textit{k}-mers will match with a probability of \(p = P(k_X = k_Y)_{H}\) and not match with a probability of \(q = 1 - p\). Let \(n\) be the number of inclusion targets. The parameters of this binomial distribution are described below:
+
+\begin{equation}
+\begin{split}
+  p &= P(k_X = k_Y)_{H} \\
+  q &= 1 - p \\
+  \mu &= n \cdot p \\
+  \sigma^2 &= n \cdot p \cdot q \\
+\end{split}
+\end{equation}
+
+A normal distribution can approximate a binomial distribution for sufficiently large \(n\) and \(p\). Therefore, we can set the minimum number of inclusion hits to capture a large fraction of all observations in a normal distribution. Let \(\alpha\) be our statistical confidence and \(\Phi^{-1}(\alpha)\) be the probit function. The minimum number of inclusion targets containing a \textit{k}-mer, \(\wedge_{in}\), required for a reference \textit{k}-mer to be considered an inclusion \textit{k}-mer is defined as follows:
+
+\begin{equation}
+\begin{split}
+  \wedge_{in} = 1 + \mu - \Phi^{-1}(\alpha)\sigma
+\end{split}
+\end{equation}
+
+\section{Maximum Gap Size}
+
+We model the problem of maximum gap size between exact matching inclusion \textit{k}-mers as recurrence times of success runs in Bernoulli trials. Let \(p\) be the probability of a Bernoulli trial success; and \(q\) be \(q = 1 - p\), or the probability of a Bernoulli trial failure.
+
+\begin{equation}
+\begin{split}
+  p &= P(X = Y)_{H} \\
+  q &= 1 - p
+\end{split}
+\end{equation}
+
+The mean and variance of the recurrence times of \(k\) successes, or an exact \textit{k}-mer match, in Bernoulli trials is described by Feller 1960 \cite{feller1960}:
+
+\begin{equation}
+\begin{split}
+  \mu = \frac{1 - p^k}{q \cdot p^k}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  \sigma^2 = \frac{1}{(q \cdot p^k)^2} - \frac{2k + 1}{q \cdot p^k} - \frac{p}{q^2}
+\end{split}
+\end{equation}
+
+This distribution captures how many bases we must observe before we can expect to see another homologous \textit{k}-mer match. The distribution is not normal for a small number of observations. However, we can use Chebyshev's Inequality to make lower-bound claims about the distribution:
+
+\begin{equation}
+\label{eq:feller}
+\begin{split}
+  P(|X - \mu| \geq \delta\sigma) \leq \frac{1}{\delta^2}
+\end{split}
+\end{equation}
+
+Where \(\delta\) is the number of standard deviations, \(\sigma\), from the mean, \(\mu\). Let \mbox{\(P(|X - \mu| \geq \delta\sigma)\)} be our statistical confidence, \(\alpha\). The maximum allowable \textit{k}-mer gap size, \(\vee_{gap}\), is calculated as follows:
+
+\begin{equation}
+\label{eq:maxgap}
+\begin{split}
+  \vee_{gap} = \mu + \sqrt{\frac{1}{1 - \alpha}} \cdot \sigma
+\end{split}
+\end{equation}
+
+\bibliography{Mathematics}{}
+\bibliographystyle{plain}
+  
+\end{document}
