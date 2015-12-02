@@ -80,7 +80,6 @@ class JobManager:
         self.session = session
         self.outputDirectoryLocation = outputDirectoryLocation
         self.logDirectoryLocation = logDirectoryLocation
-        self.verbose = False
 
         if defaultSpecification:
 
@@ -154,16 +153,6 @@ class JobManager:
     def setFilterSpecification(self, specification):
         if specification:
             self.filterSpecification = specification.strip()
-
-    """
-    # =========================================================================
-
-    SET VERBOSE
-
-    # =========================================================================
-    """
-    def setVerbose(self, verbose):
-        self.verbose = verbose
 
     """
     # =========================================================================

@@ -77,7 +77,6 @@ AGGREGATE_SPECIFICATION = "aggregateSpecification"
 EXTRACT_SPECIFICATION = "extractSpecification"
 DATABASE_SPECIFICATION = "databaseSpecification"
 FILTER_SPECIFICATION = "filterSpecification"
-VERBOSE = "verbose"
 
 # ARGUMENTS
 LONG = "--"
@@ -89,7 +88,6 @@ AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
 EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
 DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
 FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
-VERBOSE_LONG = LONG + VERBOSE
 
 SHORT = "-"
 
@@ -303,10 +301,6 @@ class Execution():
         if args.filterSpecification:
             self.jobManager.setFilterSpecification(
                 args.filterSpecification)
-
-        # -- verbose --
-        if args.verbose:
-            self.jobManager.setVerbose(args.verbose)
 
     """
     # =========================================================================
@@ -1111,12 +1105,6 @@ def main():
         dest=FILTER_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
-
-    parser.add_argument(
-        VERBOSE_LONG,
-        dest=VERBOSE,
-        help="verbose output flag",
-        action='store_true', default=False)
 
     # --- ArgParse Work-Around ---
     for i in range(len(sys.argv)):
