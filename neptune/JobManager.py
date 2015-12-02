@@ -251,10 +251,6 @@ class JobManager:
     """
     def createJob(self):
 
-        # PARAMETERS
-        NULL = "/dev/null"
-
-        # JOB CREATION
         job = self.session.createJobTemplate()
 
         job.outputPath = ":" + self.logDirectoryLocation
