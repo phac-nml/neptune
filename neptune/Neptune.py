@@ -183,6 +183,14 @@ class Execution():
 
         self.filterPercent = args.filterPercent
 
+        # -- seed size --
+        # 4 <= seedSize
+        if (args.seedSize is not None and
+                (int(args.seedSize) < 4)):
+            raise RuntimeError("The seed size is out of range.")
+
+        self.seedSize = args.seedSize
+
         # -- parallelization --
         # 1 <= parallelization
         if (args.parallelization is not None and
@@ -662,7 +670,8 @@ def filterSignatures(execution, candidateLocations):
             inclusionDatabaseLocation, exclusionDatabaseLocation,
             execution.inclusionLocations, execution.exclusionLocations,
             candidateLocation, filteredLocation, sortedLocation,
-            execution.filterLength, execution.filterPercent)
+            execution.filterLength, execution.filterPercent,
+            execution.seedSize)
 
         jobs.append(job)
 
@@ -1055,6 +1064,13 @@ def main():
             with a candidate; remove candidates that have exclusion hit \
             matches longer than this",
         type=float, required=False)
+
+    parser.add_argument(
+        FilterSignatures.SEED_SIZE_SHORT,
+        FilterSignatures.SEED_SIZE_LONG,
+        dest=FilterSignatures.SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False)
 
     parser.add_argument(
         OUTPUT_SHORT,

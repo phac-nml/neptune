@@ -609,7 +609,7 @@ class JobManager:
     def createFilterJob(
             self, inclusionDatabaseLocation, exclusionDatabaseLocation,
             inclusion, exclusion, inputLocation, filteredOutputLocation,
-            sortedOutputLocation, filterLength, filterPercent):
+            sortedOutputLocation, filterLength, filterPercent, seedSize):
 
         # JOB CREATION
         job = self.createPythonJob()
@@ -657,6 +657,11 @@ class JobManager:
         if filterPercent:
             args.append(FilterSignatures.FILTER_PERCENT_LONG)
             args.append(str(filterPercent))
+
+        # SEED SIZE
+        if seedSize:
+            args.append(FilterSignatures.SEED_SIZE_LONG)
+            args.append(str(seedSize))
 
         job.args = args
 
