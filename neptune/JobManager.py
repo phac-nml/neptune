@@ -95,6 +95,15 @@ class JobManager:
             self.extractSpecification = None
             self.databaseSpecification = None
             self.filterSpecification = None
+    """
+    # =========================================================================
+
+    SET LOG DIRECTORY LOCATION
+
+    # =========================================================================
+    """
+    def setLogDirectoryLocation(self, logDirectoryLocation):
+        self.logDirectoryLocation = logDirectoryLocation
 
     """
     # =========================================================================
@@ -264,10 +273,10 @@ class JobManager:
         # JOB CREATION
         job = self.session.createJobTemplate()
 
-        if self.verbose:
+        if self.logDirectoryLocation:
 
-            job.outputPath = ":" + self.outputDirectoryLocation
-            job.errorPath = ":" + self.outputDirectoryLocation
+            job.outputPath = ":" + self.logDirectoryLocation
+            job.errorPath = ":" + self.logDirectoryLocation
 
         else:
 

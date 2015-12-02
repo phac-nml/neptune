@@ -66,6 +66,7 @@ CANDIDATES = "candidates"
 FILTERED = "filtered"
 SORTED = "sorted"
 DATABASE = "database"
+LOG = "log"
 
 # NAMES
 OUTPUT = "output"
@@ -272,10 +273,17 @@ class Execution():
         self.aggregateLocation = os.path.abspath(
             os.path.join(self.outputDirectoryLocation, AGGREGATE))
 
+        self.logDirectoryLocation = os.path.abspath(
+            os.path.join(self.outputDirectoryLocation, LOG))
+        if not os.path.exists(self.logDirectoryLocation):
+            os.makedirs(self.logDirectoryLocation)
+
         # -- job manager --
         self.jobManager = JobManager.JobManager(
             session, self.outputDirectoryLocation,
             args.defaultSpecification)
+
+        self.jobManager.setLogDirectoryLocation(self.logDirectoryLocation)
 
         # -- job specifications --
         if args.countSpecification:
