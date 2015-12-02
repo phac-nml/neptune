@@ -63,7 +63,6 @@ class DefaultArgs():
         extractSpecification = None
         databaseSpecification = None
         filterSpecification = None
-        verbose = False
 
 class TestMain(unittest.TestCase):
 
@@ -966,7 +965,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         result = Execution.calculateExpectedKMerHits(0.50, 1000000000, 11)
         expected = 119209287047.3861825466
 
-        self.assertAlmostEqual(result, expected, 4)
+        self.assertAlmostEqual(result / math.pow(10, 10), expected / math.pow(10, 10), 4)
 
     """ 
     # =============================================================================
