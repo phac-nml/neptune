@@ -378,8 +378,8 @@ class Execution():
     def calculateExpectedKMerHits(gc, gs, k):
 
         # P(k_x = k_y) * ((gs - k + 1) C (2)) -- from manuscript
-        a = 2 * math.pow((1 - gc) / 2, 2)
-        b = 2 * math.pow(gc / 2, 2)
+        a = 2.0 * math.pow((1.0 - gc) / 2.0, 2.0)
+        b = 2.0 * math.pow(gc / 2.0, 2.0)
         c = math.pow(a + b, k)
         d = comb((gs - k + 1), (2), False)
         expected = c * d
