@@ -74,7 +74,8 @@ class JobManager:
 
     # =========================================================================
     """
-    def __init__(self, session, outputDirectoryLocation, logDirectoryLocation,
+    def __init__(
+            self, session, outputDirectoryLocation, logDirectoryLocation,
             defaultSpecification):
 
         self.session = session
