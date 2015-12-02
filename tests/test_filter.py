@@ -161,8 +161,10 @@ class TestQueryDataBase(unittest.TestCase):
         queryLocation = "tests/data/filter/long.query"
         outputLocation = "tests/output/filter/temp.out"
         filterPercent = 0.50
+        seedSize = 11
 
-        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation, filterPercent)
+        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation,
+            filterPercent, seedSize)
 
         with open (queryOutputLocation, "r") as myfile:
             result = myfile.read()
@@ -202,8 +204,10 @@ class TestQueryDataBase(unittest.TestCase):
         queryLocation = "tests/data/filter/missing.query"
         outputLocation = "tests/output/filter/temp.out"
         filterPercent = 0.50
+        seedSize = 11
 
-        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation, filterPercent)
+        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation,
+            filterPercent, seedSize)
 
         with open (queryOutputLocation, "r") as myfile:
             result = myfile.read()

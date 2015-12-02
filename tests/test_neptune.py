@@ -56,6 +56,7 @@ class DefaultArgs():
         referenceSize = 12
         reference = ["tests/data/simple.fasta"]
         output = getPath("tests/output/temp.dir")
+        seedSize = 11
 
         defaultSpecification = None
         countSpecification = None

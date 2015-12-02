@@ -382,9 +382,11 @@ class TestCreateFilterJob(unittest.TestCase):
             sortedOutputLocation = getPath("tests/output/simple.sorted")
             filterLength = 0.5
             filterPercent = 0.5
+            seedSize = 11
 
             job = jobManager.createFilterJob(inclusionDatabaseLocation, exclusionDatabaseLocation, 
-		        inclusion, exclusion, inputLocation, filteredOutputLocation, sortedOutputLocation, filterLength, filterPercent)
+		        inclusion, exclusion, inputLocation, filteredOutputLocation, sortedOutputLocation,
+                filterLength, filterPercent, seedSize)
 
             args = [
 			    FilterSignatures.INCLUSION_DATABASE_LONG, str(inclusionDatabaseLocation), 
@@ -395,7 +397,8 @@ class TestCreateFilterJob(unittest.TestCase):
                 FilterSignatures.FILTERED_OUTPUT_LONG, str(filteredOutputLocation), 
                 FilterSignatures.SORTED_OUTPUT_LONG, str(sortedOutputLocation), 
                 FilterSignatures.FILTER_LENGTH_LONG, str(filterLength), 
-                FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent)]
+                FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
+                FilterSignatures.SEED_SIZE_LONG, str(seedSize)]
 
             self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
             self.assertEquals(job.args[1:], args)
