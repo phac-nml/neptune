@@ -67,15 +67,19 @@ class JobManager:
         [DRMAA SESSION] [session] - The DRMAA session.
         [STRING] [outputDirectoryLocation] - The direction location to write
             DRMAA output.
+        [STRING] [logDirectoryLocation] - The direction location to write
+            DRMAA output logs and error logs.
         [STRING - OPTIONAL] [defaultSpecification] - Implementation specific
             command line options.
 
     # =========================================================================
     """
-    def __init__(self, session, outputDirectoryLocation, defaultSpecification):
+    def __init__(self, session, outputDirectoryLocation, logDirectoryLocation,
+            defaultSpecification):
 
         self.session = session
         self.outputDirectoryLocation = outputDirectoryLocation
+        self.logDirectoryLocation = logDirectoryLocation
         self.verbose = False
 
         if defaultSpecification:
@@ -95,15 +99,6 @@ class JobManager:
             self.extractSpecification = None
             self.databaseSpecification = None
             self.filterSpecification = None
-    """
-    # =========================================================================
-
-    SET LOG DIRECTORY LOCATION
-
-    # =========================================================================
-    """
-    def setLogDirectoryLocation(self, logDirectoryLocation):
-        self.logDirectoryLocation = logDirectoryLocation
 
     """
     # =========================================================================
@@ -273,15 +268,8 @@ class JobManager:
         # JOB CREATION
         job = self.session.createJobTemplate()
 
-        if self.logDirectoryLocation:
-
-            job.outputPath = ":" + self.logDirectoryLocation
-            job.errorPath = ":" + self.logDirectoryLocation
-
-        else:
-
-            job.outputPath = ":" + NULL
-            job.errorPath = ":" + NULL
+        job.outputPath = ":" + self.logDirectoryLocation
+        job.errorPath = ":" + self.logDirectoryLocation
 
         job.joinFiles = False
         job.jobEnvironment = os.environ

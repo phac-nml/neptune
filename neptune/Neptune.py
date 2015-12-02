@@ -281,9 +281,7 @@ class Execution():
         # -- job manager --
         self.jobManager = JobManager.JobManager(
             session, self.outputDirectoryLocation,
-            args.defaultSpecification)
-
-        self.jobManager.setLogDirectoryLocation(self.logDirectoryLocation)
+            self.logDirectoryLocation, args.defaultSpecification)
 
         # -- job specifications --
         if args.countSpecification:
