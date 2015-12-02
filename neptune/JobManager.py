@@ -67,16 +67,20 @@ class JobManager:
         [DRMAA SESSION] [session] - The DRMAA session.
         [STRING] [outputDirectoryLocation] - The direction location to write
             DRMAA output.
+        [STRING] [logDirectoryLocation] - The direction location to write
+            DRMAA output logs and error logs.
         [STRING - OPTIONAL] [defaultSpecification] - Implementation specific
             command line options.
 
     # =========================================================================
     """
-    def __init__(self, session, outputDirectoryLocation, defaultSpecification):
+    def __init__(
+            self, session, outputDirectoryLocation, logDirectoryLocation,
+            defaultSpecification):
 
         self.session = session
         self.outputDirectoryLocation = outputDirectoryLocation
-        self.verbose = False
+        self.logDirectoryLocation = logDirectoryLocation
 
         if defaultSpecification:
 
@@ -150,16 +154,6 @@ class JobManager:
     def setFilterSpecification(self, specification):
         if specification:
             self.filterSpecification = specification.strip()
-
-    """
-    # =========================================================================
-
-    SET VERBOSE
-
-    # =========================================================================
-    """
-    def setVerbose(self, verbose):
-        self.verbose = verbose
 
     """
     # =========================================================================
@@ -258,21 +252,10 @@ class JobManager:
     """
     def createJob(self):
 
-        # PARAMETERS
-        NULL = "/dev/null"
-
-        # JOB CREATION
         job = self.session.createJobTemplate()
 
-        if self.verbose:
-
-            job.outputPath = ":" + self.outputDirectoryLocation
-            job.errorPath = ":" + self.outputDirectoryLocation
-
-        else:
-
-            job.outputPath = ":" + NULL
-            job.errorPath = ":" + NULL
+        job.outputPath = ":" + self.logDirectoryLocation
+        job.errorPath = ":" + self.logDirectoryLocation
 
         job.joinFiles = False
         job.jobEnvironment = os.environ
