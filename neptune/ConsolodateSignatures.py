@@ -44,6 +44,32 @@ from Bio.Alphabet import generic_dna
 """
 # =============================================================================
 
+GLOBALS
+
+# =============================================================================
+"""
+
+# NAMES
+SIGNATURES = "signatures"
+OUTPUT = "output"
+CONSOLODATED_DATABASE = "database"
+
+# ARGUMENTS
+LONG = "--"
+
+SIGNATURES_LONG = LONG + SIGNATURES
+CONSOLODATED_DATABASE_LONG = LONG + CONSOLODATED_DATABASE
+OUTPUT_LONG = LONG + OUTPUT
+
+SHORT = "-"
+
+SIGNATURES_SHORT = SHORT + "s"
+CONSOLODATED_DATABASE_SHORT = SHORT + CONSOLODATED_DATABASE
+OUTPUT_SHORT = SHORT + "o"
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -55,16 +81,33 @@ def main():
         description='.')
 
     parser.add_argument(
-        "-s",
-        "--signatures",
-        dest="signatures",
-        help="signatures",
+        SIGNATURES_SHORT,
+        SIGNATURES_LONG,
+        dest=SIGNATURES,
+        help="file locations of all signatures to consolodate",
         type=str, required=True, nargs='+')
+
+    parser.add_argument(
+        CONSOLODATED_DATABASE_SHORT,
+        CONSOLODATED_DATABASE_LONG,
+        dest=CONSOLODATED_DATABASE,
+        help="the location to create the consolodated database location",
+        type=str, required=True)
+
+    parser.add_argument(
+        OUTPUT_SHORT,
+        OUTPUT_LONG,
+        dest=OUTPUT,
+        help="output file",
+        type=str, required=True)
 
     args = parser.parse_args()
 
     signatureFileLocations = []
     Utility.expandInput(args.signatures, signatureFileLocations)
+
+    databaseLocation = args.database
+    outputLocation = args.output
 
     masterSignatures = {}
 
@@ -92,44 +135,8 @@ def main():
 
     outputFile.close()
 
-    # make db !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!?
-
-    # COMMAND LINE
-    COMMAND = "makeblastdb"
-
-    TYPE = "-dbtype"
-    NUCLEOTIDE = "nucl"
-
-    INPUT = "-in"
-    INPUT_LOCATIONS = "consolodatedSignatures.fasta"
-
-    TITLE = "-title"
-    NAME = "DATABASE"
-
-    OUTPUT = "-out"
-    OUTPUT_LOCATION = "consolodatedSignatures.db"
-
-    args = []
-
-    args.append(COMMAND)
-
-    args.append(TYPE)
-    args.append(NUCLEOTIDE)
-
-    args.append(INPUT)
-    args.append(INPUT_LOCATIONS)
-
-    args.append(TITLE)
-    args.append(NAME)
-
-    args.append(OUTPUT)
-    args.append(OUTPUT_LOCATION)
-
-    print args
-
-    subprocess.check_call(args)
-
-    Database.queryDatabase("consolodatedSignatures.db", "consolodatedSignatures.fasta", "db.out", 0.50)
+    Database.createDatabaseJob("consolodatedSignatures.fasta", databaseLocation)
+    Database.queryDatabase(databaseLocation, "consolodatedSignatures.fasta", "db.out", 0.50)
 
     blastOutput = open("db.out.query")
     hits = {}
@@ -157,7 +164,7 @@ def main():
 
     sortedOutputSignatures = sorted(outputSignatures.iteritems(), key=lambda (k,v): v.score, reverse=True)
 
-    outputFile = open("finalSignatures.fasta", 'w')
+    outputFile = open(outputLocation, 'w')
 
     for item in sortedOutputSignatures:
 

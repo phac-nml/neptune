@@ -38,6 +38,7 @@ This script provides shared utility to other scripts.
 """
 
 import math
+import os
 
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
@@ -240,3 +241,52 @@ def estimateReferenceParameters(references):
     gcContent = float(sumGC) / float(sumGC + sumAT)
 
     return size, gcContent
+
+"""
+# =========================================================================
+
+EXPAND INPUT
+
+PURPOSE:
+    Expands the file input locations to include all files within all
+    directories.
+
+    The directories are not included in the final list. However, all
+        non-directories located within the directories are included as
+        individual files.
+
+INPUT:
+    [STRING ITERATOR] [inputLocations] - The file input locations.
+    [STRING LIST] [result] - The list to fill with the expanded input
+        entries.
+
+RETURN:
+    [NONE]
+
+POST:
+    The passed [result] parameter will contain the expanded input.
+
+# =========================================================================
+"""
+def expandInput(inputLocations, result):
+
+    # Expand directories into files:
+    for location in inputLocations:
+
+        if os.path.isdir(location):
+
+            onlyfiles = [
+                os.path.join(location, f)
+                for f in os.listdir(location)
+                if os.path.isfile(os.path.join(location, f))]
+
+            result += onlyfiles
+
+        else:
+
+            result += [location]
+
+    # Convert to absolute path:
+    for i in range(len(result)):
+
+        result[i] = os.path.abspath(result[i])

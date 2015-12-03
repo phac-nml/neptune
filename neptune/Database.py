@@ -32,6 +32,61 @@ class Hit():
 """
 # =============================================================================
 
+CREATE DATABASE JOB
+
+PURPOSE:
+    Creates a build database job.
+
+INPUT:
+    [STRING ITERATOR] [inputLocations] - The location of a single FASTA file
+        from which to build the database.
+    [STRING] [outputLocation] - The output location of the database.
+
+RETURN:
+    [DRMAA JOB TEMPLATE] [job] - A create database job.
+
+# =============================================================================
+"""
+def createDatabaseJob(inputLocation, outputLocation):
+
+    # COMMAND LINE
+    COMMAND = "makeblastdb"
+
+    TYPE = "-dbtype"
+    NUCLEOTIDE = "nucl"
+
+    INPUT = "-in"
+    INPUT_LOCATIONS = inputLocation
+
+    TITLE = "-title"
+    NAME = "DATABASE"
+
+    OUTPUT = "-out"
+    OUTPUT_LOCATION = outputLocation
+
+    args = []
+
+    args.append(COMMAND)
+
+    args.append(TYPE)
+    args.append(NUCLEOTIDE)
+
+    args.append(INPUT)
+    args.append(INPUT_LOCATIONS)
+
+    args.append(TITLE)
+    args.append(NAME)
+
+    args.append(OUTPUT)
+    args.append(OUTPUT_LOCATION)
+
+    print args
+
+    subprocess.check_call(args)
+
+"""
+# =============================================================================
+
 QUERY DATABASE
 
 PURPOSE:
