@@ -90,7 +90,9 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
         fileID += 1
 
-    sortedSignatures = sorted(compiledSignatures.iteritems(), key=lambda (k,v): v.score, reverse=True)
+    sortedSignatures = sorted(
+        compiledSignatures.iteritems(),
+        key=lambda (k,v): v.score, reverse=True)
 
     outputFile = open(outputLocation, 'w')
 
@@ -101,6 +103,8 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
     outputFile.close()
 
+    return sortedSignatures
+
 """
 # =============================================================================
 
@@ -108,7 +112,8 @@ PRODUCE CONSOLIDATED SIGNATURES
 
 # =============================================================================
 """
-def produceConsolidatedSignatures(compiledSignatures, queryLocation, outputLocation):
+def produceConsolidatedSignatures(
+        compiledSignatures, sortedSignatures, queryLocation, outputLocation):
 
     queryFile = open(queryLocation)
 
@@ -133,7 +138,11 @@ def produceConsolidatedSignatures(compiledSignatures, queryLocation, outputLocat
     outputFile = open(outputLocation, 'w')
 
     # Build a list of output signatures.
-    for signatureID in compiledSignatures:
+    for item in sortedSignatures:
+
+        signatureID = item[0]
+
+        print signatureID
 
         # Is the signature close to anything already output?
         if(all((ID not in outputSignatures) for ID in hits[signatureID])):
@@ -150,9 +159,23 @@ CONSOLIDATE SIGNATURES
 
 # =============================================================================
 """
-def consolidateSignatures():
+def consolidateSignatures(
+        signatureLocations, databaseLocation, outputLocation):
 
-    pass
+    compiledSignatures = {}
+    compiledSignatureLocation = "consolidatedSignatures.fasta"
+
+    sortedSignatures = compileSignatures(
+        compiledSignatures, signatureLocations, compiledSignatureLocation)
+
+    Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
+    Database.queryDatabase(
+        databaseLocation, compiledSignatureLocation, "db.out", 0.50)
+
+    produceConsolidatedSignatures(
+        compiledSignatures, sortedSignatures, "db.out.query", outputLocation)
+
+    print "\n==== Exiting ====\n"    
 
 """
 # =============================================================================
@@ -196,16 +219,7 @@ def main():
     databaseLocation = args.database
     outputLocation = args.output
 
-    compiledSignatures = {}
-    compiledSignatureLocation = "consolidatedSignatures.fasta"
-    compileSignatures(compiledSignatures, signatureLocations, compiledSignatureLocation)
-
-    Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
-    Database.queryDatabase(databaseLocation, compiledSignatureLocation, "db.out", 0.50)
-
-    produceConsolidatedSignatures(compiledSignatures, "db.out.query", outputLocation)
-
-    print "\n==== Exiting ====\n"
+    consolidateSignatures(signatureLocations, databaseLocation, outputLocation)
 
 if __name__ == '__main__':
 
