@@ -52,19 +52,19 @@ GLOBALS
 # NAMES
 SIGNATURES = "signatures"
 OUTPUT = "output"
-CONSOLODATED_DATABASE = "database"
+CONSOLIDATED_DATABASE = "database"
 
 # ARGUMENTS
 LONG = "--"
 
 SIGNATURES_LONG = LONG + SIGNATURES
-CONSOLODATED_DATABASE_LONG = LONG + CONSOLODATED_DATABASE
+CONSOLIDATED_DATABASE_LONG = LONG + CONSOLIDATED_DATABASE
 OUTPUT_LONG = LONG + OUTPUT
 
 SHORT = "-"
 
 SIGNATURES_SHORT = SHORT + "s"
-CONSOLODATED_DATABASE_SHORT = SHORT + CONSOLODATED_DATABASE
+CONSOLIDATED_DATABASE_SHORT = SHORT + CONSOLIDATED_DATABASE
 OUTPUT_SHORT = SHORT + "o"
 
 """
@@ -104,11 +104,11 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 """
 # =============================================================================
 
-PRODUCE CONSOLODATED SIGNATURES
+PRODUCE CONSOLIDATED SIGNATURES
 
 # =============================================================================
 """
-def produceConsolodatedSignatures(compiledSignatures, queryLocation, outputLocation):
+def produceConsolidatedSignatures(compiledSignatures, queryLocation, outputLocation):
 
     queryFile = open(queryLocation)
 
@@ -146,6 +146,17 @@ def produceConsolodatedSignatures(compiledSignatures, queryLocation, outputLocat
 """
 # =============================================================================
 
+CONSOLIDATE SIGNATURES
+
+# =============================================================================
+"""
+def consolidateSignatures():
+
+    pass
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -160,14 +171,14 @@ def main():
         SIGNATURES_SHORT,
         SIGNATURES_LONG,
         dest=SIGNATURES,
-        help="file locations of all signatures to consolodate",
+        help="file locations of all signatures to consolidate",
         type=str, required=True, nargs='+')
 
     parser.add_argument(
-        CONSOLODATED_DATABASE_SHORT,
-        CONSOLODATED_DATABASE_LONG,
-        dest=CONSOLODATED_DATABASE,
-        help="the location to create the consolodated database location",
+        CONSOLIDATED_DATABASE_SHORT,
+        CONSOLIDATED_DATABASE_LONG,
+        dest=CONSOLIDATED_DATABASE,
+        help="the location to create the consolidated database location",
         type=str, required=True)
 
     parser.add_argument(
@@ -186,13 +197,13 @@ def main():
     outputLocation = args.output
 
     compiledSignatures = {}
-    compiledSignatureLocation = "consolodatedSignatures.fasta"
+    compiledSignatureLocation = "consolidatedSignatures.fasta"
     compileSignatures(compiledSignatures, signatureLocations, compiledSignatureLocation)
 
     Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
     Database.queryDatabase(databaseLocation, compiledSignatureLocation, "db.out", 0.50)
 
-    produceConsolodatedSignatures(compiledSignatures, "db.out.query", outputLocation)
+    produceConsolidatedSignatures(compiledSignatures, "db.out.query", outputLocation)
 
     print "\n==== Exiting ====\n"
 
