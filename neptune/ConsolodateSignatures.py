@@ -70,6 +70,82 @@ OUTPUT_SHORT = SHORT + "o"
 """
 # =============================================================================
 
+COMPILE SIGNATURES
+
+# =============================================================================
+"""
+def compileSignatures(compiledSignatures, signatureLocations, outputLocation):    
+
+    fileID = 0
+
+    for location in signatureLocations:
+
+        signatures = Signature.readSignatures(location)
+
+        for signatureID in signatures:
+
+            compileID = str(fileID) + "." + signatureID
+            compiledSignatures[compileID] = signatures[signatureID]
+            compiledSignatures[compileID].ID = compileID
+
+        fileID += 1
+
+    sortedSignatures = sorted(compiledSignatures.iteritems(), key=lambda (k,v): v.score, reverse=True)
+
+    outputFile = open(outputLocation, 'w')
+
+    for item in sortedSignatures:
+
+        ID = item[0]
+        Signature.writeSignature(compiledSignatures[ID], outputFile)
+
+    outputFile.close()
+
+"""
+# =============================================================================
+
+PRODUCE CONSOLODATED SIGNATURES
+
+# =============================================================================
+"""
+def produceConsolodatedSignatures(compiledSignatures, queryLocation, outputLocation):
+
+    queryFile = open(queryLocation)
+
+    hits = {}
+    outputSignatures = {}
+
+    # Build a list of all query hits.
+    for line in queryFile:
+
+        hit = Database.Hit(line)
+
+        # only care if longer
+        if (float(hit.alignmentLength) / float(hit.length) < float(0.50)):
+            continue
+
+        if hit.ID in hits:
+            hits[hit.ID].append(hit.reference)
+
+        else:
+            hits[hit.ID] = [hit.reference]
+
+    outputFile = open(outputLocation, 'w')
+
+    # Build a list of output signatures.
+    for signatureID in compiledSignatures:
+
+        # Is the signature close to anything already output?
+        if(all((ID not in outputSignatures) for ID in hits[signatureID])):
+
+            outputSignatures[signatureID] = compiledSignatures[signatureID]
+            Signature.writeSignature(compiledSignatures[signatureID], outputFile)
+
+    outputFile.close()
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -103,75 +179,20 @@ def main():
 
     args = parser.parse_args()
 
-    signatureFileLocations = []
-    Utility.expandInput(args.signatures, signatureFileLocations)
+    signatureLocations = []
+    Utility.expandInput(args.signatures, signatureLocations)
 
     databaseLocation = args.database
     outputLocation = args.output
 
-    masterSignatures = {}
+    compiledSignatures = {}
+    compiledSignatureLocation = "consolodatedSignatures.fasta"
+    compileSignatures(compiledSignatures, signatureLocations, compiledSignatureLocation)
 
-    fileNumber = 0
+    Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
+    Database.queryDatabase(databaseLocation, compiledSignatureLocation, "db.out", 0.50)
 
-    for fileLocation in signatureFileLocations:
-
-        signatures = Signature.readSignatures(fileLocation)
-
-        for signatureID in signatures:
-            masterID = str(fileNumber) + "." + signatureID
-            masterSignatures[masterID] = signatures[signatureID]
-            masterSignatures[masterID].ID = masterID
-
-        fileNumber += 1
-
-    sortedSignatures = sorted(masterSignatures.iteritems(), key=lambda (k,v): v.score, reverse=True)
-
-    outputFile = open("consolodatedSignatures.fasta", 'w')
-
-    for item in sortedSignatures:
-
-        ID = item[0]
-        Signature.writeSignature(masterSignatures[ID], outputFile)
-
-    outputFile.close()
-
-    Database.createDatabaseJob("consolodatedSignatures.fasta", databaseLocation)
-    Database.queryDatabase(databaseLocation, "consolodatedSignatures.fasta", "db.out", 0.50)
-
-    blastOutput = open("db.out.query")
-    hits = {}
-    outputSignatures = {}
-
-    for line in blastOutput:
-
-        hit = Database.Hit(line)
-
-        # only care if longer
-        if (float(hit.alignmentLength) / float(hit.length) < float(0.50)):
-            continue
-
-        if hit.ID in hits:
-            hits[hit.ID].append(hit.reference)
-
-        else:
-            hits[hit.ID] = [hit.reference]
-
-    for signatureID in masterSignatures:
-
-        if(all((ID not in outputSignatures) for ID in hits[signatureID])):
-
-            outputSignatures[signatureID] = masterSignatures[signatureID]
-
-    sortedOutputSignatures = sorted(outputSignatures.iteritems(), key=lambda (k,v): v.score, reverse=True)
-
-    outputFile = open(outputLocation, 'w')
-
-    for item in sortedOutputSignatures:
-
-        ID = item[0]
-        Signature.writeSignature(masterSignatures[ID], outputFile)
-
-    outputFile.close()
+    produceConsolodatedSignatures(compiledSignatures, "db.out.query", outputLocation)
 
     print "\n==== Exiting ====\n"
 
