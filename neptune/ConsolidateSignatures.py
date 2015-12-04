@@ -34,20 +34,12 @@ CONSOLIDATE SIGNATURES
 # =============================================================================
 """
 
-import math
 import argparse
 import os
-
-import sys
-import operator
-import subprocess
 
 import Signature
 import Database
 import Utility
-
-from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna
 
 """
 # =============================================================================
@@ -100,7 +92,7 @@ POST:
 
 # =============================================================================
 """
-def compileSignatures(compiledSignatures, signatureLocations, outputLocation):    
+def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
     fileID = 0
 
@@ -118,7 +110,7 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
     sortedSignatures = sorted(
         compiledSignatures.iteritems(),
-        key=lambda (k,v): v.score, reverse=True)
+        key=lambda (k, v): v.score, reverse=True)
 
     sortedIDs = [item[0] for item in sortedSignatures]
 
@@ -139,12 +131,16 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 PRODUCE SIGNATURES
 
 PURPOSE:
+    Produces and outputs a list of consolidated signatures.
 
 INPUT:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] compiledSignatures
-    [STRING LIST] [sortedIDs]
-    [FILE LOCATION] [queryLocation]
-    [outputFile]
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] -
+        A dictionary containing all signatures, including overlapping
+        signatures.
+    [STRING LIST] [sortedIDs] - A list of signature IDs, sorted by their
+        corresponding signature scores.
+    [FILE] [queryFile] - A readable BLASTN query file.
+    [FILE] [outputFile] - A writable file-like object.
 
 RETURN:
     [NONE]
@@ -155,9 +151,7 @@ POST:
 # =============================================================================
 """
 def produceSignatures(
-        compiledSignatures, sortedIDs, queryLocation, outputFile):
-
-    queryFile = open(queryLocation)
+        compiledSignatures, sortedIDs, queryFile, outputFile):
 
     hits = {}
     outputSignatures = {}
@@ -184,7 +178,8 @@ def produceSignatures(
         if(all((ID not in outputSignatures) for ID in hits[signatureID])):
 
             outputSignatures[signatureID] = compiledSignatures[signatureID]
-            Signature.writeSignature(compiledSignatures[signatureID], outputFile)
+            Signature.writeSignature(
+                compiledSignatures[signatureID], outputFile)
 
 """
 # =============================================================================
@@ -200,7 +195,7 @@ INPUT:
     [FILE LOCATION LIST] [signatureLocations] - A list of signature file
         locations to consolidate.
     [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
-        write output files.        
+        write output files.
 
 RETURN:
     [NONE]
@@ -232,13 +227,15 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
     outputLocation = os.path.join(
         outputDirectoryLocation, CONSOLIDATED_SIGNATURES)
     outputFile = open(outputLocation, 'w')
+    queryFile = open(queryLocation, 'r')
 
     produceSignatures(
-        compiledSignatures, sortedIDs, queryLocation, outputFile)
+        compiledSignatures, sortedIDs, queryFile, outputFile)
 
     outputFile.close()
+    queryFile.close()
 
-    print "\n==== Exiting ====\n"    
+    print "\n==== Exiting ====\n"
 
 """
 # =============================================================================

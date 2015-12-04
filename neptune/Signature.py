@@ -7,7 +7,8 @@ SIGNATURE
 """
 class Signature():
 
-    def __init__(self, ID, score, inscore, exscore, sequence, reference, position):
+    def __init__(
+            self, ID, score, inscore, exscore, sequence, reference, position):
 
         self.ID = str(ID)
         self.score = float(score)
@@ -59,7 +60,8 @@ def readSignatures(fileLocation):
 
         sequence = line2
 
-        signature = Signature(ID, score, inscore, exscore, sequence, reference, position)
+        signature = Signature(
+            ID, score, inscore, exscore, sequence, reference, position)
         signatures[ID] = signature
 
     signaturesFile.close()
@@ -99,4 +101,3 @@ def writeSignature(signature, destination):
         + str("pos=") + str(signature.position) + "\n")
 
     destination.write(str(signature.sequence) + "\n")
-
