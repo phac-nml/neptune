@@ -93,17 +93,17 @@ PURPOSE:
     Queries the database with a specified query.
 
 INPUT:
-    [STRING] [databaseLocation] - The file location of the database.
-    [STRING] [queryLocation] - The file location of the query.
-    [STRING] [outputLocation] - The file location of the output.
+    [FILE LOCATION] [databaseLocation] - The file location of the database.
+    [FILE LOCATION] [queryLocation] - The file location of the query.
+    [FILE LOCATION] [outputLocation] - The file location of the output.
     [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
         exclusion hit with a candidate.
 
+RETURN:
+    [FILE LOCATION] [outputLocation] - The file location of the query output.
+
 POST:
     A query file will be created in the output directory.
-
-RETURN:
-    [STRING] [queryOutputLocation] - The file location of the query output.
 
 # =============================================================================
 """
@@ -124,13 +124,11 @@ def queryDatabase(
     DUST = "-dust"
     DUST_VALUE = "no"
 
-    queryOutputLocation = outputLocation + ".query"
-
     args = [
         COMMAND,
         DATABASE, databaseLocation,
         QUERY, queryLocation,
-        OUTPUT, queryOutputLocation,
+        OUTPUT, outputLocation,
         OUTPUT_FORMAT, OUTPUT_FORMAT_STRING,
         PERCENT_IDENTITY, str(filterPercent),
         WORD_SIZE, str(WORD_SIZE_VALUE),
@@ -138,4 +136,4 @@ def queryDatabase(
 
     subprocess.check_call(args)
 
-    return queryOutputLocation
+    return outputLocation

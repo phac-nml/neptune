@@ -26,6 +26,14 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
+"""
+# =============================================================================
+
+CONSOLIDATE SIGNATURES
+
+# =============================================================================
+"""
+
 import math
 import argparse
 import os
@@ -67,10 +75,28 @@ SIGNATURES_SHORT = SHORT + "s"
 CONSOLIDATED_DATABASE_SHORT = SHORT + CONSOLIDATED_DATABASE
 OUTPUT_SHORT = SHORT + "o"
 
+# OTHER
+COMPILED_SIGNATURES = "compiled.fasta"
+COMPILED_DATABASE = "compiled.db"
+COMPILED_DATABASE_QUERY = COMPILED_DATABASE + ".query"
+CONSOLIDATED_SIGNATURES = "consolidated.fasta"
+
 """
 # =============================================================================
 
 COMPILE SIGNATURES
+
+PURPOSE:
+
+INPUT:
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] compiledSignatures
+    [signatureLocations]
+    [outputLocation]
+
+RETURN:
+    [sortedIDs]
+
+POST:
 
 # =============================================================================
 """
@@ -94,6 +120,8 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
         compiledSignatures.iteritems(),
         key=lambda (k,v): v.score, reverse=True)
 
+    sortedIDs = [item[0] for item in sortedSignatures]
+
     outputFile = open(outputLocation, 'w')
 
     for item in sortedSignatures:
@@ -103,17 +131,31 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
     outputFile.close()
 
-    return sortedSignatures
+    return sortedIDs
 
 """
 # =============================================================================
 
-PRODUCE CONSOLIDATED SIGNATURES
+PRODUCE SIGNATURES
+
+PURPOSE:
+
+INPUT:
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] compiledSignatures
+    [STRING LIST] [sortedIDs]
+    [FILE LOCATION] [queryLocation]
+    [outputFile]
+
+RETURN:
+    [NONE]
+
+POST:
+    The consolidated signatures will be written to the [outputFile].
 
 # =============================================================================
 """
-def produceConsolidatedSignatures(
-        compiledSignatures, sortedSignatures, queryLocation, outputLocation):
+def produceSignatures(
+        compiledSignatures, sortedIDs, queryLocation, outputFile):
 
     queryFile = open(queryLocation)
 
@@ -135,14 +177,8 @@ def produceConsolidatedSignatures(
         else:
             hits[hit.ID] = [hit.reference]
 
-    outputFile = open(outputLocation, 'w')
-
     # Build a list of output signatures.
-    for item in sortedSignatures:
-
-        signatureID = item[0]
-
-        print signatureID
+    for signatureID in sortedIDs:
 
         # Is the signature close to anything already output?
         if(all((ID not in outputSignatures) for ID in hits[signatureID])):
@@ -150,30 +186,57 @@ def produceConsolidatedSignatures(
             outputSignatures[signatureID] = compiledSignatures[signatureID]
             Signature.writeSignature(compiledSignatures[signatureID], outputFile)
 
-    outputFile.close()
-
 """
 # =============================================================================
 
 CONSOLIDATE SIGNATURES
 
+PURPOSE:
+    Consolidates signatures from several FASTA signature files into a single
+    representative signature file, determined by signature score and sequence
+    similarity.
+
+INPUT:
+    [FILE LOCATION LIST] [signatureLocations] - A list of signature file
+        locations to consolidate.
+    [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
+        write output files.        
+
+RETURN:
+    [NONE]
+
+POST:
+    The signatures will be consolidated and written to the [outputFile].
+
 # =============================================================================
 """
-def consolidateSignatures(
-        signatureLocations, databaseLocation, outputLocation):
+def consolidateSignatures(signatureLocations, outputDirectoryLocation):
 
+    # --- Compile ---
     compiledSignatures = {}
-    compiledSignatureLocation = "consolidatedSignatures.fasta"
-
-    sortedSignatures = compileSignatures(
+    compiledSignatureLocation = COMPILED_SIGNATURES
+    sortedIDs = compileSignatures(
         compiledSignatures, signatureLocations, compiledSignatureLocation)
+
+    # --- Build Database ---
+    databaseLocation = os.path.join(
+        outputDirectoryLocation, COMPILED_DATABASE)
+    queryLocation = os.path.join(
+        outputDirectoryLocation, COMPILED_DATABASE_QUERY)
 
     Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
     Database.queryDatabase(
-        databaseLocation, compiledSignatureLocation, "db.out", 0.50)
+        databaseLocation, compiledSignatureLocation, queryLocation, 0.50)
 
-    produceConsolidatedSignatures(
-        compiledSignatures, sortedSignatures, "db.out.query", outputLocation)
+    # --- Produce Consolidated Signatures ---
+    outputLocation = os.path.join(
+        outputDirectoryLocation, CONSOLIDATED_SIGNATURES)
+    outputFile = open(outputLocation, 'w')
+
+    produceSignatures(
+        compiledSignatures, sortedIDs, queryLocation, outputFile)
+
+    outputFile.close()
 
     print "\n==== Exiting ====\n"    
 
@@ -188,7 +251,9 @@ def main():
 
     # --- Parser ---
     parser = argparse.ArgumentParser(
-        description='.')
+        description='Consolidates signatures from several FASTA signature \
+        files into a single representative signature file, determined by \
+        signature score and sequence similarity.')
 
     parser.add_argument(
         SIGNATURES_SHORT,
@@ -198,28 +263,19 @@ def main():
         type=str, required=True, nargs='+')
 
     parser.add_argument(
-        CONSOLIDATED_DATABASE_SHORT,
-        CONSOLIDATED_DATABASE_LONG,
-        dest=CONSOLIDATED_DATABASE,
-        help="the location to create the consolidated database location",
-        type=str, required=True)
-
-    parser.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
-        help="output file",
+        help="output directory",
         type=str, required=True)
 
     args = parser.parse_args()
 
     signatureLocations = []
     Utility.expandInput(args.signatures, signatureLocations)
+    outputDirectoryLocation = args.output
 
-    databaseLocation = args.database
-    outputLocation = args.output
-
-    consolidateSignatures(signatureLocations, databaseLocation, outputLocation)
+    consolidateSignatures(signatureLocations, outputDirectoryLocation)
 
 if __name__ == '__main__':
 
