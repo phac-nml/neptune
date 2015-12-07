@@ -29,7 +29,12 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-CONSOLIDATE SIGNATURES
+Author: Eric Marinier
+Date: 7 December 2015
+
+This script consolidates multiple signatures files, produced by Neptune, into
+a single file containing the best signatures from all files. This script
+attempts to avoid overlapping signatures. However, this is not guaranteed.
 
 # =============================================================================
 """
@@ -79,23 +84,31 @@ CONSOLIDATED_SIGNATURES = "consolidated.fasta"
 COMPILE SIGNATURES
 
 PURPOSE:
+    Compiles the signatures from several Neptune signature files into a single
+    dictionary containing all signatures.
 
 INPUT:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] compiledSignatures
-    [signatureLocations]
-    [outputLocation]
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] - An initially
+        empty dictionary that will be filled with signatures located in within
+        the [signatureLocations] files.
+    [FILE LOCATION LIST] [signatureLocations] - A list of signature file
+        locations.
 
 RETURN:
-    [sortedIDs]
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] - A dictionary
+        containing all compiled signatures. This dictionary is the same object
+        as the initially passed dictionary.
 
 POST:
+    The [compiledSignatures] dictionary will be filled the signatures.
 
 # =============================================================================
 """
-def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
+def compileSignatures(compiledSignatures, signatureLocations):
 
     fileID = 0
 
+    # -- Read Files -- #
     for location in signatureLocations:
 
         signatures = Signature.readSignatures(location)
@@ -108,22 +121,7 @@ def compileSignatures(compiledSignatures, signatureLocations, outputLocation):
 
         fileID += 1
 
-    sortedSignatures = sorted(
-        compiledSignatures.iteritems(),
-        key=lambda (k, v): v.score, reverse=True)
-
-    sortedIDs = [item[0] for item in sortedSignatures]
-
-    outputFile = open(outputLocation, 'w')
-
-    for item in sortedSignatures:
-
-        ID = item[0]
-        Signature.writeSignature(compiledSignatures[ID], outputFile)
-
-    outputFile.close()
-
-    return sortedIDs
+    return compiledSignatures
 
 """
 # =============================================================================
@@ -137,7 +135,7 @@ INPUT:
     [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] -
         A dictionary containing all signatures, including overlapping
         signatures.
-    [STRING LIST] [sortedIDs] - A list of signature IDs, sorted by their
+    [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
         corresponding signature scores.
     [FILE] [queryFile] - A readable BLASTN query file.
     [FILE] [outputFile] - A writable file-like object.
@@ -151,7 +149,7 @@ POST:
 # =============================================================================
 """
 def produceSignatures(
-        compiledSignatures, sortedIDs, queryFile, outputFile):
+        compiledSignatures, sortedSignatures, queryFile, outputFile):
 
     hits = {}
     outputSignatures = {}
@@ -172,14 +170,14 @@ def produceSignatures(
             hits[hit.ID] = [hit.reference]
 
     # Build a list of output signatures.
-    for signatureID in sortedIDs:
+    for signature in sortedSignatures:
 
         # Is the signature close to anything already output?
-        if(all((ID not in outputSignatures) for ID in hits[signatureID])):
+        if(all((ID not in outputSignatures) for ID in hits[signature.ID])):
 
-            outputSignatures[signatureID] = compiledSignatures[signatureID]
+            outputSignatures[signature.ID] = compiledSignatures[signature.ID]
             Signature.writeSignature(
-                compiledSignatures[signatureID], outputFile)
+                compiledSignatures[signature.ID], outputFile)
 
 """
 # =============================================================================
@@ -207,13 +205,22 @@ POST:
 """
 def consolidateSignatures(signatureLocations, outputDirectoryLocation):
 
-    # --- Compile ---
+    # --- Compile Signatures --- #
     compiledSignatures = {}
-    compiledSignatureLocation = COMPILED_SIGNATURES
-    sortedIDs = compileSignatures(
-        compiledSignatures, signatureLocations, compiledSignatureLocation)
+    compileSignatures(compiledSignatures, signatureLocations)
 
-    # --- Build Database ---
+    # -- Sort Signatures -- #
+    sortedSignatures = Signature.sortSignatures(compiledSignatures)
+
+    # -- Write Signatures -- #
+    compiledSignatureLocation = os.path.join(
+        outputDirectoryLocation, COMPILED_SIGNATURES)
+
+    compiledSignatureFile = open(compiledSignatureLocation, 'w')
+    Signature.writeSignatures(sortedSignatures, compiledSignatureFile)
+    compiledSignatureFile.close()
+
+    # --- Build Database --- #
     databaseLocation = os.path.join(
         outputDirectoryLocation, COMPILED_DATABASE)
     queryLocation = os.path.join(
@@ -223,14 +230,14 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
     Database.queryDatabase(
         databaseLocation, compiledSignatureLocation, queryLocation, 0.50)
 
-    # --- Produce Consolidated Signatures ---
+    # --- Produce Consolidated Signatures --- #
     outputLocation = os.path.join(
         outputDirectoryLocation, CONSOLIDATED_SIGNATURES)
     outputFile = open(outputLocation, 'w')
     queryFile = open(queryLocation, 'r')
 
     produceSignatures(
-        compiledSignatures, sortedIDs, queryFile, outputFile)
+        compiledSignatures, sortedSignatures, queryFile, outputFile)
 
     outputFile.close()
     queryFile.close()

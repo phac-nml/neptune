@@ -69,9 +69,34 @@ def readSignatures(fileLocation):
     return signatures
 
 """
-# =========================================================================
+# =============================================================================
 
 WRITE SIGNATURES
+
+PURPOSE:
+
+
+INPUT:
+    [SIGNATURE LIST] [signatures] -
+
+
+RETURN:
+
+
+POST:
+
+# =============================================================================
+"""
+def writeSignatures(signatures, destination):
+
+    for signature in signatures:
+
+        writeSignature(signature, destination)
+
+"""
+# =========================================================================
+
+WRITE SIGNATURE
 
 PURPOSE:
     Writes the signature to the destination. This function is designed to
@@ -101,3 +126,29 @@ def writeSignature(signature, destination):
         + str("pos=") + str(signature.position) + "\n")
 
     destination.write(str(signature.sequence) + "\n")
+
+"""
+# =============================================================================
+
+SORT SIGNATURES
+
+PURPOSE:
+
+
+INPUT:
+
+
+RETURN:
+
+
+POST:
+
+# =============================================================================
+"""
+def sortSignatures(signatures):
+
+    sortedSignatures = sorted(
+        signatures.iteritems(),
+        key=lambda (k, v): v.score, reverse=True)
+
+    return [item[1] for item in sortedSignatures]
