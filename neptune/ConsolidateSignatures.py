@@ -130,11 +130,11 @@ PRODUCE SIGNATURES
 
 PURPOSE:
     Produces a list of consolidated signatures by outputting to file while
-    avoiding outputting the similar signatures.
+    avoiding outputting duplicate signatures.
 
 INPUT:
     [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
-        corresponding signature scores.
+        corresponding Neptune signature scores.
     [FILE] [queryFile] - A readable BLASTN query file.
     [FILE] [destination] - A writable file-like object.
 
@@ -142,7 +142,7 @@ RETURN:
     [NONE]
 
 POST:
-    The consolidated signatures will be written to the [destination].
+    The list of consolidated signatures will be written to the [destination].
 
 # =============================================================================
 """
@@ -181,21 +181,22 @@ def produceSignatures(sortedSignatures, queryFile, destination):
 CONSOLIDATE SIGNATURES
 
 PURPOSE:
-    Consolidates signatures from several FASTA signature files into a single
-    representative signature file, determined by signature score and sequence
-    similarity.
+    Consolidates signatures from several Neptune signature files into a single
+    representative Neptune signature file, determined by signature score and
+    sequence similarity.
 
 INPUT:
-    [FILE LOCATION LIST] [signatureLocations] - A list of signature file
-        locations corresponding to files to consolidate.
+    [FILE LOCATION LIST] [signatureLocations] - A list of Neptune signature
+        file locations corresponding to files to consolidate.
     [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
-        write output files.
+        write the output files.
 
 RETURN:
     [NONE]
 
 POST:
-    The signatures files will be written to the [outputDirectoryLocation].
+    The signatures files will be written to several locations within the
+    [outputDirectoryLocation].
 
 # =============================================================================
 """
@@ -216,7 +217,7 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
     Signature.writeSignatures(sortedSignatures, compiledSignatureFile)
     compiledSignatureFile.close()
 
-    # --- Build Database --- #
+    # --- Build and Query Database --- #
     databaseLocation = os.path.join(
         outputDirectoryLocation, COMPILED_DATABASE)
     queryLocation = os.path.join(
@@ -250,7 +251,7 @@ def main():
 
     # --- Parser ---
     parser = argparse.ArgumentParser(
-        description='Consolidates signatures from several FASTA signature \
+        description='Consolidates signatures from several Neptune signature \
         files into a single representative signature file, determined by \
         signature score and sequence similarity.')
 

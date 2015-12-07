@@ -96,8 +96,8 @@ INPUT:
     [FILE LOCATION] [databaseLocation] - The file location of the database.
     [FILE LOCATION] [queryLocation] - The file location of the query.
     [FILE LOCATION] [outputLocation] - The file location of the output.
-    [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
-        exclusion hit with a candidate.
+    [0 <= FLOAT <= 1] [percentIdentity] - The minimum percent identity of an
+        alignment.
 
 RETURN:
     [FILE LOCATION] [outputLocation] - The file location of the query output.
@@ -108,7 +108,7 @@ POST:
 # =============================================================================
 """
 def queryDatabase(
-        databaseLocation, queryLocation, outputLocation, filterPercent):
+        databaseLocation, queryLocation, outputLocation, percentIdentity):
 
     # COMMAND LINE
     COMMAND = "blastn"
@@ -130,7 +130,7 @@ def queryDatabase(
         QUERY, queryLocation,
         OUTPUT, outputLocation,
         OUTPUT_FORMAT, OUTPUT_FORMAT_STRING,
-        PERCENT_IDENTITY, str(filterPercent),
+        PERCENT_IDENTITY, str(percentIdentity),
         WORD_SIZE, str(WORD_SIZE_VALUE),
         DUST, DUST_VALUE]
 

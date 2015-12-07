@@ -74,16 +74,19 @@ def readSignatures(fileLocation):
 WRITE SIGNATURES
 
 PURPOSE:
-
+    Writes several signatures to the destination. This function is designed to
+    be symmetric with the read signatures function.
 
 INPUT:
-    [SIGNATURE LIST] [signatures] -
+    [SIGNATURE LIST] [signatures] - A list of Signature objects.
+    [FILE] [destination] - An open and writable file-like object.
 
 
 RETURN:
-
+    [NONE]
 
 POST:
+    The [signatures] will be written to the [destination]
 
 # =============================================================================
 """
@@ -104,13 +107,13 @@ PURPOSE:
 
 INPUT:
     [SIGNATURE] [signature] - The signature to write.
-    [WRITABLE] [destination] - An open and writable object.
+    [FILE] [destination] - An open and writable file-like object.
 
 RETURN:
     [NONE]
 
 POST:
-    The passed signature will be written to the destination.
+    The passed signature will be written to the [destination].
 
 # =========================================================================
 """
@@ -133,15 +136,17 @@ def writeSignature(signature, destination):
 SORT SIGNATURES
 
 PURPOSE:
-
+    Sorts the signatures by their corresponding score in descending order.
 
 INPUT:
-
+    [[STRING ID] -> [SIGNATURE] DICTIONARY] [signatures] - A dictionary mapping
+        signature IDs to their corresponding signature.
 
 RETURN:
-
+    [SIGNATURE LIST] [sortedSignatures] - A list of sorted Signature objects.
 
 POST:
+    [NONE]
 
 # =============================================================================
 """
