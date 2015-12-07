@@ -97,7 +97,7 @@ INPUT:
 RETURN:
     [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] - A dictionary
         containing all compiled signatures. This dictionary is the same object
-        as the initially passed dictionary.
+        as the initially passed [compiledSignatures] dictionary.
 
 POST:
     The [compiledSignatures] dictionary will be filled the signatures.
@@ -129,27 +129,24 @@ def compileSignatures(compiledSignatures, signatureLocations):
 PRODUCE SIGNATURES
 
 PURPOSE:
-    Produces and outputs a list of consolidated signatures.
+    Produces a list of consolidated signatures by outputting to file while
+    avoiding outputting the similar signatures.
 
 INPUT:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] -
-        A dictionary containing all signatures, including overlapping
-        signatures.
     [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
         corresponding signature scores.
     [FILE] [queryFile] - A readable BLASTN query file.
-    [FILE] [outputFile] - A writable file-like object.
+    [FILE] [destination] - A writable file-like object.
 
 RETURN:
     [NONE]
 
 POST:
-    The consolidated signatures will be written to the [outputFile].
+    The consolidated signatures will be written to the [destination].
 
 # =============================================================================
 """
-def produceSignatures(
-        compiledSignatures, sortedSignatures, queryFile, outputFile):
+def produceSignatures(sortedSignatures, queryFile, destination):
 
     hits = {}
     outputSignatures = {}
@@ -175,9 +172,8 @@ def produceSignatures(
         # Is the signature close to anything already output?
         if(all((ID not in outputSignatures) for ID in hits[signature.ID])):
 
-            outputSignatures[signature.ID] = compiledSignatures[signature.ID]
-            Signature.writeSignature(
-                compiledSignatures[signature.ID], outputFile)
+            outputSignatures[signature.ID] = signature
+            Signature.writeSignature(signature, destination)
 
 """
 # =============================================================================
@@ -191,7 +187,7 @@ PURPOSE:
 
 INPUT:
     [FILE LOCATION LIST] [signatureLocations] - A list of signature file
-        locations to consolidate.
+        locations corresponding to files to consolidate.
     [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
         write output files.
 
@@ -199,7 +195,7 @@ RETURN:
     [NONE]
 
 POST:
-    The signatures will be consolidated and written to the [outputFile].
+    The signatures files will be written to the [outputDirectoryLocation].
 
 # =============================================================================
 """
@@ -230,14 +226,13 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
     Database.queryDatabase(
         databaseLocation, compiledSignatureLocation, queryLocation, 0.50)
 
-    # --- Produce Consolidated Signatures --- #
+    # --- Produce Signatures --- #
     outputLocation = os.path.join(
         outputDirectoryLocation, CONSOLIDATED_SIGNATURES)
     outputFile = open(outputLocation, 'w')
     queryFile = open(queryLocation, 'r')
 
-    produceSignatures(
-        compiledSignatures, sortedSignatures, queryFile, outputFile)
+    produceSignatures(sortedSignatures, queryFile, outputFile)
 
     outputFile.close()
     queryFile.close()
