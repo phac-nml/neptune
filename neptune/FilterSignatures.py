@@ -121,64 +121,6 @@ exclusionScore = {}
 """
 # =============================================================================
 
-QUERY DATABASE
-
-PURPOSE:
-    Queries the database with a specified query.
-
-INPUT:
-    [STRING] [databaseLocation] - The file location of the database.
-    [STRING] [queryLocation] - The file location of the query.
-    [STRING] [outputLocation] - The file location of the output.
-    [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
-        exclusion hit with a candidate.
-    [4 <= INT] [seedSize] - The seed size used in alignments.
-
-POST:
-    A query file will be created in the output directory.
-
-RETURN:
-    [STRING] [queryOutputLocation] - The file location of the query output.
-
-# =============================================================================
-"""
-def queryDatabase(
-        databaseLocation, queryLocation, outputLocation,
-        filterPercent, seedSize):
-
-    # COMMAND LINE
-    COMMAND = "blastn"
-
-    DATABASE = "-db"
-    QUERY = "-query"
-    OUTPUT = "-out"
-    OUTPUT_FORMAT = "-outfmt"
-    OUTPUT_FORMAT_STRING = "6 qseqid qlen sseqid length pident score"
-    PERCENT_IDENTITY = "-perc_identity"
-    WORD_SIZE = "-word_size"
-    WORD_SIZE_VALUE = seedSize
-    DUST = "-dust"
-    DUST_VALUE = "no"
-
-    queryOutputLocation = outputLocation + ".query"
-
-    args = [
-        COMMAND,
-        DATABASE, databaseLocation,
-        QUERY, queryLocation,
-        OUTPUT, queryOutputLocation,
-        OUTPUT_FORMAT, OUTPUT_FORMAT_STRING,
-        PERCENT_IDENTITY, str(filterPercent),
-        WORD_SIZE, str(WORD_SIZE_VALUE),
-        DUST, DUST_VALUE]
-
-    subprocess.check_call(args)
-
-    return queryOutputLocation
-
-"""
-# =============================================================================
-
 UPDATE HIT OVERALL DICTIONARY
 
 PURPOSE:
@@ -562,8 +504,8 @@ def filterSignatures(
         filteredOutputLocation, sortedOutputLocation, filterLength,
         filterPercent, seedSize):
 
-    # BLASTN - EXCLUSION
-    exclusionQueryLocation = queryDatabase(
+    # QUERY DB - EXCLUSION
+    exclusionQueryLocation = Database.queryDatabase(
         exclusionDatabaseLocation, candidateLocation,
         filteredOutputLocation, filterPercent, seedSize)
 
@@ -572,8 +514,8 @@ def filterSignatures(
         candidateLocation, exclusionQueryLocation, filteredOutputLocation,
         filterLength, totalExclusion)
 
-    # BLASTN - INCLUSION
-    inclusionQueryLocation = queryDatabase(
+    # QUERY DB - INCLUSION
+    inclusionQueryLocation = Database.queryDatabase(
         inclusionDatabaseLocation, filteredLocation,
         sortedOutputLocation, filterPercent, seedSize)
 

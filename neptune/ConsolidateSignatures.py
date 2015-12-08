@@ -225,7 +225,7 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
 
     Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
     Database.queryDatabase(
-        databaseLocation, compiledSignatureLocation, queryLocation, 0.50)
+        databaseLocation, compiledSignatureLocation, queryLocation, 0.50, 11)
 
     # --- Produce Signatures --- #
     outputLocation = os.path.join(

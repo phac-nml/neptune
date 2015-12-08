@@ -98,6 +98,7 @@ INPUT:
     [FILE LOCATION] [outputLocation] - The file location of the output.
     [0 <= FLOAT <= 1] [percentIdentity] - The minimum percent identity of an
         alignment.
+    [4 <= INT] [seedSize] - The seed size used in alignments.
 
 RETURN:
     [FILE LOCATION] [outputLocation] - The file location of the query output.
@@ -108,7 +109,8 @@ POST:
 # =============================================================================
 """
 def queryDatabase(
-        databaseLocation, queryLocation, outputLocation, percentIdentity):
+        databaseLocation, queryLocation, outputLocation,
+        percentIdentity, seedSize):
 
     # COMMAND LINE
     COMMAND = "blastn"
@@ -120,7 +122,7 @@ def queryDatabase(
     OUTPUT_FORMAT_STRING = "6 qseqid qlen sseqid length pident score"
     PERCENT_IDENTITY = "-perc_identity"
     WORD_SIZE = "-word_size"
-    WORD_SIZE_VALUE = 11
+    WORD_SIZE_VALUE = seedSize
     DUST = "-dust"
     DUST_VALUE = "no"
 
