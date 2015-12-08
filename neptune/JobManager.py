@@ -47,6 +47,7 @@ import CountKMers
 import AggregateKMers
 import ExtractSignatures
 import FilterSignatures
+import ConsolidateSignatures
 
 """
 # =============================================================================
@@ -91,6 +92,7 @@ class JobManager:
             self.extractSpecification = defaultSpecification
             self.databaseSpecification = defaultSpecification
             self.filterSpecification = defaultSpecification
+            self.consolidateSpecification = defaultSpecification
 
         else:
 
@@ -99,6 +101,7 @@ class JobManager:
             self.extractSpecification = None
             self.databaseSpecification = None
             self.filterSpecification = None
+            self.consolidateSpecification = None
 
     """
     # =========================================================================
@@ -154,6 +157,17 @@ class JobManager:
     def setFilterSpecification(self, specification):
         if specification:
             self.filterSpecification = specification.strip()
+
+    """
+    # =========================================================================
+
+    SET CONSOLIDATE SPECIFICATION
+
+    # =========================================================================
+    """
+    def setConsolidateSpecification(self, specification):
+        if specification:
+            self.consolidateSpecification = specification.strip()
 
     """
     # =========================================================================
@@ -668,5 +682,48 @@ class JobManager:
 
         if self.filterSpecification:
             job.nativeSpecification = self.filterSpecification
+
+        return job
+
+    """
+    # =========================================================================
+
+    CREATE CONSOLIDATE JOB
+
+    PURPOSE:
+        Creates a consolidate signatures job.
+
+    INPUT:
+        x
+
+    RETURN:
+        [DRMAA JOB TEMPLATE] [job] - A consolidate signatures job.
+
+    # =========================================================================
+    """
+    def createConsolidateJob(
+            self, signatureLocations, outputDirectoryLocation):
+
+        # JOB CREATION
+        job = self.createPythonJob()
+
+        # COMMAND
+        args = []
+        args.append(os.path.realpath(inspect.getsourcefile(ConsolidateSignatures)))
+
+        # SIGNATURE LOCATIONS
+        if signatureLocations:
+            args.append(ConsolidateSignatures.SIGNATURES_LONG)
+            args += signatureLocations
+
+        # OUTPUT DIRECTORY LOCATION
+        if outputDirectoryLocation:
+            args.append(ConsolidateSignatures.OUTPUT_LONG)
+            args.append(str(outputDirectoryLocation))
+
+        job.args = args
+
+        if self.consolidateSpecification:
+            job.nativeSpecification = self.consolidateSpecification
 
         return job
