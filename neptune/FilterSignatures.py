@@ -64,6 +64,9 @@ import argparse
 import subprocess
 import operator
 
+import Database
+import Signature
+
 """
 # =============================================================================
 
@@ -111,127 +114,6 @@ FILTER_LENGTH_SHORT = SHORT + "fl"
 overallScore = {}
 inclusionScore = {}
 exclusionScore = {}
-
-"""
-# =============================================================================
-
-HIT
-
-# =============================================================================
-"""
-class Hit():
-
-    def __init__(self, line):
-
-        tokens = line.split()
-
-        ID = tokens[0]
-        length = tokens[1]
-        reference = tokens[2]
-        alignmentLength = tokens[3]
-        percentIdentity = tokens[4]
-        alignmentScore = tokens[5]
-
-        self.ID = str(ID).strip()
-        self.length = int(length)
-        self.reference = str(reference).strip()
-        self.alignmentLength = int(alignmentLength)
-        self.percentIdentity = float(percentIdentity)
-        self.alignmentScore = float(alignmentScore)
-
-        self.neptuneScore = float(0.0)
-
-"""
-# =============================================================================
-
-SIGNATURE
-
-# =============================================================================
-"""
-class Signature():
-
-    def __init__(self, ID, sequence, reference, position):
-
-        self.ID = ID
-        self.sequence = sequence.strip()
-        self.length = len(sequence.strip())
-        self.reference = reference
-        self.position = position
-
-    """
-    # =========================================================================
-
-    READ SIGNATURES
-
-    PURPOSE:
-        Reads a signature file into a signature dictionary.
-
-    INPUT:
-        [STRING] [fileLocation] - The file location of the signatures.
-
-    RETURN:
-        [(STRING) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string IDs
-            to signature objects.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def readSignatures(fileLocation):
-
-        signaturesFile = open(fileLocation, 'r')
-        signatures = {}
-
-        while True:
-
-            line1 = signaturesFile.readline()
-            line2 = signaturesFile.readline()
-
-            if not line2:
-                break
-
-            tokens = (line1[1:]).split()
-            ID = tokens[0]
-            reference = tokens[2]
-            position = tokens[3]
-
-            sequence = line2
-
-            signatures[ID] = Signature(ID, sequence, reference, position)
-
-        signaturesFile.close()
-
-        return signatures
-
-    """
-    # =========================================================================
-
-    WRITE SIGNATURES
-
-    PURPOSE:
-        Writes the signature to the destination. This function is designed to
-        be symmetric with the read signatures function.
-
-    INPUT:
-        [SIGNATURE] [signature] - The signature to write.
-        [WRITABLE] [destination] - An open and writable object.
-
-    RETURN:
-        [NONE]
-
-    POST:
-        The passed signature will be written to the destination.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def writeSignature(signature, destination):
-
-        destination.write(
-            ">" + str(signature.ID) + " " + str(signature.length)
-            + " " + str(signature.reference) + " "
-            + str(signature.position) + "\n")
-
-        destination.write(str(signature.sequence) + "\n")
 
 """
 # =============================================================================
@@ -507,35 +389,25 @@ def reportSorted(filteredLocation, outputLocation, sortedSignatureIDs):
 
             signature = filteredSignatures[ID]
 
-            outputFile.write(">" + str(signature.ID))
-
+            # -- Score Signature -- #
             if ID in overallScore:
-                outputFile.write(
-                    " score=" + "{0:.2f}".format(
-                        round(overallScore[ID], 2)))
+                signature.score = overallScore[ID]
             else:
-                outputFile.write(" score=0.00")
+                signature.score = 0.0
 
             if ID in inclusionScore:
-                outputFile.write(
-                    " in=" + "{0:.2f}".format(
-                        round(inclusionScore[ID], 2)))
+                signature.inscore = inclusionScore[ID]
             else:
-                outputFile.write(" in=0.00")
+                signature.inscore = 0.0
 
             if ID in exclusionScore:
-                outputFile.write(
-                    " ex=" + "{0:.2f}".format(
-                        round(exclusionScore[ID], 2)))
+                signature.exscore = exclusionScore[ID]
             else:
-                outputFile.write(" ex=0.00")
+                signature.exscore = 0.0
 
-            outputFile.write(" len=" + str(signature.length))
-            outputFile.write(" ref=" + str(signature.reference))
-            outputFile.write(" pos=" + str(signature.position))
-            outputFile.write("\n")
-
-            outputFile.write(signature.sequence + "\n")
+            outputFile = open(outputLocation, 'w')
+            Signature.writeSignature(signature, outputFile)
+            outputFile.close()
 
     outputFile.close()
 
@@ -579,7 +451,7 @@ def reportSignatures(
     # LOAD FILTER
     for line in exclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitOverallDictionary(hit, hitOverallDictionary)
         updateHitPairDictionary(hit, hitPairDictionary)
 
@@ -630,7 +502,7 @@ def sortSignatures(
     # LOAD FILTER
     for line in inclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitPairDictionary(hit, hitPairDictionary)
 
     inclusionQueryFile.close()

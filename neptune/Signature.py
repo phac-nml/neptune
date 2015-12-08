@@ -81,7 +81,6 @@ INPUT:
     [SIGNATURE LIST] [signatures] - A list of Signature objects.
     [FILE] [destination] - An open and writable file-like object.
 
-
 RETURN:
     [NONE]
 
@@ -121,9 +120,9 @@ def writeSignature(signature, destination):
 
     destination.write(
         ">" + str(signature.ID) + " "
-        + str("score=") + str(signature.score) + " "
-        + str("in=") + str(signature.inscore) + " "
-        + str("ex=") + str(signature.exscore) + " "
+        + str("score=") + "{0:.4f}".format(signature.score) + " "
+        + str("in=") + "{0:.4f}".format(signature.inscore) + " "
+        + str("ex=") + "{0:.4f}".format(signature.exscore) + " "
         + str("len=") + str(signature.length) + " "
         + str("ref=") + str(signature.reference) + " "
         + str("pos=") + str(signature.position) + "\n")

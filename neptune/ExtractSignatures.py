@@ -68,6 +68,8 @@ from Utility import reverseComplement
 from Utility import buildReferences
 from Utility import estimateReferenceParameters
 
+import Signature
+
 from scipy.stats import norm
 
 """
@@ -260,12 +262,11 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
 
     for i in range(len(regions)):
 
-        outputFile.write(
-            ">" + str(i) + " " + str(len(regions[i].sequence))
-            + " " + str(regions[i].reference) + " "
-            + str(regions[i].position) + "\n")
+        signature = Signature.Signature(
+            i, 0.0, 0.0, 0.0, regions[i].sequence,
+            regions[i].reference, regions[i].position)
 
-        outputFile.write(regions[i].sequence + "\n")
+        Signature.writeSignature(signature, outputFile)
 
 """
 # =============================================================================
