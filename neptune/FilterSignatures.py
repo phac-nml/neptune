@@ -85,6 +85,7 @@ FILTERED_OUTPUT = "filteredOutput"
 SORTED_OUTPUT = "sortedOutput"
 FILTER_PERCENT = "filterPercent"
 FILTER_LENGTH = "filterLength"
+SEED_SIZE = "seedSize"
 
 # ARGUMENTS
 LONG = "--"
@@ -98,6 +99,7 @@ FILTERED_OUTPUT_LONG = LONG + FILTERED_OUTPUT
 SORTED_OUTPUT_LONG = LONG + SORTED_OUTPUT
 FILTER_PERCENT_LONG = LONG + FILTER_PERCENT
 FILTER_LENGTH_LONG = LONG + FILTER_LENGTH
+SEED_SIZE_LONG = LONG + SEED_SIZE
 
 SHORT = "-"
 
@@ -110,6 +112,7 @@ FILTERED_OUTPUT_SHORT = SHORT + "fo"
 SORTED_OUTPUT_SHORT = SHORT + "so"
 FILTER_PERCENT_SHORT = LONG + "fp"
 FILTER_LENGTH_SHORT = SHORT + "fl"
+SEED_SIZE_SHORT = SHORT + "ss"
 
 overallScore = {}
 inclusionScore = {}
@@ -129,6 +132,7 @@ INPUT:
     [STRING] [outputLocation] - The file location of the output.
     [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
         exclusion hit with a candidate.
+    [4 <= INT] [seedSize] - The seed size used in alignments.
 
 POST:
     A query file will be created in the output directory.
@@ -139,7 +143,8 @@ RETURN:
 # =============================================================================
 """
 def queryDatabase(
-        databaseLocation, queryLocation, outputLocation, filterPercent):
+        databaseLocation, queryLocation, outputLocation,
+        filterPercent, seedSize):
 
     # COMMAND LINE
     COMMAND = "blastn"
@@ -151,7 +156,7 @@ def queryDatabase(
     OUTPUT_FORMAT_STRING = "6 qseqid qlen sseqid length pident score"
     PERCENT_IDENTITY = "-perc_identity"
     WORD_SIZE = "-word_size"
-    WORD_SIZE_VALUE = 11
+    WORD_SIZE_VALUE = seedSize
     DUST = "-dust"
     DUST_VALUE = "no"
 
@@ -540,6 +545,8 @@ INPUT:
         for the signature to be considered a hit and used in scoring.
     [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
         exclusion hit with a candidate.
+    [4 <= INT] [seedSize] - The seed size used in alignments.
+
 POST:
     Filtered signatures will be written to [filteredOutputLocation] and
     sorted signatures will be written to [sortedOutputLocation].
@@ -553,12 +560,12 @@ def filterSignatures(
         inclusionDatabaseLocation, exclusionDatabaseLocation,
         totalInclusion, totalExclusion, candidateLocation,
         filteredOutputLocation, sortedOutputLocation, filterLength,
-        filterPercent):
+        filterPercent, seedSize):
 
     # BLASTN - EXCLUSION
     exclusionQueryLocation = queryDatabase(
-        exclusionDatabaseLocation, candidateLocation, filteredOutputLocation,
-        filterPercent)
+        exclusionDatabaseLocation, candidateLocation,
+        filteredOutputLocation, filterPercent, seedSize)
 
     # FILTER
     filteredLocation = reportSignatures(
@@ -568,7 +575,7 @@ def filterSignatures(
     # BLASTN - INCLUSION
     inclusionQueryLocation = queryDatabase(
         inclusionDatabaseLocation, filteredLocation,
-        sortedOutputLocation, filterPercent)
+        sortedOutputLocation, filterPercent, seedSize)
 
     # SORT
     sortSignatures(
@@ -655,6 +662,13 @@ def main():
             with a candidate",
         type=float, required=False, default=0.50)
 
+    parser.add_argument(
+        SEED_SIZE_SHORT,
+        SEED_SIZE_LONG,
+        dest=SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False, default=11)
+
     args = parser.parse_args()
 
     inclusionDatabaseLocation = args.inclusionDatabase
@@ -666,12 +680,13 @@ def main():
     sortedOutputLocation = args.sortedOutput
     filterLength = args.filterLength
     filterPercent = args.filterPercent
+    seedSize = args.seedSize
 
     filterSignatures(
         inclusionDatabaseLocation, exclusionDatabaseLocation,
         totalInclusion, totalExclusion, inputLocation,
         filteredOutputLocation, sortedOutputLocation, filterLength,
-        filterPercent)
+        filterPercent, seedSize)
 
 if __name__ == '__main__':
 

@@ -66,6 +66,7 @@ CANDIDATES = "candidates"
 FILTERED = "filtered"
 SORTED = "sorted"
 DATABASE = "database"
+LOG = "log"
 
 # NAMES
 OUTPUT = "output"
@@ -76,7 +77,6 @@ AGGREGATE_SPECIFICATION = "aggregateSpecification"
 EXTRACT_SPECIFICATION = "extractSpecification"
 DATABASE_SPECIFICATION = "databaseSpecification"
 FILTER_SPECIFICATION = "filterSpecification"
-VERBOSE = "verbose"
 
 # ARGUMENTS
 LONG = "--"
@@ -88,7 +88,6 @@ AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
 EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
 DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
 FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
-VERBOSE_LONG = LONG + VERBOSE
 
 SHORT = "-"
 
@@ -184,6 +183,14 @@ class Execution():
 
         self.filterPercent = args.filterPercent
 
+        # -- seed size --
+        # 4 <= seedSize
+        if (args.seedSize is not None and
+                (int(args.seedSize) < 4)):
+            raise RuntimeError("The seed size is out of range.")
+
+        self.seedSize = args.seedSize
+
         # -- parallelization --
         # 1 <= parallelization
         if (args.parallelization is not None and
@@ -272,10 +279,15 @@ class Execution():
         self.aggregateLocation = os.path.abspath(
             os.path.join(self.outputDirectoryLocation, AGGREGATE))
 
+        self.logDirectoryLocation = os.path.abspath(
+            os.path.join(self.outputDirectoryLocation, LOG))
+        if not os.path.exists(self.logDirectoryLocation):
+            os.makedirs(self.logDirectoryLocation)
+
         # -- job manager --
         self.jobManager = JobManager.JobManager(
             session, self.outputDirectoryLocation,
-            args.defaultSpecification)
+            self.logDirectoryLocation, args.defaultSpecification)
 
         # -- job specifications --
         if args.countSpecification:
@@ -297,10 +309,6 @@ class Execution():
         if args.filterSpecification:
             self.jobManager.setFilterSpecification(
                 args.filterSpecification)
-
-        # -- verbose --
-        if args.verbose:
-            self.jobManager.setVerbose(args.verbose)
 
     """
     # =========================================================================
@@ -378,8 +386,8 @@ class Execution():
     def calculateExpectedKMerHits(gc, gs, k):
 
         # P(k_x = k_y) * ((gs - k + 1) C (2)) -- from manuscript
-        a = 2 * math.pow((1 - gc) / 2, 2)
-        b = 2 * math.pow(gc / 2, 2)
+        a = 2.0 * math.pow((1.0 - gc) / 2.0, 2.0)
+        b = 2.0 * math.pow(gc / 2.0, 2.0)
         c = math.pow(a + b, k)
         d = comb((gs - k + 1), (2), False)
         expected = c * d
@@ -662,7 +670,8 @@ def filterSignatures(execution, candidateLocations):
             inclusionDatabaseLocation, exclusionDatabaseLocation,
             execution.inclusionLocations, execution.exclusionLocations,
             candidateLocation, filteredLocation, sortedLocation,
-            execution.filterLength, execution.filterPercent)
+            execution.filterLength, execution.filterPercent,
+            execution.seedSize)
 
         jobs.append(job)
 
@@ -1057,6 +1066,13 @@ def main():
         type=float, required=False)
 
     parser.add_argument(
+        FilterSignatures.SEED_SIZE_SHORT,
+        FilterSignatures.SEED_SIZE_LONG,
+        dest=FilterSignatures.SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False)
+
+    parser.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
@@ -1105,12 +1121,6 @@ def main():
         dest=FILTER_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
-
-    parser.add_argument(
-        VERBOSE_LONG,
-        dest=VERBOSE,
-        help="verbose output flag",
-        action='store_true', default=False)
 
     # --- ArgParse Work-Around ---
     for i in range(len(sys.argv)):
