@@ -351,9 +351,7 @@ def reportSorted(filteredLocation, outputLocation, sortedSignatureIDs):
             else:
                 signature.exscore = 0.0
 
-            outputFile = open(outputLocation, 'w')
             Signature.writeSignature(signature, outputFile)
-            outputFile.close()
 
     outputFile.close()
 

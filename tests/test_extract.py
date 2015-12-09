@@ -675,7 +675,7 @@ class TestExtract(unittest.TestCase):
         result = extract(references, k, inmers, exmers, size, gap, output)
         lines = output.getvalue().split("\n")
 
-        self.assertEqual(lines[0], ">0 5 1 5")
+        self.assertEqual(lines[0], ">0 score=0.0000 in=0.0000 ex=0.0000 len=5 ref=1 pos=5")
         self.assertEqual(lines[1], "AAAAA")
 
         output.close()
@@ -1529,7 +1529,7 @@ class TestMain(unittest.TestCase):
     EXPECTED:
         0:
 
-        >0 4 0 4
+        >0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4
         ACGT
 
     # =============================================================================
@@ -1552,7 +1552,7 @@ class TestMain(unittest.TestCase):
         with open (outputLocation, "r") as myfile:
 
             result = myfile.read()
-            expected = ">0 4 0 4\nACGT\n"
+            expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4\nACGT\n"
             self.assertEquals(result, expected)
 
         os.remove(outputLocation)
@@ -1671,7 +1671,7 @@ class TestMain(unittest.TestCase):
     EXPECTED:
         0: 
 
-        >0 4 0 4
+        >0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4
         ACGT
     # =============================================================================
     """
@@ -1699,7 +1699,7 @@ class TestMain(unittest.TestCase):
         with open (outputLocation, "r") as myfile:
 
             result = myfile.read()
-            expected = ">0 4 0 4\nACGT\n"
+            expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4\nACGT\n"
             self.assertEquals(result, expected)
 
         os.remove(outputLocation)
@@ -1746,7 +1746,7 @@ class TestMain(unittest.TestCase):
     EXPECTED:
         0:
 
-        >0 12 random 9
+        >0 score=0.0000 in=0.0000 ex=0.0000 len=12 ref=random pos=9
         TCTAAACTTCAT
 
     # =============================================================================
@@ -1775,7 +1775,7 @@ class TestMain(unittest.TestCase):
         with open (outputLocation, "r") as myfile:
 
             result = myfile.read()
-            expected = ">0 12 random 9\nTCTAAACTTCAT\n"
+            expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=12 ref=random pos=9\nTCTAAACTTCAT\n"
             self.assertEquals(result, expected)
 
         os.remove(outputLocation)

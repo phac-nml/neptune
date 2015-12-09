@@ -64,6 +64,7 @@ class DefaultArgs():
         extractSpecification = None
         databaseSpecification = None
         filterSpecification = None
+        consolidateSpecification = None
 
 class TestMain(unittest.TestCase):
 
