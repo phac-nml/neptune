@@ -709,7 +709,8 @@ class JobManager:
 
         # COMMAND
         args = []
-        args.append(os.path.realpath(inspect.getsourcefile(ConsolidateSignatures)))
+        args.append(os.path.realpath(
+            inspect.getsourcefile(ConsolidateSignatures)))
 
         # SIGNATURE LOCATIONS
         if signatureLocations:
