@@ -694,11 +694,11 @@ class JobManager:
         Creates a consolidate signatures job.
 
     INPUT:
-        [FILE LOCATION LIST] [signatureLocations] - A list of Neptune signature
-            file locations corresponding to files to consolidate.
+        [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune
+            signature file locations corresponding to files to consolidate.
         [4 <= INT] [seedSize] - The seed size used in alignments.
-        [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
-            write the output files.
+        [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory
+            to write the output files.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - A consolidate signatures job.

@@ -38,9 +38,9 @@ PURPOSE:
     Creates a build database job.
 
 INPUT:
-    [STRING ITERATOR] [inputLocations] - The location of a single FASTA file
+    [FILE LOCATION] [inputLocations] - The location of a single FASTA file
         from which to build the database.
-    [STRING] [outputLocation] - The output location of the database.
+    [FILE LOCATION] [outputLocation] - The output location of the database.
 
 RETURN:
     [DRMAA JOB TEMPLATE] [job] - A create database job.
@@ -97,14 +97,14 @@ INPUT:
     [FILE LOCATION] [queryLocation] - The file location of the query.
     [FILE LOCATION] [outputLocation] - The file location of the output.
     [0 <= FLOAT <= 1] [percentIdentity] - The minimum percent identity of an
-        alignment.
-    [4 <= INT] [seedSize] - The seed size used in alignments.
+        alignment for it to be reported.
+    [4 <= INT] [seedSize] - The seed size used in query alignments.
 
 RETURN:
     [FILE LOCATION] [outputLocation] - The file location of the query output.
 
 POST:
-    A query file will be created in the output directory.
+    A query file will be created at the [outputLocation].
 
 # =============================================================================
 """

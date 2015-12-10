@@ -88,17 +88,18 @@ COMPILE SIGNATURES
 
 PURPOSE:
     Compiles the signatures from several Neptune signature files into a single
-    dictionary containing all signatures.
+    dictionary containing all signatures. This may result in repeated
+    signatures.
 
 INPUT:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] - An initially
+    [(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures] - An initially
         empty dictionary that will be filled with signatures located in within
         the [signatureLocations] files.
-    [FILE LOCATION LIST] [signatureLocations] - A list of signature file
+    [(FILE LOCATION) LIST] [signatureLocations] - A list of signature file
         locations.
 
 RETURN:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] [compiledSignatures] - A dictionary
+    [(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures] - A dictionary
         containing all compiled signatures. This dictionary is the same object
         as the initially passed [compiledSignatures] dictionary.
 
@@ -138,7 +139,8 @@ PURPOSE:
 INPUT:
     [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
         corresponding Neptune signature scores.
-    [FILE] [queryFile] - A readable BLASTN query file.
+    [FILE] [queryFile] - A readable BLASTN query file. This query is the result
+        of aligning all [sortedSignatures] against themselves.
     [FILE] [destination] - A writable file-like object.
 
 RETURN:
@@ -185,22 +187,22 @@ CONSOLIDATE SIGNATURES
 
 PURPOSE:
     Consolidates signatures from several Neptune signature files into a single
-    representative Neptune signature file, determined by signature score and
-    sequence similarity.
+    representative Neptune signature file, determined by the signature score
+    and sequence similarity of all the contributing signatures.
 
 INPUT:
-    [FILE LOCATION LIST] [signatureLocations] - A list of Neptune signature
+    [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune signature
         file locations corresponding to files to consolidate.
     [4 <= INT] [seedSize] - The seed size used in alignments.
-    [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
+    [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory to
         write the output files.
 
 RETURN:
     [NONE]
 
 POST:
-    The signatures files will be written to several locations within the
-    [outputDirectoryLocation].
+    The signatures and associated files will be written to several locations
+    within the [outputDirectoryLocation].
 
 # =============================================================================
 """

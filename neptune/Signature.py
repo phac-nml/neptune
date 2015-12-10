@@ -25,14 +25,16 @@ class Signature():
 READ SIGNATURES
 
 PURPOSE:
-    Reads a signature file into a signature dictionary.
+    Reads a signature file and places the signatures into a new signature
+    dictionary. This function is designed to be symmetric with the write
+    signatures function.
 
 INPUT:
-    [STRING] [fileLocation] - The file location of the signatures.
+    [FILE LOCATION] [fileLocation] - The file location of the signatures.
 
 RETURN:
-    [(STRING) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string IDs
-        to signature objects.
+    [(STRING ID) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string
+        IDs to signature objects.
 
 # =========================================================================
 """
@@ -43,9 +45,11 @@ def readSignatures(fileLocation):
 
     while True:
 
+        # read lines
         line1 = signaturesFile.readline()
         line2 = signaturesFile.readline()
 
+        # reached the end of file
         if not line2:
             break
 
@@ -138,7 +142,7 @@ PURPOSE:
     Sorts the signatures by their corresponding score in descending order.
 
 INPUT:
-    [[STRING ID] -> [SIGNATURE] DICTIONARY] [signatures] - A dictionary mapping
+    [(STRING ID) -> (SIGNATURE) DICTIONARY] [signatures] - A dictionary mapping
         signature IDs to their corresponding signature.
 
 RETURN:

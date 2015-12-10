@@ -562,16 +562,21 @@ class Execution():
 CONSOLIDATE SIGNATURES
 
 PURPOSE:
-    x
+    Consolidates signatures from several Neptune signature files into a single
+    representative Neptune signature file, determined by the signature score
+    and sequence similarity of all the contributing signatures.
 
 INPUT:
-    x
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+    [(FILE LOCATION) LIST] [sortedLocations] - The file locations of candidate
+        signatures.
 
 RETURN:
-    x
+    [NONE]
 
 POST:
-    x
+    The produced signatures will be consolidated into a single signature file.
 
 # =============================================================================
 """

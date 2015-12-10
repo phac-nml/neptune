@@ -252,13 +252,13 @@ PURPOSE:
     directories.
 
     The directories are not included in the final list. However, all
-        non-directories located within the directories are included as
-        individual files.
+    non-directories located within the directories are included as
+    individual files.
 
 INPUT:
-    [STRING ITERATOR] [inputLocations] - The file input locations.
-    [STRING LIST] [result] - The list to fill with the expanded input
-        entries.
+    [(FILE LOCATION) LIST] [inputLocations] - The file input locations.
+    [(FILE LOCATION) LIST] [result] - The list to fill with the expanded
+        input entries.
 
 RETURN:
     [NONE]
