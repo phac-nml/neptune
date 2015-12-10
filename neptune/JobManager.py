@@ -724,7 +724,7 @@ class JobManager:
         # SEED SIZE
         if seedSize:
             args.append(ConsolidateSignatures.SEED_SIZE_LONG)
-            args.append(str(seedSize))          
+            args.append(str(seedSize))
 
         # OUTPUT DIRECTORY LOCATION
         if outputDirectoryLocation:

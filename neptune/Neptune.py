@@ -580,7 +580,9 @@ def consolidateSignatures(execution, sortedLocations):
     print("Consolidating signatures ...")
 
     job = execution.jobManager.createConsolidateJob(
-        sortedLocations, execution.seedSize, execution.consolidatedDirectoryLocation)
+        sortedLocations, execution.seedSize,
+        execution.consolidatedDirectoryLocation)
+
     execution.jobManager.runJobs([job])
 
     print("Consolidating finished!")
