@@ -58,6 +58,7 @@ GLOBALS
 SIGNATURES = "signatures"
 OUTPUT = "output"
 CONSOLIDATED_DATABASE = "database"
+SEED_SIZE = "seedSize"
 
 # ARGUMENTS
 LONG = "--"
@@ -65,12 +66,14 @@ LONG = "--"
 SIGNATURES_LONG = LONG + SIGNATURES
 CONSOLIDATED_DATABASE_LONG = LONG + CONSOLIDATED_DATABASE
 OUTPUT_LONG = LONG + OUTPUT
+SEED_SIZE_LONG = LONG + SEED_SIZE
 
 SHORT = "-"
 
 SIGNATURES_SHORT = SHORT + "s"
 CONSOLIDATED_DATABASE_SHORT = SHORT + CONSOLIDATED_DATABASE
 OUTPUT_SHORT = SHORT + "o"
+SEED_SIZE_SHORT = SHORT + "ss"
 
 # OTHER
 COMPILED_SIGNATURES = "compiled.fasta"
@@ -188,6 +191,7 @@ PURPOSE:
 INPUT:
     [FILE LOCATION LIST] [signatureLocations] - A list of Neptune signature
         file locations corresponding to files to consolidate.
+    [4 <= INT] [seedSize] - The seed size used in alignments.
     [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory to
         write the output files.
 
@@ -200,7 +204,8 @@ POST:
 
 # =============================================================================
 """
-def consolidateSignatures(signatureLocations, outputDirectoryLocation):
+def consolidateSignatures(
+        signatureLocations, seedSize, outputDirectoryLocation):
 
     # --- Compile Signatures --- #
     compiledSignatures = {}
@@ -225,7 +230,8 @@ def consolidateSignatures(signatureLocations, outputDirectoryLocation):
 
     Database.createDatabaseJob(compiledSignatureLocation, databaseLocation)
     Database.queryDatabase(
-        databaseLocation, compiledSignatureLocation, queryLocation, 0.50, 11)
+        databaseLocation, compiledSignatureLocation,
+        queryLocation, 0.50, seedSize)
 
     # --- Produce Signatures --- #
     outputLocation = os.path.join(
@@ -269,13 +275,24 @@ def main():
         help="output directory",
         type=str, required=True)
 
+    parser.add_argument(
+        SEED_SIZE_SHORT,
+        SEED_SIZE_LONG,
+        dest=SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False, default=11)
+
     args = parser.parse_args()
 
     signatureLocations = []
     Utility.expandInput(args.signatures, signatureLocations)
+
     outputDirectoryLocation = args.output
 
-    consolidateSignatures(signatureLocations, outputDirectoryLocation)
+    seedSize = args.seedSize
+
+    consolidateSignatures(
+        signatureLocations, seedSize, outputDirectoryLocation)
 
 if __name__ == '__main__':
 
