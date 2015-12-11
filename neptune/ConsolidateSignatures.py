@@ -133,14 +133,15 @@ def compileSignatures(compiledSignatures, signatureLocations):
 PRODUCE SIGNATURES
 
 PURPOSE:
-    Produces a list of consolidated signatures by outputting to file while
-    avoiding outputting duplicate signatures.
+    Produces a list of consolidated signatures by outputting signatures to
+    file, while avoiding outputting duplicate signatures.
 
 INPUT:
     [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
-        corresponding Neptune signature scores.
-    [FILE] [queryFile] - A readable BLASTN query file. This query is the result
-        of aligning all [sortedSignatures] against themselves.
+        corresponding Neptune signature scores. This list of signatures may
+        contain apparently-duplicate signatures.
+    [FILE] [blastOutputFile] - A readable BLASTN output file. This query is the
+        output of aligning all [sortedSignatures] against themselves.
     [FILE] [destination] - A writable file-like object.
 
 RETURN:
@@ -151,32 +152,43 @@ POST:
 
 # =============================================================================
 """
-def produceSignatures(sortedSignatures, queryFile, destination):
+def produceSignatures(sortedSignatures, blastOutputFile, destination):
 
-    hits = {}
-    outputSignatures = {}
+    hits = {} # [SIGNATURE ID] -> [(SIGNATURE ID) LIST] // (alignments)
+    outputSignatures = {} # Collection of already-output signatures.
 
     # Build a list of all query hits.
-    for line in queryFile:
+    # This creates a dictionary mapping signatures that align to each other.
+    # [SIGNATURE ID] -> [(SIGNATURE ID) LIST]
+    for line in blastOutputFile:
 
         hit = Database.Hit(line)
 
-        # only care if longer
+        # We only keep the hit if the ratio of the signature-to-alignment
+        # length is sufficiently long.
         if (float(hit.alignmentLength) / float(hit.length) < float(0.50)):
             continue
 
+        # Append the signature ID to the existing list of IDs.
         if hit.ID in hits:
             hits[hit.ID].append(hit.reference)
 
+        # Create a new list of signature IDs associated with specific
+        # signature ID.
         else:
             hits[hit.ID] = [hit.reference]
 
-    # Build a list of output signatures.
+    # Write the signatures to output, while maintaining a dictionary of
+    # signatures that were previously written to output. This attempts to
+    # avoid writing signatures appear to be duplicates or appear to overlap
+    # significantly.
     for signature in sortedSignatures:
 
-        # Is the signature close to anything already output?
+        # Is the signature close to anything already written to output?
         if(all((ID not in outputSignatures) for ID in hits[signature.ID])):
 
+            # The signature appears to be sufficiently unique.
+            # Write the signature to output and update outputed signatures.
             outputSignatures[signature.ID] = signature
             Signature.writeSignature(signature, destination)
 
