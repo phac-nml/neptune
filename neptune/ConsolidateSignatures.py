@@ -154,8 +154,8 @@ POST:
 """
 def produceSignatures(sortedSignatures, blastOutputFile, destination):
 
-    hits = {} # [SIGNATURE ID] -> [(SIGNATURE ID) LIST] // (alignments)
-    outputSignatures = {} # Collection of already-output signatures.
+    hits = {}  # [SIGNATURE ID] -> [(SIGNATURE ID) LIST] // (alignments)
+    outputSignatures = {}  # Collection of already-output signatures.
 
     # Build a list of all query hits.
     # This creates a dictionary mapping signatures that align to each other.
