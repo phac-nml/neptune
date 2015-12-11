@@ -35,188 +35,9 @@ prepareSystemPath()
 
 from neptune.FilterSignatures import *
 from neptune.Utility import *
+from neptune.Database import *
 
 import unittest
-
-"""
-# =============================================================================
-
-READ SIGNATURES
-
-# =============================================================================
-"""
-class TestReadSignatures(unittest.TestCase):
-
-    """ 
-    # =============================================================================
-
-    test_simple
-
-    PURPOSE:
-        Tests a simple read signatures example.
-
-    INPUT:
-        0:
-
-        >long1 84 reference1 0
-        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
-        >long2 84 reference3 100
-        ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT
-
-    EXPECTED:
-        0:
-
-        signature["long1"] -> LONG1 SIGNATURE
-        signature["long2"] -> LONG2 SIGNATURE
-
-    # =============================================================================
-    """
-    def test_simple(self):
-
-        fileLocation = getPath("tests/data/filter/multiple.fasta")
-        signatures = Signature.readSignatures(fileLocation)
-
-        self.assertEquals(signatures["long1"].ID, "long1")
-        self.assertEquals(signatures["long1"].reference, "reference1")
-
-        self.assertEquals(signatures["long2"].ID, "long2")
-        self.assertEquals(signatures["long2"].reference, "reference3")
-
-"""
-# =============================================================================
-
-WRITE SIGNATURE
-
-# =============================================================================
-"""
-class TestWriteSignatures(unittest.TestCase):
-
-    """ 
-    # =============================================================================
-
-    test_simple
-
-    PURPOSE:
-        Tests a simple write signatures example.
-
-    INPUT:
-        0:
-
-        signature = Signature("ACGTACGT", "0", "ref", "20")
-
-    EXPECTED:
-        0:
-
-        >0 8 ref 20
-        ACGTACGT
-
-    # =============================================================================
-    """
-    def test_simple(self):
-
-        destination = StringIO.StringIO()
-        signature = Signature("0", "ACGTACGT", "ref", "20")
-
-        Signature.writeSignature(signature, destination)
-        result = destination.getvalue()
-
-        expected = ">0 8 ref 20\nACGTACGT\n"
-        self.assertEquals(result, expected)
-
-"""
-# =============================================================================
-
-QUERY DATABASE
-
-# =============================================================================
-"""
-class TestQueryDataBase(unittest.TestCase):
-
-    """ 
-    # =============================================================================
-
-    test_simple
-
-    PURPOSE:
-        Tests a simple query.
-
-    INPUT:
-        0:
-
-        database constructed from:
-        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGG\
-        AAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
-
-        query:
-        AAACCCTTTGGGAAAACCCCTTTTGGGGAAAAA
-
-    EXPECTED:
-        0: "long.query\t33\tlong\t33\t100.00\t33\n" in result
-
-    # =============================================================================
-    """
-    def test_simple(self):
-
-        databaseLocation = "tests/data/filter/long.database/LONG"
-        queryLocation = "tests/data/filter/long.query"
-        outputLocation = "tests/output/filter/temp.out"
-        filterPercent = 0.50
-        seedSize = 11
-
-        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation,
-            filterPercent, seedSize)
-
-        with open (queryOutputLocation, "r") as myfile:
-            result = myfile.read()
-
-        expected = "long.query\t33\tlong\t33\t100.00\t33\n"
-
-        self.assertTrue(expected in result)
-
-        os.remove(queryOutputLocation)
-
-
-    """ 
-    # =============================================================================
-
-    test_missing
-
-    PURPOSE:
-        Tests a query that does not exist.
-
-    INPUT:
-        0:
-
-        database constructed from:
-        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
-
-        missing.query:
-        ATATATATATATATATATATATATATAT
-
-    EXPECTED:
-        0: ""
-
-    # =============================================================================
-    """
-    def test_missing(self):
-
-        databaseLocation = "tests/data/filter/long.database/LONG"
-        queryLocation = "tests/data/filter/missing.query"
-        outputLocation = "tests/output/filter/temp.out"
-        filterPercent = 0.50
-        seedSize = 11
-
-        queryOutputLocation = queryDatabase(databaseLocation, queryLocation, outputLocation,
-            filterPercent, seedSize)
-
-        with open (queryOutputLocation, "r") as myfile:
-            result = myfile.read()
-
-        expected = ""
-
-        self.assertEquals(result, expected)
-
-        os.remove(queryOutputLocation)
 
 """
 # =============================================================================
@@ -693,7 +514,8 @@ class TestReportCandidates(unittest.TestCase):
         0:
 
     EXPECTED:
-        0:
+        >long score=0.0000 in=0.0000 ex=0.0000 len=84 ref=reference pos=0
+        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
 
     # =============================================================================
     """
@@ -714,7 +536,7 @@ class TestReportCandidates(unittest.TestCase):
         with open (outputLocation, "r") as myfile:
 
             result = myfile.read()
-            expected = ">long 84 reference 0\nACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
+            expected = ">long score=0.0000 in=0.0000 ex=0.0000 len=84 ref=reference pos=0\nACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
             self.assertEquals(result, expected)
 
         os.remove(outputLocation)
@@ -778,7 +600,8 @@ class TestReportSorted(unittest.TestCase):
         0:
 
     EXPECTED:
-        0:
+        >long score=0.1500 in=0.1500 ex=0.0000 len=84 ref=reference pos=0
+        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
 
     # =============================================================================
     """
@@ -817,7 +640,7 @@ class TestReportSorted(unittest.TestCase):
             result = myfile.read()
 
             expected = (
-                ">long score=0.15 in=0.15 ex=0.00 len=84 ref=reference pos=0\n"
+                ">long score=0.1500 in=0.1500 ex=0.0000 len=84 ref=reference pos=0\n"
                 + "ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n")
 
             self.assertEquals(result, expected)
@@ -837,7 +660,10 @@ class TestReportSorted(unittest.TestCase):
         0:
 
     EXPECTED:
-        0:
+        >long1 score=0.45 in=0.45 ex=0.00 len=84 ref=reference1 pos=0
+        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
+        >long2 score=0.35 in=0.35 ex=0.00 len=84 ref=reference3 pos=100
+        ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT
 
     # =============================================================================
     """
@@ -883,9 +709,9 @@ class TestReportSorted(unittest.TestCase):
 
             result = myfile.read()
             expected = (
-                ">long1 score=0.45 in=0.45 ex=0.00 len=84 ref=reference1 pos=0\n"
+                ">long1 score=0.4500 in=0.4500 ex=0.0000 len=84 ref=reference1 pos=0\n"
                 + "ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
-                + ">long2 score=0.35 in=0.35 ex=0.00 len=84 ref=reference3 pos=100\n"
+                + ">long2 score=0.3500 in=0.3500 ex=0.0000 len=84 ref=reference3 pos=100\n"
                 + "ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT\n")
             self.assertEquals(result, expected)
 

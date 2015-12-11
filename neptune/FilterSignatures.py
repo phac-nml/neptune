@@ -61,8 +61,10 @@ script.py -d ex.db -i in1.can -o in1.fil -fp 0.70 -fl 0.50
 """
 
 import argparse
-import subprocess
 import operator
+
+import Database
+import Signature
 
 """
 # =============================================================================
@@ -114,185 +116,6 @@ SEED_SIZE_SHORT = SHORT + "ss"
 overallScore = {}
 inclusionScore = {}
 exclusionScore = {}
-
-"""
-# =============================================================================
-
-HIT
-
-# =============================================================================
-"""
-class Hit():
-
-    def __init__(self, line):
-
-        tokens = line.split()
-
-        ID = tokens[0]
-        length = tokens[1]
-        reference = tokens[2]
-        alignmentLength = tokens[3]
-        percentIdentity = tokens[4]
-        alignmentScore = tokens[5]
-
-        self.ID = str(ID).strip()
-        self.length = int(length)
-        self.reference = str(reference).strip()
-        self.alignmentLength = int(alignmentLength)
-        self.percentIdentity = float(percentIdentity)
-        self.alignmentScore = float(alignmentScore)
-
-        self.neptuneScore = float(0.0)
-
-"""
-# =============================================================================
-
-SIGNATURE
-
-# =============================================================================
-"""
-class Signature():
-
-    def __init__(self, ID, sequence, reference, position):
-
-        self.ID = ID
-        self.sequence = sequence.strip()
-        self.length = len(sequence.strip())
-        self.reference = reference
-        self.position = position
-
-    """
-    # =========================================================================
-
-    READ SIGNATURES
-
-    PURPOSE:
-        Reads a signature file into a signature dictionary.
-
-    INPUT:
-        [STRING] [fileLocation] - The file location of the signatures.
-
-    RETURN:
-        [(STRING) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string IDs
-            to signature objects.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def readSignatures(fileLocation):
-
-        signaturesFile = open(fileLocation, 'r')
-        signatures = {}
-
-        while True:
-
-            line1 = signaturesFile.readline()
-            line2 = signaturesFile.readline()
-
-            if not line2:
-                break
-
-            tokens = (line1[1:]).split()
-            ID = tokens[0]
-            reference = tokens[2]
-            position = tokens[3]
-
-            sequence = line2
-
-            signatures[ID] = Signature(ID, sequence, reference, position)
-
-        signaturesFile.close()
-
-        return signatures
-
-    """
-    # =========================================================================
-
-    WRITE SIGNATURES
-
-    PURPOSE:
-        Writes the signature to the destination. This function is designed to
-        be symmetric with the read signatures function.
-
-    INPUT:
-        [SIGNATURE] [signature] - The signature to write.
-        [WRITABLE] [destination] - An open and writable object.
-
-    RETURN:
-        [NONE]
-
-    POST:
-        The passed signature will be written to the destination.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def writeSignature(signature, destination):
-
-        destination.write(
-            ">" + str(signature.ID) + " " + str(signature.length)
-            + " " + str(signature.reference) + " "
-            + str(signature.position) + "\n")
-
-        destination.write(str(signature.sequence) + "\n")
-
-"""
-# =============================================================================
-
-QUERY DATABASE
-
-PURPOSE:
-    Queries the database with a specified query.
-
-INPUT:
-    [STRING] [databaseLocation] - The file location of the database.
-    [STRING] [queryLocation] - The file location of the query.
-    [STRING] [outputLocation] - The file location of the output.
-    [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
-        exclusion hit with a candidate.
-    [4 <= INT] [seedSize] - The seed size used in alignments.
-
-POST:
-    A query file will be created in the output directory.
-
-RETURN:
-    [STRING] [queryOutputLocation] - The file location of the query output.
-
-# =============================================================================
-"""
-def queryDatabase(
-        databaseLocation, queryLocation, outputLocation,
-        filterPercent, seedSize):
-
-    # COMMAND LINE
-    COMMAND = "blastn"
-
-    DATABASE = "-db"
-    QUERY = "-query"
-    OUTPUT = "-out"
-    OUTPUT_FORMAT = "-outfmt"
-    OUTPUT_FORMAT_STRING = "6 qseqid qlen sseqid length pident score"
-    PERCENT_IDENTITY = "-perc_identity"
-    WORD_SIZE = "-word_size"
-    WORD_SIZE_VALUE = seedSize
-    DUST = "-dust"
-    DUST_VALUE = "no"
-
-    queryOutputLocation = outputLocation + ".query"
-
-    args = [
-        COMMAND,
-        DATABASE, databaseLocation,
-        QUERY, queryLocation,
-        OUTPUT, queryOutputLocation,
-        OUTPUT_FORMAT, OUTPUT_FORMAT_STRING,
-        PERCENT_IDENTITY, str(filterPercent),
-        WORD_SIZE, str(WORD_SIZE_VALUE),
-        DUST, DUST_VALUE]
-
-    subprocess.check_call(args)
-
-    return queryOutputLocation
 
 """
 # =============================================================================
@@ -512,35 +335,23 @@ def reportSorted(filteredLocation, outputLocation, sortedSignatureIDs):
 
             signature = filteredSignatures[ID]
 
-            outputFile.write(">" + str(signature.ID))
-
+            # -- Score Signature -- #
             if ID in overallScore:
-                outputFile.write(
-                    " score=" + "{0:.2f}".format(
-                        round(overallScore[ID], 2)))
+                signature.score = overallScore[ID]
             else:
-                outputFile.write(" score=0.00")
+                signature.score = 0.0
 
             if ID in inclusionScore:
-                outputFile.write(
-                    " in=" + "{0:.2f}".format(
-                        round(inclusionScore[ID], 2)))
+                signature.inscore = inclusionScore[ID]
             else:
-                outputFile.write(" in=0.00")
+                signature.inscore = 0.0
 
             if ID in exclusionScore:
-                outputFile.write(
-                    " ex=" + "{0:.2f}".format(
-                        round(exclusionScore[ID], 2)))
+                signature.exscore = exclusionScore[ID]
             else:
-                outputFile.write(" ex=0.00")
+                signature.exscore = 0.0
 
-            outputFile.write(" len=" + str(signature.length))
-            outputFile.write(" ref=" + str(signature.reference))
-            outputFile.write(" pos=" + str(signature.position))
-            outputFile.write("\n")
-
-            outputFile.write(signature.sequence + "\n")
+            Signature.writeSignature(signature, outputFile)
 
     outputFile.close()
 
@@ -584,7 +395,7 @@ def reportSignatures(
     # LOAD FILTER
     for line in exclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitOverallDictionary(hit, hitOverallDictionary)
         updateHitPairDictionary(hit, hitPairDictionary)
 
@@ -635,7 +446,7 @@ def sortSignatures(
     # LOAD FILTER
     for line in inclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitPairDictionary(hit, hitPairDictionary)
 
     inclusionQueryFile.close()
@@ -690,8 +501,8 @@ def filterSignatures(
         filteredOutputLocation, sortedOutputLocation, filterLength,
         filterPercent, seedSize):
 
-    # BLASTN - EXCLUSION
-    exclusionQueryLocation = queryDatabase(
+    # QUERY DB - EXCLUSION
+    exclusionQueryLocation = Database.queryDatabase(
         exclusionDatabaseLocation, candidateLocation,
         filteredOutputLocation, filterPercent, seedSize)
 
@@ -700,8 +511,8 @@ def filterSignatures(
         candidateLocation, exclusionQueryLocation, filteredOutputLocation,
         filterLength, totalExclusion)
 
-    # BLASTN - INCLUSION
-    inclusionQueryLocation = queryDatabase(
+    # QUERY DB - INCLUSION
+    inclusionQueryLocation = Database.queryDatabase(
         inclusionDatabaseLocation, filteredLocation,
         sortedOutputLocation, filterPercent, seedSize)
 

@@ -66,6 +66,7 @@ CANDIDATES = "candidates"
 FILTERED = "filtered"
 SORTED = "sorted"
 DATABASE = "database"
+CONSOLIDATED = "consolidated"
 LOG = "log"
 
 # NAMES
@@ -77,6 +78,7 @@ AGGREGATE_SPECIFICATION = "aggregateSpecification"
 EXTRACT_SPECIFICATION = "extractSpecification"
 DATABASE_SPECIFICATION = "databaseSpecification"
 FILTER_SPECIFICATION = "filterSpecification"
+CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
 
 # ARGUMENTS
 LONG = "--"
@@ -88,6 +90,7 @@ AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
 EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
 DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
 FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
+CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
 
 SHORT = "-"
 
@@ -205,7 +208,7 @@ class Execution():
             raise RuntimeError("Inclusion sequence(s) are missing.")
 
         self.inclusionLocations = []
-        self.expandInput(args.inclusion, self.inclusionLocations)
+        Utility.expandInput(args.inclusion, self.inclusionLocations)
 
         if len(args.inclusion) is 0:
             raise RuntimeError("Inclusion sequence(s) are missing.")
@@ -216,7 +219,7 @@ class Execution():
             raise RuntimeError("Exclusion sequence(s) are missing.")
 
         self.exclusionLocations = []
-        self.expandInput(args.exclusion, self.exclusionLocations)
+        Utility.expandInput(args.exclusion, self.exclusionLocations)
 
         if len(args.exclusion) is 0:
             raise RuntimeError("exclusion sequence(s) are missing.")
@@ -264,6 +267,11 @@ class Execution():
         if not os.path.exists(self.sortedDirectoryLocation):
             os.makedirs(self.sortedDirectoryLocation)
 
+        self.consolidatedDirectoryLocation = os.path.abspath(
+            os.path.join(self.outputDirectoryLocation, CONSOLIDATED))
+        if not os.path.exists(self.consolidatedDirectoryLocation):
+            os.makedirs(self.consolidatedDirectoryLocation)
+
         self.databaseDirectoryLocation = os.path.abspath(
             os.path.join(self.outputDirectoryLocation, DATABASE))
         if not os.path.exists(self.databaseDirectoryLocation):
@@ -310,55 +318,9 @@ class Execution():
             self.jobManager.setFilterSpecification(
                 args.filterSpecification)
 
-    """
-    # =========================================================================
-
-    EXPAND INPUT
-
-    PURPOSE:
-        Expands the file input locations to include all files within all
-        directories.
-
-        The directories are not included in the final list. However, all
-            non-directories located within the directories are included as
-            individual files.
-
-    INPUT:
-        [STRING ITERATOR] [inputLocations] - The file input locations.
-        [STRING LIST] [result] - The list to fill with the expanded input
-            entries.
-
-    RETURN:
-        [NONE]
-
-    POST:
-        The passed [result] parameter will contain the expanded input.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def expandInput(inputLocations, result):
-
-        # Expand directories into files:
-        for location in inputLocations:
-
-            if os.path.isdir(location):
-
-                onlyfiles = [
-                    os.path.join(location, f)
-                    for f in os.listdir(location)
-                    if os.path.isfile(os.path.join(location, f))]
-
-                result += onlyfiles
-
-            else:
-
-                result += [location]
-
-        # Convert to absolute path:
-        for i in range(len(result)):
-
-            result[i] = os.path.abspath(result[i])
+        if args.consolidateSpecification:
+            self.jobManager.setConsolidateSpecification(
+                args.consolidateSpecification)
 
     """
     # =========================================================================
@@ -597,6 +559,42 @@ class Execution():
 """
 # =============================================================================
 
+CONSOLIDATE SIGNATURES
+
+PURPOSE:
+    Consolidates signatures from several Neptune signature files into a single
+    representative Neptune signature file, determined by the signature score
+    and sequence similarity of all the contributing signatures.
+
+INPUT:
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+    [(FILE LOCATION) LIST] [sortedLocations] - The file locations of candidate
+        signatures.
+
+RETURN:
+    [NONE]
+
+POST:
+    The produced signatures will be consolidated into a single signature file.
+
+# =============================================================================
+"""
+def consolidateSignatures(execution, sortedLocations):
+
+    print("Consolidating signatures ...")
+
+    job = execution.jobManager.createConsolidateJob(
+        sortedLocations, execution.seedSize,
+        execution.consolidatedDirectoryLocation)
+
+    execution.jobManager.runJobs([job])
+
+    print("Consolidating finished!")
+
+"""
+# =============================================================================
+
 FILTER SIGNATURES
 
 PURPOSE:
@@ -656,6 +654,7 @@ def filterSignatures(execution, candidateLocations):
         os.remove(exclusionAggregatedLocation)
 
     jobs = []
+    sortedLocations = []
 
     # Filtering
     for candidateLocation in candidateLocations:
@@ -665,6 +664,7 @@ def filterSignatures(execution, candidateLocations):
             os.path.join(execution.filteredDirectoryLocation, baseName))
         sortedLocation = os.path.abspath(
             os.path.join(execution.sortedDirectoryLocation, baseName))
+        sortedLocations.append(sortedLocation)
 
         job = execution.jobManager.createFilterJob(
             inclusionDatabaseLocation, exclusionDatabaseLocation,
@@ -678,6 +678,8 @@ def filterSignatures(execution, candidateLocations):
     execution.jobManager.runJobs(jobs)
 
     print("Filtering finished!")
+
+    return sortedLocations
 
 """
 # =============================================================================
@@ -1122,13 +1124,20 @@ def main():
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
 
+    parser.add_argument(
+        CONSOLIDATE_SPECIFICATION_LONG,
+        dest=CONSOLIDATE_SPECIFICATION,
+        help="DRM-specific parameters for signature filtering",
+        type=str, required=False)
+
     # --- ArgParse Work-Around ---
     for i in range(len(sys.argv)):
         if ((sys.argv[i] == DEFAULT_SPECIFICATION_LONG or
                 sys.argv[i] == COUNT_SPECIFICATION_LONG or
                 sys.argv[i] == AGGREGATE_SPECIFICATION_LONG or
                 sys.argv[i] == DATABASE_SPECIFICATION_LONG or
-                sys.argv[i] == FILTER_SPECIFICATION_LONG)):
+                sys.argv[i] == FILTER_SPECIFICATION_LONG or
+                sys.argv[i] == CONSOLIDATE_SPECIFICATION_LONG)):
 
             sys.argv[i + 1] = (
                 str(sys.argv[i + 1])[:0] + " "
@@ -1152,7 +1161,10 @@ def main():
         candidateLocations = extractSignatures(execution)
 
         # --- SIGNATURE FILTERING ---
-        filterSignatures(execution, candidateLocations)
+        sortedLocations = filterSignatures(execution, candidateLocations)
+
+        # --- CONSOLIDATE SIGNATURES ---
+        consolidateSignatures(execution, sortedLocations)
 
         execution.produceReceipt()
 
