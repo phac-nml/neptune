@@ -1163,6 +1163,13 @@ def main():
         # --- SIGNATURE FILTERING ---
         sortedLocations = filterSignatures(execution, candidateLocations)
 
+        # Are all the signature files empty?
+        if(all((os.stat(location).st_size == 0)
+                for location in sortedLocations)):
+
+            print "NOTICE: No signatures were identified."
+            return
+
         # --- CONSOLIDATE SIGNATURES ---
         consolidateSignatures(execution, sortedLocations)
 
