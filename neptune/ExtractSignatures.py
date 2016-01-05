@@ -665,7 +665,7 @@ def reportParameters(
     reportFile.write("Reference Size = " + str(referenceSize) + "\n")
     reportFile.write("GC-Content = %.2f" % (GC) + "\n")
     reportFile.write("\n")
-    reportFile.write("Mutation / Error Rate = " + str(rate) + "\n")
+    reportFile.write("SNV Rate = " + str(rate) + "\n")
     reportFile.write("\n")
     reportFile.write("Inclusion Genomes = " + str(totalInclusion) + "\n")
     reportFile.write("Minimum Inclusion Hits = " + str(inhits) + "\n")

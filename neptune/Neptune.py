@@ -40,6 +40,7 @@ import os
 import argparse
 import sys
 import math
+import shutil
 from scipy.misc import comb
 
 import Utility
@@ -677,6 +678,8 @@ def filterSignatures(execution, candidateLocations):
 
     execution.jobManager.runJobs(jobs)
 
+    shutil.rmtree(execution.databaseDirectoryLocation)
+
     print("Filtering finished!")
 
     return sortedLocations
@@ -866,9 +869,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
         aggregateSingleFiles(
             execution, inclusionKMerLocations, exclusionKMerLocations)
 
-    os.rmdir(execution.inclusionOutputDirectory)
-    os.rmdir(execution.exclusionOutputDirectory)
-    os.rmdir(execution.kmersOutputDirectory)
+    shutil.rmtree(execution.kmersOutputDirectory)
 
     print("AggregateKMers finished!")
 

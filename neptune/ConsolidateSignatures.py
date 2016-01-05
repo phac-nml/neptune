@@ -258,6 +258,15 @@ def consolidateSignatures(
     outputFile.close()
     queryFile.close()
 
+    # --- Clean Output --- #
+    filelist = [f for f in os.listdir(outputDirectoryLocation)
+                if f.startswith(COMPILED_DATABASE)]
+
+    for f in filelist:
+        os.remove(os.path.join(outputDirectoryLocation, f))
+
+    os.remove(os.path.join(outputDirectoryLocation, COMPILED_SIGNATURES))
+
     print "\n==== Exiting ====\n"
 
 """
