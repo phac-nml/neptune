@@ -59,6 +59,8 @@ JOB MANAGER
 
 class JobManager:
 
+    ID = 0
+
     """
     # =========================================================================
 
@@ -172,6 +174,32 @@ class JobManager:
     """
     # =========================================================================
 
+    GENERATE ID
+
+    PURPOSE:
+        Generates an ID unique to this JobManager. This unique ID DOES NOT
+        correspond with the DRMAA job ID.
+
+    INPUT:
+        [NONE]
+
+    RETURN:
+        [INT] [ID] - The generated unique ID.
+
+    POST:
+        [NONE]
+
+    # =========================================================================
+    """
+    def generateID(self):
+
+        self.ID += 1
+
+        return int(self.ID)
+
+    """
+    # =========================================================================
+
     RUN JOBS
 
     PURPOSE:
@@ -268,10 +296,13 @@ class JobManager:
 
         job = self.session.createJobTemplate()
 
-        job.outputPath = ":" + self.logDirectoryLocation
-        job.errorPath = ":" + self.logDirectoryLocation
-
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, str(ID) + ".e")
         job.joinFiles = False
+
         job.jobEnvironment = os.environ
         job.remoteCommand = sys.executable
 

@@ -156,12 +156,12 @@ class TestRunJobs(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager/output")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
 
-            inputLocation = getPath("tests/data/simple.fasta")
-            outputLocation = getPath("tests/output/temp.out")
+            inputLocation = getPath("tests/data/manager/simple.fasta")
+            outputLocation = getPath("tests/output/manager/temp.out")
             k = 7
             parallelization = 0
 
@@ -192,7 +192,8 @@ class TestCreateJob(unittest.TestCase):
             jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, defaultSpecification)
 
             job = jobManager.createJob()
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
 
 class TestCreateCountJob(unittest.TestCase):
 
@@ -220,7 +221,8 @@ class TestCreateCountJob(unittest.TestCase):
 			    CountKMers.KMER_LONG, str(k), 
 			    CountKMers.PARALLEL_LONG, str(parallelization)]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -250,7 +252,8 @@ class TestCreateAggregateJob(unittest.TestCase):
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -278,7 +281,8 @@ class TestCreateAggregateJob(unittest.TestCase):
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -327,7 +331,8 @@ class TestCreateExtractJob(unittest.TestCase):
                 ExtractSignatures.KMERS_LONG, aggregateLocation,
                 ExtractSignatures.OUTPUT_LONG, outputLocation]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -356,7 +361,8 @@ class TestCreateDatabaseJob(unittest.TestCase):
                 "-title", "DATABASE",
                 "-out", outputLocation]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args, args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -400,7 +406,8 @@ class TestCreateFilterJob(unittest.TestCase):
                 FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
                 FilterSignatures.SEED_SIZE_LONG, str(seedSize)]
 
-            self.assertEquals(job.outputPath, ":" + logDirectoryLocation)
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
