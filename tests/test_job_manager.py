@@ -168,7 +168,6 @@ class TestRunJobs(unittest.TestCase):
             job = jobManager.createCountJob(inputLocation, outputLocation, k, parallelization)
 
             jobManager.runJobs([job])
-            print outputLocation
 
             with open (outputLocation, "r") as myfile:
                 result = myfile.read()
