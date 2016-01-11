@@ -545,7 +545,6 @@ class Execution():
             "output = \n"
             + str("\t" + self.outputDirectoryLocation) + "\n")
 
-
         receiptFile.write("\n")
 
         receiptFile.write("-- DRMAA -- \n")
