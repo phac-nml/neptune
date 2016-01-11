@@ -59,6 +59,14 @@ JOB MANAGER
 
 class JobManager:
 
+    NEPTUNE_JOB = "Neptune"
+    COUNT_JOB = "Neptune-CountKMers"
+    AGGREGATE_JOB = "Neptune-AggregateKMers"
+    EXTRACT_JOB = "Neptune-ExtractSignatures"
+    DATABASE_JOB = "Neptune-CreateDatabase"
+    FILTER_JOB = "Neptune-FilterSignatures"
+    CONSOLIDATE_JOB = "Neptune-ConsolidateSignatures"
+
     ID = 0
 
     """
@@ -296,13 +304,8 @@ class JobManager:
 
         job = self.session.createJobTemplate()
 
-        ID = self.generateID()
-        job.outputPath = ":" + os.path.join(
-            self.logDirectoryLocation, str(ID) + ".o")
-        job.errorPath = ":" + os.path.join(
-            self.logDirectoryLocation, str(ID) + ".e")
         job.joinFiles = False
-
+        job.jobName = self.NEPTUNE_JOB
         job.jobEnvironment = os.environ
         job.remoteCommand = sys.executable
 
@@ -357,6 +360,13 @@ class JobManager:
         # JOB CREATION
         job = self.createPythonJob()
 
+        job.jobName = self.COUNT_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.COUNT_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.COUNT_JOB + str(ID) + ".e")
+
         job.args = [
             os.path.realpath(inspect.getsourcefile(CountKMers)),
             CountKMers.INPUT_LONG, str(inputLocation),
@@ -397,6 +407,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.AGGREGATE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.AGGREGATE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.AGGREGATE_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -473,6 +490,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.EXTRACT_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.EXTRACT_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.EXTRACT_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -607,6 +631,13 @@ class JobManager:
         job = self.createJob()
         job.remoteCommand = COMMAND
 
+        job.jobName = self.DATABASE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.DATABASE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.DATABASE_JOB + str(ID) + ".e")
+
         args = []
 
         args.append(TYPE)
@@ -659,6 +690,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.FILTER_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.FILTER_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.FILTER_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -741,6 +779,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.CONSOLIDATE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.CONSOLIDATE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.CONSOLIDATE_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []

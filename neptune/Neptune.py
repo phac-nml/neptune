@@ -514,7 +514,7 @@ class Execution():
             "parallelization = "
             + str(self.parallelization) + "\n")
         receiptFile.write(
-            "referenceSize = "
+            "reference size = "
             + str(self.referenceSize) + "\n")
         receiptFile.write("\n")
 
@@ -530,29 +530,44 @@ class Execution():
         for location in self.exclusionLocations:
             receiptFile.write("\t" + str(location) + "\n")
 
-        receiptFile.write("reference = " + str(self.reference) + "\n")
+        if self.reference:
+
+            receiptFile.write("reference = \n")
+
+            for ref in self.reference:
+                receiptFile.write("\t" + str(ref) + "\n")
+
+        else:
+
+            receiptFile.write("reference = " + str(self.reference) + "\n")
+
         receiptFile.write(
-            "output = "
-            + str(self.outputDirectoryLocation) + "\n")
+            "output = \n"
+            + str("\t" + self.outputDirectoryLocation) + "\n")
+
+
         receiptFile.write("\n")
 
         receiptFile.write("-- DRMAA -- \n")
         receiptFile.write("\n")
         receiptFile.write(
-            "countSpecification = "
+            "CountKMers Specification = "
             + str(self.jobManager.countSpecification) + "\n")
         receiptFile.write(
-            "aggregateSpecification = "
+            "AggregateKMers Specification = "
             + str(self.jobManager.aggregateSpecification) + "\n")
         receiptFile.write(
-            "extractSpecification = "
+            "ExtractSignatures Specification = "
             + str(self.jobManager.extractSpecification) + "\n")
         receiptFile.write(
-            "databaseSpecification = "
+            "CreateDatabase Specification = "
             + str(self.jobManager.databaseSpecification) + "\n")
         receiptFile.write(
-            "filterSpecification = "
+            "FilterSignatures Specification = "
             + str(self.jobManager.filterSpecification) + "\n")
+        receiptFile.write(
+            "ConsolidateSignatures Specification = "
+            + str(self.jobManager.consolidateSpecification) + "\n")
         receiptFile.write("\n")
 
         receiptFile.close()
