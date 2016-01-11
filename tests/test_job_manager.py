@@ -191,8 +191,7 @@ class TestCreateJob(unittest.TestCase):
             jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, defaultSpecification)
 
             job = jobManager.createJob()
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertTrue(job)
 
 class TestCreateCountJob(unittest.TestCase):
 
@@ -220,8 +219,8 @@ class TestCreateCountJob(unittest.TestCase):
 			    CountKMers.KMER_LONG, str(k), 
 			    CountKMers.PARALLEL_LONG, str(parallelization)]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CountKMers1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CountKMers1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -251,8 +250,8 @@ class TestCreateAggregateJob(unittest.TestCase):
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-AggregateKMers1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-AggregateKMers1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -280,8 +279,8 @@ class TestCreateAggregateJob(unittest.TestCase):
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-AggregateKMers1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-AggregateKMers1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -330,8 +329,8 @@ class TestCreateExtractJob(unittest.TestCase):
                 ExtractSignatures.KMERS_LONG, aggregateLocation,
                 ExtractSignatures.OUTPUT_LONG, outputLocation]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-ExtractSignatures1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-ExtractSignatures1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -360,8 +359,8 @@ class TestCreateDatabaseJob(unittest.TestCase):
                 "-title", "DATABASE",
                 "-out", outputLocation]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CreateDatabase1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CreateDatabase1.e"))
             self.assertEquals(job.args, args)
             self.assertEquals(job.nativeSpecification, specification)
 
@@ -405,8 +404,8 @@ class TestCreateFilterJob(unittest.TestCase):
                 FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
                 FilterSignatures.SEED_SIZE_LONG, str(seedSize)]
 
-            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "1.o"))
-            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "1.e"))
+            self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-FilterSignatures1.o"))
+            self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-FilterSignatures1.e"))
             self.assertEquals(job.args[1:], args)
             self.assertEquals(job.nativeSpecification, specification)
 
