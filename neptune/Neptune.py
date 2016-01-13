@@ -26,25 +26,14 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-"""
-# =============================================================================
-
-Author: Eric Marinier
-Date: 22 April 2015
-
-# =============================================================================
-"""
-
 import drmaa
 import os
 import argparse
 import sys
-import math
 import shutil
-from scipy.misc import comb
 
+import Execution
 import Utility
-import JobManager
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
@@ -57,6 +46,7 @@ GLOBALS
 # =============================================================================
 """
 
+# FILE NAMES
 KMERS = "kmers"
 INCLUSION = "inclusion"
 EXCLUSION = "exclusion"
@@ -70,7 +60,7 @@ DATABASE = "database"
 CONSOLIDATED = "consolidated"
 LOG = "log"
 
-# NAMES
+# ARGUMENT NAMES
 OUTPUT = "output"
 PARALLELIZATION = "parallelization"
 DEFAULT_SPECIFICATION = "defaultSpecification"
@@ -97,515 +87,271 @@ SHORT = "-"
 
 OUTPUT_SHORT = SHORT + "o"
 
-EXPECTED_HITS_THRESHOLD = 0.05
-
 """
 # =============================================================================
 
-EXECUTION
-
-# =============================================================================
-"""
-class Execution():
-
-    def __init__(self, session, args):
-
-        # -- rate --
-        # 0.0 <= q <= 1.0
-        if (args.rate is not None and
-                (float(args.rate) < 0.0 or
-                    float(args.rate) > 1.0)):
-            raise RuntimeError("The rate is out of range.")
-
-        self.rate = args.rate
-
-        # -- minimum inclusion hits --
-        # 1 <= inhits
-        if (args.inhits is not None and
-                (int(args.inhits) < 1)):
-            raise RuntimeError("The inclusion hits is out of range.")
-
-        self.inhits = args.inhits
-
-        # -- minimum exclusion hits --
-        # 1 <= exhits
-        if (args.exhits is not None and
-                (int(args.exhits) < 1)):
-            raise RuntimeError("The exclusion hits is out of range.")
-
-        self.exhits = args.exhits
-
-        # -- maximum gap size --
-        # 1 <= gap
-        if (args.gap is not None and
-                (int(args.gap) < 1)):
-            raise RuntimeError("The gap size is out of range.")
-
-        self.gap = args.gap
-
-        # -- minimum signature size --
-        # 1 <= size
-        if (args.size is not None and
-                (int(args.size) < 1)):
-            raise RuntimeError("The signature size is out of range.")
-
-        self.size = args.size
-
-        # -- GC-content --
-        # 0.0 <= gc <= 1.0
-        if (args.gcContent is not None and
-                (float(args.gcContent) < 0.0 or
-                    float(args.gcContent) > 1.0)):
-            raise RuntimeError("The GC-content is out of range.")
-
-        self.gcContent = args.gcContent
-
-        # -- statistical confidence --
-        # 0.0 < confidence < 1.0
-        if (args.confidence is not None and
-                (float(args.confidence) <= 0.0 or
-                    float(args.confidence) >= 1.0)):
-            raise RuntimeError("The statistical confidence is out of range.")
-
-        self.confidence = args.confidence
-
-        # -- filter length --
-        # 0.0 <= filterLength <= 1.0
-        if (args.filterLength is not None and
-                (float(args.filterLength) < 0.0 or
-                    float(args.filterLength) > 1.0)):
-            raise RuntimeError("The filter length is out of range.")
-
-        self.filterLength = args.filterLength
-
-        # -- filter percent --
-        # 0.0 <= filterPercent <= 1.0
-        if (args.filterPercent is not None and
-                (float(args.filterPercent) < 0.0 or
-                    float(args.filterPercent) > 1.0)):
-            raise RuntimeError("The filter percent is out of range.")
-
-        self.filterPercent = args.filterPercent
-
-        # -- seed size --
-        # 4 <= seedSize
-        if (args.seedSize is not None and
-                (int(args.seedSize) < 4)):
-            raise RuntimeError("The seed size is out of range.")
-
-        self.seedSize = args.seedSize
-
-        # -- parallelization --
-        # 1 <= parallelization
-        if (args.parallelization is not None and
-                (int(args.parallelization) < 0)):
-            raise RuntimeError("The parallelization is out of range.")
-
-        self.parallelization = args.parallelization
-
-        # -- inclusion locations --
-        # inclusion exists
-        if args.inclusion is None:
-            raise RuntimeError("Inclusion sequence(s) are missing.")
-
-        self.inclusionLocations = []
-        Utility.expandInput(args.inclusion, self.inclusionLocations)
-
-        if len(args.inclusion) is 0:
-            raise RuntimeError("Inclusion sequence(s) are missing.")
-
-        # -- exclusion locations --
-        # exclusion exists
-        if args.exclusion is None:
-            raise RuntimeError("Exclusion sequence(s) are missing.")
-
-        self.exclusionLocations = []
-        Utility.expandInput(args.exclusion, self.exclusionLocations)
-
-        if len(args.exclusion) is 0:
-            raise RuntimeError("exclusion sequence(s) are missing.")
-
-        # -- reference locations --
-        self.reference = args.reference
-
-        # -- reference size --
-        self.referenceSize = args.referenceSize
-
-        # -- output locations --
-        # output exists
-        if args.output is None:
-            raise RuntimeError("The output directory is missing.")
-
-        # -- k-mer --
-        # 1 <= k
-        if (args.kmer is not None and
-                (int(args.kmer) < 1)):
-            raise RuntimeError("The k-mer size is out of range.")
-
-        elif args.kmer is not None:
-            self.k = int(args.kmer)
-
-        else:
-            self.estimateKMerSize()
-
-        self.outputDirectoryLocation = os.path.abspath(args.output)
-
-        if not os.path.exists(self.outputDirectoryLocation):
-            os.makedirs(self.outputDirectoryLocation)
-
-        self.candidatesDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, CANDIDATES))
-        if not os.path.exists(self.candidatesDirectoryLocation):
-            os.makedirs(self.candidatesDirectoryLocation)
-
-        self.filteredDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, FILTERED))
-        if not os.path.exists(self.filteredDirectoryLocation):
-            os.makedirs(self.filteredDirectoryLocation)
-
-        self.sortedDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, SORTED))
-        if not os.path.exists(self.sortedDirectoryLocation):
-            os.makedirs(self.sortedDirectoryLocation)
-
-        self.consolidatedDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, CONSOLIDATED))
-        if not os.path.exists(self.consolidatedDirectoryLocation):
-            os.makedirs(self.consolidatedDirectoryLocation)
-
-        self.databaseDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, DATABASE))
-        if not os.path.exists(self.databaseDirectoryLocation):
-            os.makedirs(self.databaseDirectoryLocation)
-
-        self.kmersOutputDirectory = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, KMERS))
-        self.inclusionOutputDirectory = os.path.abspath(
-            os.path.join(self.kmersOutputDirectory, INCLUSION))
-        self.exclusionOutputDirectory = os.path.abspath(
-            os.path.join(self.kmersOutputDirectory, EXCLUSION))
-
-        self.aggregateLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, AGGREGATE))
-
-        self.logDirectoryLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, LOG))
-        if not os.path.exists(self.logDirectoryLocation):
-            os.makedirs(self.logDirectoryLocation)
-
-        # -- job manager --
-        self.jobManager = JobManager.JobManager(
-            session, self.outputDirectoryLocation,
-            self.logDirectoryLocation, args.defaultSpecification)
-
-        # -- job specifications --
-        if args.countSpecification:
-            self.jobManager.setCountSpecification(
-                args.countSpecification)
-
-        if args.aggregateSpecification:
-            self.jobManager.setAggregateSpecification(
-                args.aggregateSpecification)
-
-        if args.extractSpecification:
-            self.jobManager.setExtractSpecification(
-                args.extractSpecification)
-
-        if args.databaseSpecification:
-            self.jobManager.setDatabaseSpecification(
-                args.databaseSpecification)
-
-        if args.filterSpecification:
-            self.jobManager.setFilterSpecification(
-                args.filterSpecification)
-
-        if args.consolidateSpecification:
-            self.jobManager.setConsolidateSpecification(
-                args.consolidateSpecification)
-
-    """
-    # =========================================================================
-
-    CALCULATE EXPECTED K-MER HITS
-
-    PURPOSE:
-        Calculates the expected number of arbitrary k-mer matches with a
-        genome.
-
-        This is calculating P(k_x = k_y) * ((gs - k + 1) C (2)).
-
-    INPUT:
-        [0 <= FLOAT <= 1] [GC] - The GC content.
-        [0 <= FLOAT <= 1] [GS] - The genome size.
-        [1 <= INT] [K] - The k-mer size.
-
-    RETURN:
-        [FLOAT >= 0] [expected] - The expected number of arbitrary k-mer
-            matches.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def calculateExpectedKMerHits(gc, gs, k):
-
-        # P(k_x = k_y) * ((gs - k + 1) C (2)) -- from manuscript
-        a = 2.0 * math.pow((1.0 - gc) / 2.0, 2.0)
-        b = 2.0 * math.pow(gc / 2.0, 2.0)
-        c = math.pow(a + b, k)
-        d = comb((gs - k + 1), (2), False)
-        expected = c * d
-
-        return expected
-
-    """
-    # =========================================================================
-
-    ESTIMATE K-MER SIZE
-
-    PURPOSE:
-        Estimates the appropriate k-mer size.
-
-    INPUT:
-        [NONE]
-
-    RETURN:
-        [NONE]
-
-    POST:
-        The member variable [self.k] is assigned an appriorate value of k,
-        determined by the most extreme GC-content of all references and the
-        largest size of any reference.
-    # =========================================================================
-    """
-    def estimateKMerSize(self):
-
-        print "Estimating k-mer size ..."
-
-        maxGenomeSize = 1
-        maxGCContent = 0.5  # least extreme GC-content
-
-        for inclusionLocation in self.inclusionLocations:
-
-            inclusionFile = open(inclusionLocation, 'r')
-
-            size = 0
-            sumGC = 0
-            sumAT = 0
-            gcContent = 0
-
-            for line in inclusionFile:
-
-                if line[0] != ">":
-                    line = line.strip()
-
-                    size += len(line)
-                    sumGC += line.count('G') + line.count('C')
-                    sumAT += line.count('A') + line.count('T')
-
-            gcContent = float(sumGC) / float(sumGC + sumAT)
-
-            # SIZE
-            if size > maxGenomeSize:
-                maxGenomeSize = size
-
-            # GC-CONTENT
-            if gcContent > maxGCContent:
-                maxGCContent = gcContent
-
-            elif (1.0 - gcContent) > maxGCContent:
-                maxGCContent = (1.0 - gcContent)
-
-            inclusionFile.close()
-
-        """
-        NOTE:
-
-        When GC-content is 1.0 (worst),
-        and the length of genome is 10^80 (atoms in observable universe),
-        and the threshold is 0.05,
-        then the k required is 535.
-        Therefore, k = 535 is the maximum we use.
-
-        """
-        for k in range(3, 535, 2):
-
-            expected = self.calculateExpectedKMerHits(
-                maxGCContent, maxGenomeSize, k)
-
-            if expected < EXPECTED_HITS_THRESHOLD:
-
-                self.k = k
-                print "k = " + str(self.k)
-                return
-
-        # No suitable k estimated.
-        raise RuntimeError("ERROR: No suitable value for k determined. \n")
-
-    """
-    # =========================================================================
-
-    PRODUCE RECEIPT
-
-    PURPOSE:
-        Produces an execution receipt. This receipt provides information about
-        the execution parameters.
-
-    INPUT:
-        [NONE]
-
-    RETURN:
-        [NONE]
-
-    POST:
-        An execution receipt is printed to standard output.
-
-    # =========================================================================
-    """
-    def produceReceipt(self):
-
-        receiptLocation = os.path.abspath(
-            os.path.join(self.outputDirectoryLocation, RECEIPT))
-        receiptFile = open(receiptLocation, "w")
-
-        receiptFile.write(
-            "==============================================================\n")
-        receiptFile.write("RUN RECEIPT\n")
-        receiptFile.write(
-            "==============================================================\n")
-        receiptFile.write("\n")
-        receiptFile.write("-- Command Line -- \n")
-        receiptFile.write("\n")
-
-        for arg in sys.argv:
-            receiptFile.write(str(arg) + " ")
-        receiptFile.write("\n")
-
-        receiptFile.write("\n")
-        receiptFile.write("-- General -- \n")
-        receiptFile.write("\n")
-        receiptFile.write(
-            "k = "
-            + str(self.k) + "\n")
-        receiptFile.write(
-            "rate = "
-            + str(self.rate) + "\n")
-        receiptFile.write(
-            "min inclusion = "
-            + str(self.inhits) + "\n")
-        receiptFile.write(
-            "min exclusion = "
-            + str(self.exhits) + "\n")
-        receiptFile.write(
-            "max gap size = "
-            + str(self.gap) + "\n")
-        receiptFile.write(
-            "min signature size = "
-            + str(self.size) + "\n")
-        receiptFile.write(
-            "GC-content = "
-            + str(self.gcContent) + "\n")
-        receiptFile.write(
-            "filter length = "
-            + str(self.filterLength) + "\n")
-        receiptFile.write(
-            "filter percent = "
-            + str(self.filterPercent) + "\n")
-        receiptFile.write(
-            "parallelization = "
-            + str(self.parallelization) + "\n")
-        receiptFile.write(
-            "reference size = "
-            + str(self.referenceSize) + "\n")
-        receiptFile.write("\n")
-
-        receiptFile.write("-- Files -- \n")
-        receiptFile.write("\n")
-        receiptFile.write("inclusion targets = \n")
-
-        for location in self.inclusionLocations:
-            receiptFile.write("\t" + str(location) + "\n")
-
-        receiptFile.write("exclusion targets = \n")
-
-        for location in self.exclusionLocations:
-            receiptFile.write("\t" + str(location) + "\n")
-
-        if self.reference:
-
-            receiptFile.write("reference = \n")
-
-            for ref in self.reference:
-                receiptFile.write("\t" + str(ref) + "\n")
-
-        else:
-
-            receiptFile.write("reference = " + str(self.reference) + "\n")
-
-        receiptFile.write(
-            "output = \n"
-            + str("\t" + self.outputDirectoryLocation) + "\n")
-
-        receiptFile.write("\n")
-
-        receiptFile.write("-- DRMAA -- \n")
-        receiptFile.write("\n")
-        receiptFile.write(
-            "CountKMers Specification = "
-            + str(self.jobManager.countSpecification) + "\n")
-        receiptFile.write(
-            "AggregateKMers Specification = "
-            + str(self.jobManager.aggregateSpecification) + "\n")
-        receiptFile.write(
-            "ExtractSignatures Specification = "
-            + str(self.jobManager.extractSpecification) + "\n")
-        receiptFile.write(
-            "CreateDatabase Specification = "
-            + str(self.jobManager.databaseSpecification) + "\n")
-        receiptFile.write(
-            "FilterSignatures Specification = "
-            + str(self.jobManager.filterSpecification) + "\n")
-        receiptFile.write(
-            "ConsolidateSignatures Specification = "
-            + str(self.jobManager.consolidateSpecification) + "\n")
-        receiptFile.write("\n")
-
-        receiptFile.close()
-
-"""
-# =============================================================================
-
-CONSOLIDATE SIGNATURES
+COUNT K-MERS
 
 PURPOSE:
-    Consolidates signatures from several Neptune signature files into a single
-    representative Neptune signature file, determined by the signature score
-    and sequence similarity of all the contributing signatures.
+    This function prepares and runs a CountKMers job for every inclusion
+    and exclusion file. These jobs are run using the DRMAA framework.
 
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-    [(FILE LOCATION) LIST] [sortedLocations] - The file locations of candidate
-        signatures.
+
+RETURN:
+    [(STRING ITERATOR, STRING ITERATOR) TUPLE]
+    [(inclusionKMerLocations, exclusionKMerLocations)] -
+        The returned tuple will contain two lists of the locations of the
+        written inclusion and exclusion k-mers.
+
+POST:
+    A DRMAA job is submitted for each inclusion and exclusion file. The
+    execution will be halted until all the jobs are completed.
+
+# =============================================================================
+"""
+def countKMers(execution):
+
+    print("CountKMers starting ...")
+
+    if not os.path.exists(execution.inclusionOutputDirectory):
+        os.makedirs(execution.inclusionOutputDirectory)
+
+    if not os.path.exists(execution.exclusionOutputDirectory):
+        os.makedirs(execution.exclusionOutputDirectory)
+
+    jobs = []
+    inclusionKMerLocations = []
+    exclusionKMerLocations = []
+
+    # INCLUSION
+    for inclusionLocation in execution.inclusionLocations:
+
+        baseName = os.path.basename(inclusionLocation)
+
+        outputLocation = os.path.abspath(
+            os.path.join(
+                execution.inclusionOutputDirectory, baseName + ".kmers"))
+
+        inclusionKMerLocations.append(outputLocation)
+
+        job = execution.jobManager.createCountJob(
+            inclusionLocation, outputLocation,
+            execution.k, execution.parallelization)
+        jobs.append(job)
+
+    # EXCLUSION
+    for exclusionLocation in execution.exclusionLocations:
+
+        baseName = os.path.basename(exclusionLocation)
+
+        outputLocation = os.path.abspath(
+            os.path.join(
+                execution.exclusionOutputDirectory, baseName + ".kmers"))
+
+        exclusionKMerLocations.append(outputLocation)
+
+        job = execution.jobManager.createCountJob(
+            exclusionLocation, outputLocation,
+            execution.k, execution.parallelization)
+        jobs.append(job)
+
+    execution.jobManager.runJobs(jobs)
+
+    print("CountKMers finished!")
+
+    return (inclusionKMerLocations, exclusionKMerLocations)
+
+"""
+# =============================================================================
+
+AGGREGATE K-MERS
+
+PURPOSE:
+    This function prepares and runs a AggregateKMers.py job which, in turn,
+    aggregates multuple prepared k-mer files into a single k-mers file.
+
+INPUT:
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
+        file output locations.
+    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
+        file output locations.
 
 RETURN:
     [NONE]
 
 POST:
-    The produced signatures will be consolidated into a single signature file.
+    A DRMAA job is submitted that aggregates the prepared inclusion and
+    exclusion k-mers. The execution of the script will be halted until the
+    job has finished.
 
 # =============================================================================
 """
-def consolidateSignatures(execution, sortedLocations):
+def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
-    print("Consolidating signatures ...")
+    print("AggregateKMers starting ...")
 
-    job = execution.jobManager.createConsolidateJob(
-        sortedLocations, execution.seedSize,
-        execution.consolidatedDirectoryLocation)
+    if execution.parallelization:
+
+        aggregateMultipleFiles(
+            execution,
+            inclusionKMerLocations, exclusionKMerLocations)
+
+    else:
+
+        aggregateSingleFiles(
+            execution, inclusionKMerLocations, exclusionKMerLocations)
+
+    shutil.rmtree(execution.kmersOutputDirectory)
+
+    print("AggregateKMers finished!")
+
+"""
+# =============================================================================
+
+AGGREGATE MULTIPLE FILES
+
+PURPOSE:
+    Aggregates k-mer count files produced from genomes, such that
+    there was multiple k-mer files produced per genome.
+
+INPUT:
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
+        file output locations.
+    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
+        file output locations.
+
+RETURN:
+    [NONE]
+
+POST:
+    The k-mer count files are aggregated into a single k-mer count file.
+
+# =============================================================================
+"""
+def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
+
+    jobs = []
+    outputLocations = []
+
+    for tag in Utility.getAggregationTags(execution.parallelization):
+
+        outputLocation = execution.aggregateLocation + "." + tag
+        outputLocations.append(outputLocation)
+
+        job = execution.jobManager.createAggregateJob(
+            inclusionLocations, exclusionLocations,
+            outputLocation, tag)
+        jobs.append(job)
+
+    execution.jobManager.runJobs(jobs)
+
+    aggregateFile = open(execution.aggregateLocation, "w")
+
+    for location in outputLocations:
+
+        tempfile = open(location, "r")
+        aggregateFile.write(tempfile.read())
+        tempfile.close()
+
+        os.remove(location)
+
+    aggregateFile.close()
+
+"""
+# =============================================================================
+
+AGGREGATE SINGLE FILES
+
+PURPOSE:
+    Aggregates k-mer count files produced from genomes, such that
+    there was only one k-mer file produced per genome.
+
+INPUT:
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
+        file output locations.
+    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
+        file output locations.
+
+RETURN:
+    [NONE]
+
+POST:
+    The k-mer count files are aggregated into a single k-mer count file.
+
+# =============================================================================
+"""
+def aggregateSingleFiles(
+        execution, inclusionKMerLocations, exclusionKMerLocations):
+
+    job = execution.jobManager.createAggregateJob(
+        inclusionKMerLocations, exclusionKMerLocations,
+        execution.aggregateLocation, None)
 
     execution.jobManager.runJobs([job])
 
-    print("Consolidating finished!")
+"""
+# =============================================================================
+
+EXTRACT SIGNATURES
+
+PURPOSE:
+    Prepares and runs an extract k-mers job using DRMAA. This, in turn,
+    extracts signatures from a reference genome.
+
+INPUT:
+    [EXECUTION] [execution] - The Execution object containing all of the
+        current execution's parameters.
+POST:
+    A DRMAA job is submitted that extracts signatures from a reference genome
+    using information from aggregated k-mer information from inclusion and
+    exclusion genomes. The execution of the script will be halted until the
+    job has finished.
+
+# =============================================================================
+"""
+def extractSignatures(execution):
+
+    print("ExtractSignatures starting ...")
+
+    jobs = []
+    outputLocations = []
+
+    if execution.reference:
+        references = execution.reference
+
+    else:
+        references = execution.inclusionLocations
+
+    for reference in references:
+
+        baseName = os.path.basename(reference)
+        outputLocation = os.path.abspath(
+            os.path.join(execution.candidatesDirectoryLocation, baseName))
+        outputLocations.append(outputLocation)
+
+        job = execution.jobManager.createExtractJob(
+            reference, execution.referenceSize, execution.rate,
+            execution.inclusionLocations, execution.inhits,
+            execution.exclusionLocations, execution.exhits, execution.gap,
+            execution.size, execution.gcContent, execution.confidence,
+            execution.aggregateLocation, outputLocation)
+
+        jobs.append(job)
+
+    execution.jobManager.runJobs(jobs)
+
+    print("ExtractSignatures finished!")
+
+    return outputLocations
 
 """
 # =============================================================================
@@ -701,268 +447,38 @@ def filterSignatures(execution, candidateLocations):
 """
 # =============================================================================
 
-EXTRACT SIGNATURES
+CONSOLIDATE SIGNATURES
 
 PURPOSE:
-    Prepares and runs an extract k-mers job using DRMAA. This, in turn,
-    extracts signatures from a reference genome.
+    Consolidates signatures from several Neptune signature files into a single
+    representative Neptune signature file, determined by the signature score
+    and sequence similarity of all the contributing signatures.
 
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-POST:
-    A DRMAA job is submitted that extracts signatures from a reference genome
-    using information from aggregated k-mer information from inclusion and
-    exclusion genomes. The execution of the script will be halted until the
-    job has finished.
-
-# =============================================================================
-"""
-def extractSignatures(execution):
-
-    print("ExtractSignatures starting ...")
-
-    jobs = []
-    outputLocations = []
-
-    if execution.reference:
-        references = execution.reference
-
-    else:
-        references = execution.inclusionLocations
-
-    for reference in references:
-
-        baseName = os.path.basename(reference)
-        outputLocation = os.path.abspath(
-            os.path.join(execution.candidatesDirectoryLocation, baseName))
-        outputLocations.append(outputLocation)
-
-        job = execution.jobManager.createExtractJob(
-            reference, execution.referenceSize, execution.rate,
-            execution.inclusionLocations, execution.inhits,
-            execution.exclusionLocations, execution.exhits, execution.gap,
-            execution.size, execution.gcContent, execution.confidence,
-            execution.aggregateLocation, outputLocation)
-
-        jobs.append(job)
-
-    execution.jobManager.runJobs(jobs)
-
-    print("ExtractSignatures finished!")
-
-    return outputLocations
-
-"""
-# =============================================================================
-
-AGGREGATE MULTIPLE FILES
-
-PURPOSE:
-    Aggregates k-mer count files produced from genomes, such that
-    there was multiple k-mer files produced per genome.
-
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
+    [(FILE LOCATION) LIST] [sortedLocations] - The file locations of candidate
+        signatures.
 
 RETURN:
     [NONE]
 
 POST:
-    The k-mer count files are aggregated into a single k-mer count file.
+    The produced signatures will be consolidated into a single signature file.
 
 # =============================================================================
 """
-def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
+def consolidateSignatures(execution, sortedLocations):
 
-    jobs = []
-    outputLocations = []
+    print("Consolidating signatures ...")
 
-    for tag in Utility.getAggregationTags(execution.parallelization):
-
-        outputLocation = execution.aggregateLocation + "." + tag
-        outputLocations.append(outputLocation)
-
-        job = execution.jobManager.createAggregateJob(
-            inclusionLocations, exclusionLocations,
-            outputLocation, tag)
-        jobs.append(job)
-
-    execution.jobManager.runJobs(jobs)
-
-    aggregateFile = open(execution.aggregateLocation, "w")
-
-    for location in outputLocations:
-
-        tempfile = open(location, "r")
-        aggregateFile.write(tempfile.read())
-        tempfile.close()
-
-        os.remove(location)
-
-    aggregateFile.close()
-
-"""
-# =============================================================================
-
-AGGREGATE SINGLE FILES
-
-PURPOSE:
-    Aggregates k-mer count files produced from genomes, such that
-    there was only one k-mer file produced per genome.
-
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
-
-RETURN:
-    [NONE]
-
-POST:
-    The k-mer count files are aggregated into a single k-mer count file.
-
-# =============================================================================
-"""
-def aggregateSingleFiles(
-        execution, inclusionKMerLocations, exclusionKMerLocations):
-
-    job = execution.jobManager.createAggregateJob(
-        inclusionKMerLocations, exclusionKMerLocations,
-        execution.aggregateLocation, None)
+    job = execution.jobManager.createConsolidateJob(
+        sortedLocations, execution.seedSize,
+        execution.consolidatedDirectoryLocation)
 
     execution.jobManager.runJobs([job])
 
-"""
-# =============================================================================
-
-AGGREGATE K-MERS
-
-PURPOSE:
-    This function prepares and runs a AggregateKMers.py job which, in turn,
-    aggregates multuple prepared k-mer files into a single k-mers file.
-
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
-
-RETURN:
-    [NONE]
-
-POST:
-    A DRMAA job is submitted that aggregates the prepared inclusion and
-    exclusion k-mers. The execution of the script will be halted until the
-    job has finished.
-
-# =============================================================================
-"""
-def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
-
-    print("AggregateKMers starting ...")
-
-    if execution.parallelization:
-
-        aggregateMultipleFiles(
-            execution,
-            inclusionKMerLocations, exclusionKMerLocations)
-
-    else:
-
-        aggregateSingleFiles(
-            execution, inclusionKMerLocations, exclusionKMerLocations)
-
-    shutil.rmtree(execution.kmersOutputDirectory)
-
-    print("AggregateKMers finished!")
-
-"""
-# =============================================================================
-
-COUNT K-MERS
-
-PURPOSE:
-    This function prepares and runs a CountKMers job for every inclusion
-    and exclusion file. These jobs are run using the DRMAA framework.
-
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-
-RETURN:
-    [(STRING ITERATOR, STRING ITERATOR) TUPLE]
-    [(inclusionKMerLocations, exclusionKMerLocations)] -
-        The returned tuple will contain two lists of the locations of the
-        written inclusion and exclusion k-mers.
-
-POST:
-    A DRMAA job is submitted for each inclusion and exclusion file. The
-    execution will be halted until all the jobs are completed.
-
-# =============================================================================
-"""
-def countKMers(execution):
-
-    print("CountKMers starting ...")
-
-    if not os.path.exists(execution.inclusionOutputDirectory):
-        os.makedirs(execution.inclusionOutputDirectory)
-
-    if not os.path.exists(execution.exclusionOutputDirectory):
-        os.makedirs(execution.exclusionOutputDirectory)
-
-    jobs = []
-    inclusionKMerLocations = []
-    exclusionKMerLocations = []
-
-    # INCLUSION
-    for inclusionLocation in execution.inclusionLocations:
-
-        baseName = os.path.basename(inclusionLocation)
-
-        outputLocation = os.path.abspath(
-            os.path.join(
-                execution.inclusionOutputDirectory, baseName + ".kmers"))
-
-        inclusionKMerLocations.append(outputLocation)
-
-        job = execution.jobManager.createCountJob(
-            inclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
-        jobs.append(job)
-
-    # EXCLUSION
-    for exclusionLocation in execution.exclusionLocations:
-
-        baseName = os.path.basename(exclusionLocation)
-
-        outputLocation = os.path.abspath(
-            os.path.join(
-                execution.exclusionOutputDirectory, baseName + ".kmers"))
-
-        exclusionKMerLocations.append(outputLocation)
-
-        job = execution.jobManager.createCountJob(
-            exclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
-        jobs.append(job)
-
-    execution.jobManager.runJobs(jobs)
-
-    print("CountKMers finished!")
-
-    return (inclusionKMerLocations, exclusionKMerLocations)
+    print("Consolidating finished!")
 
 """
 # =============================================================================
@@ -1163,7 +679,7 @@ def main():
     # --- Job Control ---
     with drmaa.Session() as session:
 
-        execution = Execution(session, args)
+        execution = Execution.Execution(session, args)
 
         # --- K-MER COUNTING ---
         inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
