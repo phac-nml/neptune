@@ -181,16 +181,16 @@ def updateHitPairDictionary(hit, dictionary):
     if key not in dictionary:
 
         hit.neptuneScore = (
-            (float(hit.alignmentLength) / float(hit.length))
-            * (float(hit.percentIdentity) / float(100)))
+            (float(hit.alignmentLength) / float(hit.length)) *
+            (float(hit.percentIdentity) / float(100)))
 
         dictionary[key] = hit
 
     elif hit.alignmentScore > dictionary[key].alignmentScore:
 
         hit.neptuneScore = (
-            (float(hit.alignmentLength) / float(hit.length))
-            * (float(hit.percentIdentity) / float(100)))
+            (float(hit.alignmentLength) / float(hit.length)) *
+            (float(hit.percentIdentity) / float(100)))
 
         dictionary[key] = hit
 
@@ -308,8 +308,8 @@ def reportCandidates(
 
             hit = hitOverallDictionary[ID]
 
-            if (float(hit.alignmentLength) / float(signature.length)
-                    < float(filterLength)):
+            if (float(hit.alignmentLength) / float(signature.length) <
+                    float(filterLength)):
                 Signature.writeSignature(signature, outputFile)
 
         else:

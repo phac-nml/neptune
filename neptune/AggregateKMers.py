@@ -324,8 +324,8 @@ def main():
 
         if not os.path.isfile(location):
             raise RuntimeError(
-                "ERROR: Could not open inclusion file: "
-                + str(location) + "\n")
+                "ERROR: Could not open inclusion file: " +
+                str(location) + "\n")
 
         inclusionFiles.append(open(location, 'r'))
 
@@ -334,8 +334,8 @@ def main():
 
         if not os.path.isfile(location):
             raise RuntimeError(
-                "ERROR: Could not open exclusion file: "
-                + str(location) + "\n")
+                "ERROR: Could not open exclusion file: " +
+                str(location) + "\n")
 
         exclusionFiles.append(open(location, 'r'))
 

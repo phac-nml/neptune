@@ -298,10 +298,10 @@ def calculateProbHBMM(GC):
 
     # P(X_M = Y_M)_H
     probHBMM = (
-        2 * math.pow(GC / (GC + 1), 2)
-        + math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) \
-        + (2 * math.pow((1 - GC) / (2 - GC), 2)
-            + math.pow(GC / (2 - GC), 2)) * (GC)
+        2 * math.pow(GC / (GC + 1), 2) +
+        math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) +\
+        (2 * math.pow((1 - GC) / (2 - GC), 2) +
+            math.pow(GC / (2 - GC), 2)) * (GC)
 
     return probHBMM
 
