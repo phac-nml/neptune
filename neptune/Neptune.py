@@ -671,8 +671,8 @@ def main():
                 sys.argv[i] == CONSOLIDATE_SPECIFICATION_LONG)):
 
             sys.argv[i + 1] = (
-                str(sys.argv[i + 1])[:0] + " "
-                + str(sys.argv[i + 1])[0:])
+                str(sys.argv[i + 1])[:0] + " " +
+                str(sys.argv[i + 1])[0:])
 
     args = parser.parse_args()
 

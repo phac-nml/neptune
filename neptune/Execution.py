@@ -484,48 +484,48 @@ class Execution():
         receiptFile.write("\n")
 
         receiptFile.write(
-            "k = "
-            + str(self.k) + "\n")
+            "k = " +
+            str(self.k) + "\n")
 
         receiptFile.write(
-            "SNV Rate = "
-            + str(self.rate) + "\n")
+            "SNV Rate = " +
+            str(self.rate) + "\n")
 
         receiptFile.write(
-            "Minimum Inclusion Observations = "
-            + str(self.inhits) + "\n")
+            "Minimum Inclusion Observations = " +
+            str(self.inhits) + "\n")
 
         receiptFile.write(
-            "Minimum Exclusion Observations = "
-            + str(self.exhits) + "\n")
+            "Minimum Exclusion Observations = " +
+            str(self.exhits) + "\n")
 
         receiptFile.write(
-            "Maximum Gap Size = "
-            + str(self.gap) + "\n")
+            "Maximum Gap Size = " +
+            str(self.gap) + "\n")
 
         receiptFile.write(
-            "Minimum Signature Size = "
-            + str(self.size) + "\n")
+            "Minimum Signature Size = " +
+            str(self.size) + "\n")
 
         receiptFile.write(
-            "GC-Content = "
-            + str(self.gcContent) + "\n")
+            "GC-Content = " +
+            str(self.gcContent) + "\n")
 
         receiptFile.write(
-            "Filter Length = "
-            + str(self.filterLength) + "\n")
+            "Filter Length = " +
+            str(self.filterLength) + "\n")
 
         receiptFile.write(
-            "Filter Percent = "
-            + str(self.filterPercent) + "\n")
+            "Filter Percent = " +
+            str(self.filterPercent) + "\n")
 
         receiptFile.write(
-            "Parallelization = "
-            + str(self.parallelization) + "\n")
+            "Parallelization = " +
+            str(self.parallelization) + "\n")
 
         receiptFile.write(
-            "Reference Size = "
-            + str(self.referenceSize) + "\n")
+            "Reference Size = " +
+            str(self.referenceSize) + "\n")
 
         receiptFile.write("\n")
 
@@ -575,8 +575,8 @@ class Execution():
             receiptFile.write("Reference = " + str(self.reference) + "\n")
 
         receiptFile.write(
-            "Output = \n"
-            + str("\t" + self.outputDirectoryLocation) + "\n")
+            "Output = \n" +
+            str("\t" + self.outputDirectoryLocation) + "\n")
 
         receiptFile.write("\n")
 
@@ -606,27 +606,27 @@ class Execution():
         receiptFile.write("\n")
 
         receiptFile.write(
-            "CountKMers Specification = "
-            + str(self.jobManager.countSpecification) + "\n")
+            "CountKMers Specification = " +
+            str(self.jobManager.countSpecification) + "\n")
 
         receiptFile.write(
-            "AggregateKMers Specification = "
-            + str(self.jobManager.aggregateSpecification) + "\n")
+            "AggregateKMers Specification = " +
+            str(self.jobManager.aggregateSpecification) + "\n")
 
         receiptFile.write(
-            "ExtractSignatures Specification = "
-            + str(self.jobManager.extractSpecification) + "\n")
+            "ExtractSignatures Specification = " +
+            str(self.jobManager.extractSpecification) + "\n")
 
         receiptFile.write(
-            "CreateDatabase Specification = "
-            + str(self.jobManager.databaseSpecification) + "\n")
+            "CreateDatabase Specification = " +
+            str(self.jobManager.databaseSpecification) + "\n")
 
         receiptFile.write(
-            "FilterSignatures Specification = "
-            + str(self.jobManager.filterSpecification) + "\n")
+            "FilterSignatures Specification = " +
+            str(self.jobManager.filterSpecification) + "\n")
 
         receiptFile.write(
-            "ConsolidateSignatures Specification = "
-            + str(self.jobManager.consolidateSpecification) + "\n")
+            "ConsolidateSignatures Specification = " +
+            str(self.jobManager.consolidateSpecification) + "\n")
 
         receiptFile.write("\n")
