@@ -420,100 +420,213 @@ class Execution():
         receiptFile.write(
             "==============================================================\n")
         receiptFile.write("\n")
+
+        self.reportCommandLine(receiptFile)
+        self.reportFiles(receiptFile)
+        self.reportGeneralParameters(receiptFile)
+        self.reportDRMAAParameters(receiptFile)
+
+        receiptFile.close()
+
+    """
+    # =========================================================================
+
+    REPORT COMMAND LINE
+
+    PURPOSE:
+        Reports the command line arguments to the execution receipt.
+
+    INPUT:
+        [FILE] [receiptFile] - The open and writable receipt file.
+
+    RETURN:
+        [NONE]
+
+    POST:
+        The command line arguments will be reported to the execution receipt.
+
+    # =========================================================================
+    """
+    def reportCommandLine(self, receiptFile):
+
         receiptFile.write("-- Command Line -- \n")
         receiptFile.write("\n")
 
         for arg in sys.argv:
             receiptFile.write(str(arg) + " ")
-        receiptFile.write("\n")
 
         receiptFile.write("\n")
+        receiptFile.write("\n")
+
+    """
+    # =========================================================================
+
+    REPORT GENERAL PARAMETERS
+
+    PURPOSE:
+        Reports the general parameters used by Neptune.
+
+    INPUT:
+        [FILE] [receiptFile] - The open and writable receipt file.
+
+    RETURN:
+        [NONE]
+
+    POST:
+        The general parameters used by Neptune will be reported to the
+        execution receipt.
+
+    # =========================================================================
+    """
+    def reportGeneralParameters(self, receiptFile):
+
         receiptFile.write("-- General -- \n")
         receiptFile.write("\n")
+
         receiptFile.write(
             "k = "
             + str(self.k) + "\n")
+
         receiptFile.write(
-            "rate = "
+            "SNV Rate = "
             + str(self.rate) + "\n")
+
         receiptFile.write(
-            "min inclusion = "
+            "Minimum Inclusion Observations = "
             + str(self.inhits) + "\n")
+
         receiptFile.write(
-            "min exclusion = "
+            "Minimum Exclusion Observations = "
             + str(self.exhits) + "\n")
+
         receiptFile.write(
-            "max gap size = "
+            "Maximum Gap Size = "
             + str(self.gap) + "\n")
+
         receiptFile.write(
-            "min signature size = "
+            "Minimum Signature Size = "
             + str(self.size) + "\n")
+
         receiptFile.write(
-            "GC-content = "
+            "GC-Content = "
             + str(self.gcContent) + "\n")
+
         receiptFile.write(
-            "filter length = "
+            "Filter Length = "
             + str(self.filterLength) + "\n")
+
         receiptFile.write(
-            "filter percent = "
+            "Filter Percent = "
             + str(self.filterPercent) + "\n")
+
         receiptFile.write(
-            "parallelization = "
+            "Parallelization = "
             + str(self.parallelization) + "\n")
+
         receiptFile.write(
-            "reference size = "
+            "Reference Size = "
             + str(self.referenceSize) + "\n")
+
         receiptFile.write("\n")
+
+    """
+    # =========================================================================
+
+    REPORT FILES
+
+    PURPOSE:
+        Reports the files used by Neptune.
+
+    INPUT:
+        [FILE] [receiptFile] - The open and writable receipt file.
+
+    RETURN:
+        [NONE]
+
+    POST:
+        The files used by Neptune will be reported to the execution receipt.
+
+    # =========================================================================
+    """
+    def reportFiles(self, receiptFile):
 
         receiptFile.write("-- Files -- \n")
         receiptFile.write("\n")
-        receiptFile.write("inclusion targets = \n")
+
+        receiptFile.write("Inclusion Targets = \n")
 
         for location in self.inclusionLocations:
             receiptFile.write("\t" + str(location) + "\n")
 
-        receiptFile.write("exclusion targets = \n")
+        receiptFile.write("Exclusion Targets = \n")
 
         for location in self.exclusionLocations:
             receiptFile.write("\t" + str(location) + "\n")
 
         if self.reference:
 
-            receiptFile.write("reference = \n")
+            receiptFile.write("References = \n")
 
             for ref in self.reference:
                 receiptFile.write("\t" + str(ref) + "\n")
 
         else:
 
-            receiptFile.write("reference = " + str(self.reference) + "\n")
+            receiptFile.write("Reference = " + str(self.reference) + "\n")
 
         receiptFile.write(
-            "output = \n"
+            "Output = \n"
             + str("\t" + self.outputDirectoryLocation) + "\n")
 
         receiptFile.write("\n")
 
+    """
+    # =========================================================================
+
+    REPORT DRMAA PARAMETERS
+
+    PURPOSE:
+        Reports the DRMAA parameters used by Neptune.
+
+    INPUT:
+        [FILE] [receiptFile] - The open and writable receipt file.
+
+    RETURN:
+        [NONE]
+
+    POST:
+        The DRMAA parameters used by Neptune will be reported to the execution
+        receipt.
+
+    # =========================================================================
+    """
+    def reportDRMAAParameters(self, receiptFile):
+
         receiptFile.write("-- DRMAA -- \n")
         receiptFile.write("\n")
+
         receiptFile.write(
             "CountKMers Specification = "
             + str(self.jobManager.countSpecification) + "\n")
+
         receiptFile.write(
             "AggregateKMers Specification = "
             + str(self.jobManager.aggregateSpecification) + "\n")
+
         receiptFile.write(
             "ExtractSignatures Specification = "
             + str(self.jobManager.extractSpecification) + "\n")
+
         receiptFile.write(
             "CreateDatabase Specification = "
             + str(self.jobManager.databaseSpecification) + "\n")
+
         receiptFile.write(
             "FilterSignatures Specification = "
             + str(self.jobManager.filterSpecification) + "\n")
+
         receiptFile.write(
             "ConsolidateSignatures Specification = "
             + str(self.jobManager.consolidateSpecification) + "\n")
-        receiptFile.write("\n")
 
-        receiptFile.close()
+        receiptFile.write("\n")
