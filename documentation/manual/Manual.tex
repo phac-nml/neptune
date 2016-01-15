@@ -39,7 +39,7 @@
 \setlength{\parskip}{1em}
 
 %opening
-\title{Neptune \\ \normalsize Version 1.0.0}
+\title{Neptune \\ \normalsize Version 1.1.0}
 \author{Eric Marinier}
 
 \begin{document}
@@ -57,7 +57,7 @@ Neptune locates genomic signatures using an exact \textit{k}-mer matching strate
 \newpage
 \section{Installation}
 
-Neptune achieves maximum parallelization by submitting jobs through a Python DRMAA binding to a DRMAA-compliant scheduler. This installation will require a substantial understanding of Unix if such a DRMAA-compliant scheduler additionally needs to be installed and configured.
+Neptune achieves maximum parallelization by submitting jobs through a Python DRMAA binding to a DRMAA-compliant scheduler. This installation will require a substantial understanding of Unix if such a DRMAA-compliant scheduler additionally needs to be installed and configured. Nepune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
 
 \subsection{Requirements}
 
@@ -151,7 +151,7 @@ The following is a description of optional command line parameters:
   
   \item[parallelization] \hfill \\
   \textbf{-{}-parallelization -p [int]} \hfill \\
-  The degree of parallelization of \textit{k}-mer aggregation. This determines the number of files to which the \textit{k}-mers for each target are written and the number of parallel instances of \textit{k}-mer aggregation. The number of parallel instances is determined by \(4^{p}\), where \(p\) is the specified parallelization argument (\mbox{-{}-parallelization}). This value must be a non-negative integer smaller than \textit{k}. If the parameter is not specified, then \(p = 0\) and there will be no parallel \textit{k}-mer aggregation. This will likely require a much longer computation time.
+  The degree of organization of \textit{k}-mer aggregation. \textbf{This is not the number of parallel process run simultaneously.} This parameter determines the number of files to which the \textit{k}-mers from each target are written and the number of parallel instances of \textit{k}-mer aggregation. The number of parallel instances is determined by \(4^{p}\), where \(p\) is the specified parallelization argument (\mbox{-{}-parallelization}). This value must be a non-negative integer smaller than \textit{k}. If the parameter is not specified, then \(p = 0\) and there will be no parallel \textit{k}-mer aggregation. This will likely require a much longer computation time.
   
   \item[reference] \hfill \\
   \textbf{-{}-reference -r [file]} \hfill \\
@@ -272,7 +272,7 @@ You may wish to specify particular files used in signature discovery. This may b
 
 \subsection{DRMAA Parameters}
 
-It may be necessary to specify DRMAA parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-defaultSpecification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregateSpecification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
+It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-defaultSpecification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregateSpecification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
 
 \begin{verbatim}
   neptune
@@ -281,6 +281,18 @@ It may be necessary to specify DRMAA parameters to accommodate Neptune job sched
     --output output/
     --defaultSpecification "-l h_vmem=6G -pe smp 4"
     --aggregateSpecification "-l h_vmem=10G -pe smp 4"
+\end{verbatim}
+
+Furthermore, it may be beneficial to use a submission wrapper script for Neptune to avoid entering the same native specification parameters for every submission. The following example automatically includes parallelization and native specification parameters, appropriate for the scheduling environment, which may be overwritten by the submitting user:
+
+\begin{verbatim}
+  #!/usr/bin/env bash
+
+  DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
+
+  /share/apps/neptune/neptune
+    --defaultSpecification "-n 1 --mem=10240"
+    --parallelization 3 $@
 \end{verbatim}
 
 \newpage
@@ -292,6 +304,7 @@ Neptune's output directory contains the following items:
   \item \textbf{candidates}: directory containing signature candidates
   \item \textbf{filtered}: directory containing filtered candidates in extracted order
   \item \textbf{sorted}: directory containing filtered signatures in sorted order
+  \item \textbf{consolidated}: directory containing the consolidate signatures
   \item \textbf{database}: directory containing Neptune's constructed databases
   \item \textbf{aggregate.kmers}: file containing all observed \textit{k}-mers
   \item \textbf{receipt.txt}: file containing Neptune's run receipt
@@ -301,7 +314,7 @@ A file with the same name as each reference will be placed in each output direct
 
 \subsection{Candidate Signatures}
 
-The candidate signatures are the sequences produced from the signature extraction step. These signatures will relatively sensitive, but not necessarily specific. This is because signature extraction is done using exact \textit{k}-mer matches. The candidate signatures are guaranteed to contain no more exact matches with any exclusion \textit{k}-mer than specified by the \mbox{\textbf{-{}-exhits}} parameter. However, there may be inexact matches with exclusion targets. 
+The candidate signatures are the sequences produced from the signature extraction step. These signatures will relatively sensitive, but not necessarily specific. This is because signature extraction is done using exact \textit{k}-mer matches. The candidate signatures are guaranteed to contain no more exact matches with any exclusion \textit{k}-mer than specified by the \mbox{\textbf{-{}-exhits}} parameter. However, there may be inexact matches with exclusion targets.
 
 \subsection{Filtered Signatures}
 
@@ -333,6 +346,10 @@ Where:
   \item \textbf{[POS]}: starting position of the signature in the reference
   \item \textbf{[SEQUENCE]}: sequence content of the signature
 \end{itemize}
+
+\subsection{Consolidated Signatures}
+
+The sorted signatures from all references are combined into a single ``consolidated.fasta`` file, located within the ''consolidated`` directory. Signatures are added to the consolidated signatures file in a greedy manner by selecting the next highest scoring signature available from all references. While effort is taken to prevent signatures from overlapping entirely, it is possible for consolidate signatures to have a small amount of overlap.
 
 \subsection{Databases}
 

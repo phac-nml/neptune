@@ -38,11 +38,14 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.0.0**
+**Neptune 1.1.0**
 
-2015 November 18
+2015 January XX
 
-This is the initial release of Neptune.
+This release of Neptune introduces a simple signature consolidation step, which
+consolidates signatures produced from multiple files into a single file.
+Furthermore, the software has been updated to be compatible with the Slurm
+scheduler.
 
 ## Requirements ##
 ------------------
