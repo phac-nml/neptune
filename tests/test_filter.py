@@ -531,7 +531,7 @@ class TestReportCandidates(unittest.TestCase):
         hit1 = Hit("long 84 subject 40 100 10")
         updateHitOverallDictionary(hit1, hitOverallDictionary)
 
-        reportCandidates(candidatesLocation, outputLocation, hitOverallDictionary, filterLength)
+        reportFilteredCandidates(candidatesLocation, outputLocation, hitOverallDictionary, filterLength)
 
         with open (outputLocation, "r") as myfile:
 
@@ -569,7 +569,7 @@ class TestReportCandidates(unittest.TestCase):
         hit1 = Hit("long 84 subject 50 100 10")
         updateHitOverallDictionary(hit1, bestOverall)
 
-        reportCandidates(candidatesLocation, outputLocation, bestOverall, filterLength)
+        reportFilteredCandidates(candidatesLocation, outputLocation, bestOverall, filterLength)
 
         with open (outputLocation, "r") as myfile:
 
