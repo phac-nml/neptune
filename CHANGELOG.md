@@ -24,7 +24,6 @@ scheduler.
 ### Fixed
 - Neptune is now compatible with the Slurm scheduler.
 - Updated PEP8/Flake8 code compliance (W503).
--
 
 ## [1.0.0] - 2015-11-18
 

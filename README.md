@@ -40,7 +40,7 @@ probabilistic models instead of heuristic strategies.
 
 **Neptune 1.1.0**
 
-2015 January XX
+2016 January XX
 
 This release of Neptune introduces a simple signature consolidation step, which
 consolidates signatures produced from multiple files into a single file.
