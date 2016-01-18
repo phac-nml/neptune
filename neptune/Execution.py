@@ -45,7 +45,6 @@ GLOBALS
 
 EXPECTED_HITS_THRESHOLD = 0.05
 
-
 """
 # =============================================================================
 
@@ -283,7 +282,7 @@ class Execution():
 
     INPUT:
         [0 <= FLOAT <= 1] [GC] - The GC content.
-        [0 <= FLOAT <= 1] [GS] - The genome size.
+        [1 <= INT] [GS] - The genome size.
         [1 <= INT] [K] - The k-mer size.
 
     RETURN:
@@ -310,7 +309,7 @@ class Execution():
     ESTIMATE K-MER SIZE
 
     PURPOSE:
-        Estimates the appropriate k-mer size.
+        Estimates the appropriate k-mer size for Neptune.
 
     INPUT:
         [NONE]
@@ -322,6 +321,7 @@ class Execution():
         The member variable [self.k] is assigned an appriorate value of k,
         determined by the most extreme GC-content of all references and the
         largest size of any reference.
+
     # =========================================================================
     """
     def estimateKMerSize(self):
@@ -404,7 +404,8 @@ class Execution():
         [NONE]
 
     POST:
-        An execution receipt is printed to standard output.
+        An execution receipt is printed to the writable to a receipt file, as
+        specified by Neptune.
 
     # =========================================================================
     """

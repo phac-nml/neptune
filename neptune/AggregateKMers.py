@@ -130,7 +130,7 @@ RETURN:
 """
 def findSmallest(strings, SENTINEL):
 
-    smallest = SENTINEL
+    smallest = SENTINEL     # the lexicographically smallest observed string
 
     for string in strings:
         if string != "" and string < smallest:
@@ -167,7 +167,7 @@ INPUT:
         It is assumed: len(kmers) == len(files)
 
 RETURN:
-    [INT >= 0] count - The number of exact k-mer matches found in the list of
+    [INT >= 0] [count] - The number of exact k-mer matches found in the list of
         k-mers.
 
 # =============================================================================
@@ -204,8 +204,8 @@ PURPOSE:
     lexicographically sorted k-mers.
 
 INPUT:
-    [FILE LIST] [inclusionFiles] - The list of inclusion k-mer files.
-    [FILE LIST] [exclusionFiles] - The list of exclusion k-mer files.
+    [FILE LIST] [inclusionFiles] - The list of open inclusion k-mer files.
+    [FILE LIST] [exclusionFiles] - The list of open exclusion k-mer files.
     [FILE] [outputFile] - The file to write the aggregated k-mers.
 
     NOTE: The input files must contain only distinct and lexicographically
@@ -214,7 +214,8 @@ INPUT:
     the k-mers, including k-mer counts, will be ignored.
 
 POST:
-    The k-mers and their aggregate counts value will be written to the output.
+    The k-mers and their aggregate counts value will be written to the
+    [outputFile].
 
 # =============================================================================
 """

@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 30 April 2015
-
 This script provides shared utility to other scripts.
 
 # =============================================================================

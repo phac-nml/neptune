@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 22 April 2015
-
 This file contains the JobManager class. JobManager is responsible for
 managing the creation and execution of DRMAA jobs.
 
@@ -76,10 +73,10 @@ class JobManager:
 
     INPUT:
         [DRMAA SESSION] [session] - The DRMAA session.
-        [STRING] [outputDirectoryLocation] - The direction location to write
-            DRMAA output.
-        [STRING] [logDirectoryLocation] - The direction location to write
-            DRMAA output logs and error logs.
+        [FILE LOCATION] [outputDirectoryLocation] - The directory location to
+            write DRMAA output.
+        [FILE LOCATION] [logDirectoryLocation] - The directory location to
+            write DRMAA output logs and error logs.
         [STRING - OPTIONAL] [defaultSpecification] - Implementation specific
             command line options.
 
@@ -256,7 +253,7 @@ class JobManager:
 
     POST:
         The function will return when all jobs have completed. Any error
-        messages will be written if there was an error-associated exist-status
+        messages will be written if there was an error-associated exit-status
         with a job.
 
     # =========================================================================
@@ -344,8 +341,8 @@ class JobManager:
         Creates a count k-mer job.
 
     INPUT:
-        [STRING] [inputLocation] - The location of the input file.
-        [STRING] [outputLocation] - The location of the output file.
+        [FILE LOCATION] [inputLocation] - The location of the input file.
+        [FILE LOCATION] [outputLocation] - The location of the output file.
         [1 <= INT] [k] - The size of the k-mers.
         [0 <= INT] [parallelization] - The degree of parallelization.
 
@@ -392,7 +389,7 @@ class JobManager:
             inclusion file locations.
         [STRING ITERATOR] [exclusionLocations] - An iterable object of all
             exclusion file locations.
-        [STRING] [outputLocation] - The output file location.
+        [FILE LOCATION] [outputLocation] - The output file location.
         [STRING -- OPTIONAL] [tag] - The parallelization tag; used to generate
             appropriate file names from the inclusion and exclusion iterators.
 
@@ -458,11 +455,10 @@ class JobManager:
         Creates an extract signatures job.
 
     INPUT:
-        [STRING] [referenceLocation] - The location of the reference to extract
-            candidates.
+        [FILE LOCATION] [referenceLocation] - The location of the reference to
+            extract candidates.
         [1 <= INT -- OPTIONAL] [referenceSize] - The size of the reference.
-        [0 <= FLOAT <= 1 -- OPTIONAL] [rate] - The rate of mutations and/or
-            errors.
+        [0 <= FLOAT <= 1 -- OPTIONAL] [rate] - The SNV rate.
         [1 <= INT -- OPTIONAL] [inclusion] - The number of inclusion genome
             files.
         [0 <= INT -- OPTIONAL] [inhits] - The minimum number of inclusion k-mer
@@ -475,8 +471,9 @@ class JobManager:
         [1 <= INT -- OPTIONAL] [size] - The minimum size of any candidate.
         [0 <= FLOAT <= 1 -- OPTIONAL] [GC] - The GC-content of the environment.
         [0 < FLOAT < 1 -- OPTIONAL] [confidence] - The statistical confidence.
-        [STRING] [aggregateLocation] - The location of the aggregation file.
-        [STRING] [outputLocation] - The location of the output file.
+        [FILE LOCATION] [aggregateLocation] - The location of the aggregation
+            file.
+        [FILE LOCATION] [outputLocation] - The location of the output file.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - An extract signatures job.
@@ -580,9 +577,9 @@ class JobManager:
         Creates a build database job.
 
     INPUT:
-        [STRING ITERATOR] [inputLocations] - The input locations of the entries
-            (FASTA) in the database.
-        [STRING] [outputLocation] - The output location of the database.
+        [(FILE LOCATION) ITERATOR] [inputLocations] - The input locations of
+            the entries (FASTA) in the database.
+        [FILE LOCATION] [outputLocation] - The output location of the database.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - A create database job.
@@ -668,15 +665,21 @@ class JobManager:
         Creates a filter signatures job.
 
     INPUT:
-        [STRING] [databaseLocation] - The location of the database to compare
-            signatures against.
-        [STRING] [inputLocation] - The candidate signatures to filter.
-        [STRING] [outputDirectoryLocation] - The location of the output
-            directory.
+        [FILE LOCATION] [inclusionDatabaseLocation] - The location of the
+            inclusion database to compare signatures against.
+        [FILE LOCATION] [exclusionDatabaseLocation] - The location of the
+            exclusion database to compare signatures against.
+        [(FILE LOCATION) LIST] [inclusion] - The list of inclusion files.
+        [(FILE LOCATION) LIST] [exclusion] - The list of exclusion files.
+        [FILE LOCATION] [inputLocation] - The candidate signatures to filter.
+        [FILE LOCATION] [filteredOutputLocation] - The filtered output
+            location.
+        [FILE LOCATION] [sortedOutputLocation] - The sorted output location.
         [0 <= FLOAT <= 1] [filterLength] - The maximum percent length of an
             exclusion hit with a candidate.
         [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
             exclusion hit with a candidate.
+        [4 <= INT] [seedSize] - The seed size used in alignments.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - A filter signatures job.

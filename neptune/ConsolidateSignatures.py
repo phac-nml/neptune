@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 7 December 2015
-
 This script consolidates multiple signatures files, produced by Neptune, into
 a single file containing the best signatures from all files. This script
 attempts to avoid overlapping signatures. However, this is not guaranteed.
@@ -104,7 +101,7 @@ RETURN:
         as the initially passed [compiledSignatures] dictionary.
 
 POST:
-    The [compiledSignatures] dictionary will be filled the signatures.
+    The [compiledSignatures] dictionary will be filled with the signatures.
 
 # =============================================================================
 """
@@ -134,7 +131,7 @@ PRODUCE SIGNATURES
 
 PURPOSE:
     Produces a list of consolidated signatures by outputting signatures to
-    file, while avoiding outputting duplicate signatures.
+    file, while attempting to avoid outputting duplicate signatures.
 
 INPUT:
     [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their

@@ -101,7 +101,7 @@ INPUT:
         current execution's parameters.
 
 RETURN:
-    [(STRING ITERATOR, STRING ITERATOR) TUPLE]
+    [((FILE LOCATION) ITERATOR, (FILE LOCATION) ITERATOR) TUPLE]
     [(inclusionKMerLocations, exclusionKMerLocations)] -
         The returned tuple will contain two lists of the locations of the
         written inclusion and exclusion k-mers.
@@ -176,10 +176,10 @@ PURPOSE:
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
+    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
+        k-mer file output locations.
+    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
+        k-mer file output locations.
 
 RETURN:
     [NONE]
@@ -222,10 +222,10 @@ PURPOSE:
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
+    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
+        k-mer file output locations.
+    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
+        k-mer file output locations.
 
 RETURN:
     [NONE]
@@ -276,10 +276,10 @@ PURPOSE:
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-    [STRING ITERATOR] [inclusionKMerLocations] - A list of inclusion k-mer
-        file output locations.
-    [STRING ITERATOR] [exclusionKMerLocations] - A list of exclusion k-mer
-        file output locations.
+    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
+        k-mer file output locations.
+    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
+        k-mer file output locations.
 
 RETURN:
     [NONE]
@@ -364,14 +364,14 @@ PURPOSE:
 INPUT:
     [EXECUTION] [execution] - The Execution object containing all of the
         current execution's parameters.
-    [STRING ITERATOR] [candidateLocations] - The location of candidate
+    [(FILE LOCATION) ITERATOR] [candidateLocations] - The location of candidate
         signatures.
 
 RETURN:
     [NONE]
 
 POST:
-    A file of filtered candidates will be produced.
+    A file of filtered candidates and sorted candidates will be produced.
 
 # =============================================================================
 """

@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 28 April 2015
-
 This script counts k-mers in a FASTA or multi FASTA file and writes them to
 either one or multiple files. Only the lexicographically smaller of a k-mer
 and it's reverse complement is reported. The k-mers are reported in sorted
@@ -112,37 +109,37 @@ WRITE MULTIPLE FILES
 
 PURPOSE:
     Writes the k-mers to several output files. The number of output files is
-    determined by the degree of parallelization.
+    determined by the degree of organization.
 
     The output file names and locations are determined according to the
-    provided base name and the degree of parallelization.
+    provided base name and the degree of organization.
 
 INPUT:
     [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to files.
     [STRING] [outputLocation] - The base file path to write the output files.
-    [INT >= 0] [parallelization] - The degree of parallelization.
-        This will produce 4^[parallelization] output files.
+    [INT >= 0] [organization] - The degree of organization.
+        This will produce 4^[organization] output files.
 
 RETURN:
     [NONE]
 
 POST:
     There will be several output files written. The number of output files
-    will be 4^[parallelization] and they will be named according to the
+    will be 4^[organization] and they will be named according to the
     [outputLocation] parameter.
 
     These files will be appended with a sequence tag, determined automatically
-    based on the degree of [parallelization].
+    based on the degree of [organization].
 
     There will additionally be a file for all sequences which begin with
     special characters.
 
 # =============================================================================
 """
-def writeMultipleFiles(kmers, outputLocation, parallelization):
+def writeMultipleFiles(kmers, outputLocation, organization):
 
     outputFiles = {}
-    tags = Utility.getAggregationTags(parallelization)
+    tags = Utility.getAggregationTags(organization)
 
     # initialize output files
     for tag in tags:
@@ -156,7 +153,7 @@ def writeMultipleFiles(kmers, outputLocation, parallelization):
         kmer = str(item[0])
         count = str(item[1])
 
-        tag = kmer[:parallelization]
+        tag = kmer[:organization]
 
         if tag in outputFiles:
             outputFiles[tag].write(kmer + " " + count + "\n")
@@ -181,14 +178,14 @@ PURPOSE:
 
 INPUT:
     [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to files.
-    [STRING] [outputLocation] - The file path to write the output files.
+    [STRING] [outputFile] - A writable file-like object to write output.
 
 RETURN:
     [NONE]
 
 POST:
-    The k-mers will written to the specified output location in the order
-    they are iterated in their data structure.
+    The k-mers will written to the [outputFile] in the order they are
+    iterated in their data structure.
 
 # =============================================================================
 """
@@ -207,21 +204,21 @@ PURPOSE:
     Counts the k-mers in a file and outputs the k-mer counts.
 
 INPUT:
-    [STRING] [inputLocation] - The location of the input.
-    [STRING] [outputLocation] - The output location.
+    [FILE LOCATION] [inputLocation] - The location of the input.
+    [FILE LOCATION] [outputLocation] - The output location.
     [INT >= 0] [k] - The k-mer size.
-    [INT >= 0] [parallelization] - The degree of parallelization.
+    [INT >= 0] [organization] - The degree of organization.
         This is responsible for the number of output files.
 
 RETURN:
     [NONE]
 
 POST:
-    The k-mers located in the input will be output to the provided location.
+    The k-mers located in the input will be output to the [outputLocation].
 
 # =============================================================================
 """
-def count(inputLocation, outputLocation, k, parallelization):
+def count(inputLocation, outputLocation, k, organization):
 
     inputFile = open(inputLocation, 'r')
 
@@ -254,13 +251,13 @@ def count(inputLocation, outputLocation, k, parallelization):
     sortedKMers = sorted(kmers.items(), key=operator.itemgetter(0))
 
     # write k-mers out
-    if parallelization == 0:
+    if organization == 0:
         outputFile = open(outputLocation, 'w')
         writeSingleFile(sortedKMers, outputFile)
         outputFile.close()
 
     else:
-        writeMultipleFiles(sortedKMers, outputLocation, parallelization)
+        writeMultipleFiles(sortedKMers, outputLocation, organization)
 
     # close input file
     inputFile.close()

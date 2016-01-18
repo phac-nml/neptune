@@ -113,6 +113,7 @@ FILTER_PERCENT_SHORT = LONG + "fp"
 FILTER_LENGTH_SHORT = SHORT + "fl"
 SEED_SIZE_SHORT = SHORT + "ss"
 
+# SCORE DICTIONARIES
 overallScore = {}
 inclusionScore = {}
 exclusionScore = {}
@@ -128,14 +129,14 @@ PURPOSE:
 
 INPUT:
     [HIT] [hit] - The hit object associated with the hit.
-    [(STRING) -> (HIT) DICTIONARY] - The best overall query hit dictionary.
-        This dictionary maps signature (query) IDs to hit objects.
+    [(STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall query-to-hit
+        dictionary. This dictionary maps signature (query) IDs to hit objects.
 
 RETURN:
     [NONE]
 
 POST:
-    The passed dictionary object will be updated.
+    The passed [dictionary] object will be updated.
 
 # =============================================================================
 """
@@ -162,15 +163,15 @@ PURPOSE:
 
 INPUT:
     [HIT] [hit] - The hit object associated with the hit.
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query-to-hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
 
 RETURN:
     [NONE]
 
 POST:
-    The passed dictionary object will be updated.
+    The passed [dictionary] object will be updated.
 
 # =============================================================================
 """
@@ -203,9 +204,9 @@ PURPOSE:
     Updates the exclusion score and negative component of the overall score.
 
 INPUT:
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
     [INT >= 1] [totalExclusion] - The total number of exclusion files.
 
 RETURN:
@@ -250,9 +251,9 @@ PURPOSE:
     Updates the inclusion score and positive component of the overall score.
 
 INPUT:
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
     [INT >= 1] [totalInclusion] - The total number of inclusion files.
 
 RETURN:
@@ -291,9 +292,34 @@ def updateInclusionScores(dictionary, totalInclusion):
 """
 # =============================================================================
 
+REPORT FILTERED CANDIDATES
+
+PURPOSE:
+    Reports all of the filtered candidate signatures to output. These are the
+    candidate signatures that were are not immediately removed by filtering
+    against the exclusion database.
+
+INPUT:
+    [FILE LOCATION] [candidatesLocation] - The file location of signature
+        candidates.
+    [FILE LOCATION] [outputLocation] - The file location of the filtered
+        candidate output.
+    [(STRING) -> (HIT) DICTIONARY] [hitOverallDictionary] - The best overall
+        query-to-hit dictionary. This dictionary maps signature (query) IDs to
+        hit objects.
+    [0.0 <= FLOAT <= 1.0] [filterLength] - The minimum fractional length
+        (alignment length) / (signature length) of the alignment-signature
+        before the candidate signature has a chance of being filtered out.
+
+RETURN:
+    [NONE]
+
+POST:
+    The filtered candidates will be written to the [outputLocation].
+
 # =============================================================================
 """
-def reportCandidates(
+def reportFilteredCandidates(
         candidatesLocation, outputLocation,
         hitOverallDictionary, filterLength):
 
@@ -319,6 +345,26 @@ def reportCandidates(
 
 """
 # =============================================================================
+
+REPORT SORTED
+
+PURPOSE:
+    Reports all of the filtered signatures in sorted order to output. This
+    function does not sort the signatures. The sorted order is informed by a
+    function parameter.
+
+INPUT:
+    [FILE LOCATION] [filteredLocation] - The file location of the filtered
+        signatures.
+    [FILE LOCATION] [outputLocation] - The file location of the output.
+    [(SIGNATURE ID) LIST] [sortedSignatureIDs] - An iterable list, in sorted
+        order, of signature IDs.
+
+RETURN:
+    [NONE]
+
+POST:
+    The sorted signatures will be written to the [outputLocation].
 
 # =============================================================================
 """
@@ -365,21 +411,21 @@ PURPOSE:
     filterable signatures.
 
 INPUT:
-    [STRING] [candidatesLocation] - The file location of the candidate
+    [FILE LOCATION] [candidatesLocation] - The file location of the candidate
         signatures.
-    [STRING] [exclusionQueryLocation] - The file location of the signaturess
-        to filter.
-    [STRING] [outputLocation] - The location for the output of the filtered
-        signatures.
+    [FILE LOCATION] [exclusionQueryLocation] - The file location of the
+        signatures to filter.
+    [FILE LOCATION] [outputLocation] - The location for the output of the
+        filtered signatures.
     [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
         exclusion hit with a candidate.
     [1 <= INT] [totalExclusion] - The total number of exclusion targets.
 
-POST:
-    A file of filterted signatures will be produced.
-
 RETURN:
     [STRING] [outputLocation] - The file location of the output.
+
+POST:
+    A file of filterted signatures will be produced.
 
 # =============================================================================
 """
@@ -403,7 +449,7 @@ def reportSignatures(
 
     updateExclusionScores(hitPairDictionary, totalExclusion)
 
-    reportCandidates(
+    reportFilteredCandidates(
         candidateLocation, outputLocation, hitOverallDictionary, filterLength)
 
     return outputLocation
@@ -417,21 +463,22 @@ PURPOSE:
     Sorts the filtered signatures according to their signature score.
 
 INPUT:
-    [STRING] [filteredLocation] - The file location of the filtered signatures.
-    [STRING] [inclusionQueryLocation] - The file location of the filtered
-        signatures against the inclusion targets.
-    [STRING] [outputLocation] - The file output location of the sorted
+    [FILE LOCATION] [filteredLocation] - The file location of the filtered
         signatures.
-    [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
+    [FILE LOCATION] [inclusionQueryLocation] - The file location of the
+        filtered signatures against the inclusion targets.
+    [FILE LOCATION] [outputLocation] - The file output location of the sorted
+        signatures.
+    [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query-alignment length
         for the signature to be considered a hit and used in scoring.
-    [0 <= INT] [totalInclusion] - The total number of inclusion targets.
+    [1 <= INT] [totalInclusion] - The total number of inclusion targets.
+
+RETURN:
+    [STRING] [outputLocation] - The location of the output file.
 
 POST:
     The signatures will be written to the [outputLocation] in score-descending
     order.
-
-RETURN:
-    [STRING] [outputLocation] - The location of the output file.
 
 # =============================================================================
 """
@@ -466,32 +513,34 @@ def sortSignatures(
 FILTER SIGNATURES
 
 PURPOSE:
-    Filters and prepares the candidate signatures for output to the user.
+    Reports the filtered signatures, both as a list of candidates and in sorted
+    order.
 
 INPUT:
-    [STRING] [inclusionDatabaseLocation] - The file location of the
+    [FILE LOCATION] [inclusionDatabaseLocation] - The file location of the
         inclusion database.
-    [STRING] [exclusionDatabaseLocation] - The file location of the
+    [FILE LOCATION] [exclusionDatabaseLocation] - The file location of the
         exclusion database.
-    [0 <= INT] [totalInclusion] - The total number of inclusion targets.
-    [0 <= INT] [totalExclusion] - The total number of exclusion targets.
-    [STRING] [candidateLocation] - The location of the candidate signatures.
-    [STRING] [filteredOutputLocation] - The file location to write the
-        filtered signatures.
-    [STRING] [sortedOutputLocation] - The file location to write the sorted
+    [1 <= INT] [totalInclusion] - The total number of inclusion targets.
+    [1 <= INT] [totalExclusion] - The total number of exclusion targets.
+    [FILE LOCATION] [candidateLocation] - The location of the candidate
         signatures.
+    [FILE LOCATION] [filteredOutputLocation] - The file location to write the
+        filtered signatures.
+    [FILE LOCATION] [sortedOutputLocation] - The file location to write the
+        sorted signatures.
     [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
         for the signature to be considered a hit and used in scoring.
     [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
         exclusion hit with a candidate.
     [4 <= INT] [seedSize] - The seed size used in alignments.
 
+RETURN:
+    [NONE]
+
 POST:
     Filtered signatures will be written to [filteredOutputLocation] and
     sorted signatures will be written to [sortedOutputLocation].
-
-RETURN:
-    NONE
 
 # =============================================================================
 """

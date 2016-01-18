@@ -35,15 +35,16 @@ class Hit():
 CREATE DATABASE JOB
 
 PURPOSE:
-    Creates a build database job.
+    Creates a build database job that will execute a Python subprocess.
 
 INPUT:
-    [FILE LOCATION] [inputLocations] - The location of a single FASTA file
+    [FILE LOCATION] [inputLocation] - The location of a single FASTA file
         from which to build the database.
     [FILE LOCATION] [outputLocation] - The output location of the database.
 
-RETURN:
-    [DRMAA JOB TEMPLATE] [job] - A create database job.
+POST:
+    A Python subprocess is executed for the create database job. Control will
+    return to the calling function after this subprocess is complete.
 
 # =============================================================================
 """
@@ -80,8 +81,6 @@ def createDatabaseJob(inputLocation, outputLocation):
     args.append(OUTPUT)
     args.append(OUTPUT_LOCATION)
 
-    print args
-
     subprocess.check_call(args)
 
 """
@@ -90,7 +89,8 @@ def createDatabaseJob(inputLocation, outputLocation):
 QUERY DATABASE
 
 PURPOSE:
-    Queries the database with a specified query.
+    Queries the database with a specified query by executing a Python
+    subprocess.
 
 INPUT:
     [FILE LOCATION] [databaseLocation] - The file location of the database.
@@ -102,6 +102,7 @@ INPUT:
 
 RETURN:
     [FILE LOCATION] [outputLocation] - The file location of the query output.
+        This is the same location as the passed [outputLocation]
 
 POST:
     A query file will be created at the [outputLocation].
