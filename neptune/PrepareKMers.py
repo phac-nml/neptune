@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 17 April 2015
-
 This script prepares k-mers for further analysis by producing a list of
 lexicographically sorted and distinct k-mers.
 

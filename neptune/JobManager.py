@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 22 April 2015
-
 This file contains the JobManager class. JobManager is responsible for
 managing the creation and execution of DRMAA jobs.
 
@@ -47,6 +44,7 @@ import CountKMers
 import AggregateKMers
 import ExtractSignatures
 import FilterSignatures
+import ConsolidateSignatures
 
 """
 # =============================================================================
@@ -58,6 +56,16 @@ JOB MANAGER
 
 class JobManager:
 
+    NEPTUNE_JOB = "Neptune"
+    COUNT_JOB = "Neptune-CountKMers"
+    AGGREGATE_JOB = "Neptune-AggregateKMers"
+    EXTRACT_JOB = "Neptune-ExtractSignatures"
+    DATABASE_JOB = "Neptune-CreateDatabase"
+    FILTER_JOB = "Neptune-FilterSignatures"
+    CONSOLIDATE_JOB = "Neptune-ConsolidateSignatures"
+
+    ID = 0
+
     """
     # =========================================================================
 
@@ -65,18 +73,22 @@ class JobManager:
 
     INPUT:
         [DRMAA SESSION] [session] - The DRMAA session.
-        [STRING] [outputDirectoryLocation] - The direction location to write
-            DRMAA output.
+        [FILE LOCATION] [outputDirectoryLocation] - The directory location to
+            write DRMAA output.
+        [FILE LOCATION] [logDirectoryLocation] - The directory location to
+            write DRMAA output logs and error logs.
         [STRING - OPTIONAL] [defaultSpecification] - Implementation specific
             command line options.
 
     # =========================================================================
     """
-    def __init__(self, session, outputDirectoryLocation, defaultSpecification):
+    def __init__(
+            self, session, outputDirectoryLocation, logDirectoryLocation,
+            defaultSpecification):
 
         self.session = session
         self.outputDirectoryLocation = outputDirectoryLocation
-        self.verbose = False
+        self.logDirectoryLocation = logDirectoryLocation
 
         if defaultSpecification:
 
@@ -87,6 +99,7 @@ class JobManager:
             self.extractSpecification = defaultSpecification
             self.databaseSpecification = defaultSpecification
             self.filterSpecification = defaultSpecification
+            self.consolidateSpecification = defaultSpecification
 
         else:
 
@@ -95,6 +108,7 @@ class JobManager:
             self.extractSpecification = None
             self.databaseSpecification = None
             self.filterSpecification = None
+            self.consolidateSpecification = None
 
     """
     # =========================================================================
@@ -154,12 +168,39 @@ class JobManager:
     """
     # =========================================================================
 
-    SET VERBOSE
+    SET CONSOLIDATE SPECIFICATION
 
     # =========================================================================
     """
-    def setVerbose(self, verbose):
-        self.verbose = verbose
+    def setConsolidateSpecification(self, specification):
+        if specification:
+            self.consolidateSpecification = specification.strip()
+
+    """
+    # =========================================================================
+
+    GENERATE ID
+
+    PURPOSE:
+        Generates an ID unique to this JobManager. This unique ID DOES NOT
+        correspond with the DRMAA job ID.
+
+    INPUT:
+        [NONE]
+
+    RETURN:
+        [INT] [ID] - The generated unique ID.
+
+    POST:
+        [NONE]
+
+    # =========================================================================
+    """
+    def generateID(self):
+
+        self.ID += 1
+
+        return int(self.ID)
 
     """
     # =========================================================================
@@ -212,7 +253,7 @@ class JobManager:
 
     POST:
         The function will return when all jobs have completed. Any error
-        messages will be written if there was an error-associated exist-status
+        messages will be written if there was an error-associated exit-status
         with a job.
 
     # =========================================================================
@@ -258,23 +299,10 @@ class JobManager:
     """
     def createJob(self):
 
-        # PARAMETERS
-        NULL = "/dev/null"
-
-        # JOB CREATION
         job = self.session.createJobTemplate()
 
-        if self.verbose:
-
-            job.outputPath = ":" + self.outputDirectoryLocation
-            job.errorPath = ":" + self.outputDirectoryLocation
-
-        else:
-
-            job.outputPath = ":" + NULL
-            job.errorPath = ":" + NULL
-
         job.joinFiles = False
+        job.jobName = self.NEPTUNE_JOB
         job.jobEnvironment = os.environ
         job.remoteCommand = sys.executable
 
@@ -313,8 +341,8 @@ class JobManager:
         Creates a count k-mer job.
 
     INPUT:
-        [STRING] [inputLocation] - The location of the input file.
-        [STRING] [outputLocation] - The location of the output file.
+        [FILE LOCATION] [inputLocation] - The location of the input file.
+        [FILE LOCATION] [outputLocation] - The location of the output file.
         [1 <= INT] [k] - The size of the k-mers.
         [0 <= INT] [parallelization] - The degree of parallelization.
 
@@ -328,6 +356,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.COUNT_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.COUNT_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.COUNT_JOB + str(ID) + ".e")
 
         job.args = [
             os.path.realpath(inspect.getsourcefile(CountKMers)),
@@ -354,7 +389,7 @@ class JobManager:
             inclusion file locations.
         [STRING ITERATOR] [exclusionLocations] - An iterable object of all
             exclusion file locations.
-        [STRING] [outputLocation] - The output file location.
+        [FILE LOCATION] [outputLocation] - The output file location.
         [STRING -- OPTIONAL] [tag] - The parallelization tag; used to generate
             appropriate file names from the inclusion and exclusion iterators.
 
@@ -369,6 +404,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.AGGREGATE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.AGGREGATE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.AGGREGATE_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -413,11 +455,10 @@ class JobManager:
         Creates an extract signatures job.
 
     INPUT:
-        [STRING] [referenceLocation] - The location of the reference to extract
-            candidates.
+        [FILE LOCATION] [referenceLocation] - The location of the reference to
+            extract candidates.
         [1 <= INT -- OPTIONAL] [referenceSize] - The size of the reference.
-        [0 <= FLOAT <= 1 -- OPTIONAL] [rate] - The rate of mutations and/or
-            errors.
+        [0 <= FLOAT <= 1 -- OPTIONAL] [rate] - The SNV rate.
         [1 <= INT -- OPTIONAL] [inclusion] - The number of inclusion genome
             files.
         [0 <= INT -- OPTIONAL] [inhits] - The minimum number of inclusion k-mer
@@ -430,8 +471,9 @@ class JobManager:
         [1 <= INT -- OPTIONAL] [size] - The minimum size of any candidate.
         [0 <= FLOAT <= 1 -- OPTIONAL] [GC] - The GC-content of the environment.
         [0 < FLOAT < 1 -- OPTIONAL] [confidence] - The statistical confidence.
-        [STRING] [aggregateLocation] - The location of the aggregation file.
-        [STRING] [outputLocation] - The location of the output file.
+        [FILE LOCATION] [aggregateLocation] - The location of the aggregation
+            file.
+        [FILE LOCATION] [outputLocation] - The location of the output file.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - An extract signatures job.
@@ -445,6 +487,13 @@ class JobManager:
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.EXTRACT_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.EXTRACT_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.EXTRACT_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -528,9 +577,9 @@ class JobManager:
         Creates a build database job.
 
     INPUT:
-        [STRING ITERATOR] [inputLocations] - The input locations of the entries
-            (FASTA) in the database.
-        [STRING] [outputLocation] - The output location of the database.
+        [(FILE LOCATION) ITERATOR] [inputLocations] - The input locations of
+            the entries (FASTA) in the database.
+        [FILE LOCATION] [outputLocation] - The output location of the database.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - A create database job.
@@ -579,6 +628,13 @@ class JobManager:
         job = self.createJob()
         job.remoteCommand = COMMAND
 
+        job.jobName = self.DATABASE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.DATABASE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.DATABASE_JOB + str(ID) + ".e")
+
         args = []
 
         args.append(TYPE)
@@ -609,15 +665,21 @@ class JobManager:
         Creates a filter signatures job.
 
     INPUT:
-        [STRING] [databaseLocation] - The location of the database to compare
-            signatures against.
-        [STRING] [inputLocation] - The candidate signatures to filter.
-        [STRING] [outputDirectoryLocation] - The location of the output
-            directory.
+        [FILE LOCATION] [inclusionDatabaseLocation] - The location of the
+            inclusion database to compare signatures against.
+        [FILE LOCATION] [exclusionDatabaseLocation] - The location of the
+            exclusion database to compare signatures against.
+        [(FILE LOCATION) LIST] [inclusion] - The list of inclusion files.
+        [(FILE LOCATION) LIST] [exclusion] - The list of exclusion files.
+        [FILE LOCATION] [inputLocation] - The candidate signatures to filter.
+        [FILE LOCATION] [filteredOutputLocation] - The filtered output
+            location.
+        [FILE LOCATION] [sortedOutputLocation] - The sorted output location.
         [0 <= FLOAT <= 1] [filterLength] - The maximum percent length of an
             exclusion hit with a candidate.
         [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
             exclusion hit with a candidate.
+        [4 <= INT] [seedSize] - The seed size used in alignments.
 
     RETURN:
         [DRMAA JOB TEMPLATE] [job] - A filter signatures job.
@@ -627,10 +689,17 @@ class JobManager:
     def createFilterJob(
             self, inclusionDatabaseLocation, exclusionDatabaseLocation,
             inclusion, exclusion, inputLocation, filteredOutputLocation,
-            sortedOutputLocation, filterLength, filterPercent):
+            sortedOutputLocation, filterLength, filterPercent, seedSize):
 
         # JOB CREATION
         job = self.createPythonJob()
+
+        job.jobName = self.FILTER_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.FILTER_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.FILTER_JOB + str(ID) + ".e")
 
         # COMMAND
         args = []
@@ -676,9 +745,74 @@ class JobManager:
             args.append(FilterSignatures.FILTER_PERCENT_LONG)
             args.append(str(filterPercent))
 
+        # SEED SIZE
+        if seedSize:
+            args.append(FilterSignatures.SEED_SIZE_LONG)
+            args.append(str(seedSize))
+
         job.args = args
 
         if self.filterSpecification:
             job.nativeSpecification = self.filterSpecification
+
+        return job
+
+    """
+    # =========================================================================
+
+    CREATE CONSOLIDATE JOB
+
+    PURPOSE:
+        Creates a consolidate signatures job.
+
+    INPUT:
+        [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune
+            signature file locations corresponding to files to consolidate.
+        [4 <= INT] [seedSize] - The seed size used in alignments.
+        [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory
+            to write the output files.
+
+    RETURN:
+        [DRMAA JOB TEMPLATE] [job] - A consolidate signatures job.
+
+    # =========================================================================
+    """
+    def createConsolidateJob(
+            self, signatureLocations, seedSize, outputDirectoryLocation):
+
+        # JOB CREATION
+        job = self.createPythonJob()
+
+        job.jobName = self.CONSOLIDATE_JOB
+        ID = self.generateID()
+        job.outputPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.CONSOLIDATE_JOB + str(ID) + ".o")
+        job.errorPath = ":" + os.path.join(
+            self.logDirectoryLocation, self.CONSOLIDATE_JOB + str(ID) + ".e")
+
+        # COMMAND
+        args = []
+        args.append(os.path.realpath(
+            inspect.getsourcefile(ConsolidateSignatures)))
+
+        # SIGNATURE LOCATIONS
+        if signatureLocations:
+            args.append(ConsolidateSignatures.SIGNATURES_LONG)
+            args += signatureLocations
+
+        # SEED SIZE
+        if seedSize:
+            args.append(ConsolidateSignatures.SEED_SIZE_LONG)
+            args.append(str(seedSize))
+
+        # OUTPUT DIRECTORY LOCATION
+        if outputDirectoryLocation:
+            args.append(ConsolidateSignatures.OUTPUT_LONG)
+            args.append(str(outputDirectoryLocation))
+
+        job.args = args
+
+        if self.consolidateSpecification:
+            job.nativeSpecification = self.consolidateSpecification
 
         return job

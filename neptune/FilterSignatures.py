@@ -61,8 +61,10 @@ script.py -d ex.db -i in1.can -o in1.fil -fp 0.70 -fl 0.50
 """
 
 import argparse
-import subprocess
 import operator
+
+import Database
+import Signature
 
 """
 # =============================================================================
@@ -82,6 +84,7 @@ FILTERED_OUTPUT = "filteredOutput"
 SORTED_OUTPUT = "sortedOutput"
 FILTER_PERCENT = "filterPercent"
 FILTER_LENGTH = "filterLength"
+SEED_SIZE = "seedSize"
 
 # ARGUMENTS
 LONG = "--"
@@ -95,6 +98,7 @@ FILTERED_OUTPUT_LONG = LONG + FILTERED_OUTPUT
 SORTED_OUTPUT_LONG = LONG + SORTED_OUTPUT
 FILTER_PERCENT_LONG = LONG + FILTER_PERCENT
 FILTER_LENGTH_LONG = LONG + FILTER_LENGTH
+SEED_SIZE_LONG = LONG + SEED_SIZE
 
 SHORT = "-"
 
@@ -107,187 +111,12 @@ FILTERED_OUTPUT_SHORT = SHORT + "fo"
 SORTED_OUTPUT_SHORT = SHORT + "so"
 FILTER_PERCENT_SHORT = LONG + "fp"
 FILTER_LENGTH_SHORT = SHORT + "fl"
+SEED_SIZE_SHORT = SHORT + "ss"
 
+# SCORE DICTIONARIES
 overallScore = {}
 inclusionScore = {}
 exclusionScore = {}
-
-"""
-# =============================================================================
-
-HIT
-
-# =============================================================================
-"""
-class Hit():
-
-    def __init__(self, line):
-
-        tokens = line.split()
-
-        ID = tokens[0]
-        length = tokens[1]
-        reference = tokens[2]
-        alignmentLength = tokens[3]
-        percentIdentity = tokens[4]
-        alignmentScore = tokens[5]
-
-        self.ID = str(ID).strip()
-        self.length = int(length)
-        self.reference = str(reference).strip()
-        self.alignmentLength = int(alignmentLength)
-        self.percentIdentity = float(percentIdentity)
-        self.alignmentScore = float(alignmentScore)
-
-        self.neptuneScore = float(0.0)
-
-"""
-# =============================================================================
-
-SIGNATURE
-
-# =============================================================================
-"""
-class Signature():
-
-    def __init__(self, ID, sequence, reference, position):
-
-        self.ID = ID
-        self.sequence = sequence.strip()
-        self.length = len(sequence.strip())
-        self.reference = reference
-        self.position = position
-
-    """
-    # =========================================================================
-
-    READ SIGNATURES
-
-    PURPOSE:
-        Reads a signature file into a signature dictionary.
-
-    INPUT:
-        [STRING] [fileLocation] - The file location of the signatures.
-
-    RETURN:
-        [(STRING) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string IDs
-            to signature objects.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def readSignatures(fileLocation):
-
-        signaturesFile = open(fileLocation, 'r')
-        signatures = {}
-
-        while True:
-
-            line1 = signaturesFile.readline()
-            line2 = signaturesFile.readline()
-
-            if not line2:
-                break
-
-            tokens = (line1[1:]).split()
-            ID = tokens[0]
-            reference = tokens[2]
-            position = tokens[3]
-
-            sequence = line2
-
-            signatures[ID] = Signature(ID, sequence, reference, position)
-
-        signaturesFile.close()
-
-        return signatures
-
-    """
-    # =========================================================================
-
-    WRITE SIGNATURES
-
-    PURPOSE:
-        Writes the signature to the destination. This function is designed to
-        be symmetric with the read signatures function.
-
-    INPUT:
-        [SIGNATURE] [signature] - The signature to write.
-        [WRITABLE] [destination] - An open and writable object.
-
-    RETURN:
-        [NONE]
-
-    POST:
-        The passed signature will be written to the destination.
-
-    # =========================================================================
-    """
-    @staticmethod
-    def writeSignature(signature, destination):
-
-        destination.write(
-            ">" + str(signature.ID) + " " + str(signature.length)
-            + " " + str(signature.reference) + " "
-            + str(signature.position) + "\n")
-
-        destination.write(str(signature.sequence) + "\n")
-
-"""
-# =============================================================================
-
-QUERY DATABASE
-
-PURPOSE:
-    Queries the database with a specified query.
-
-INPUT:
-    [STRING] [databaseLocation] - The file location of the database.
-    [STRING] [queryLocation] - The file location of the query.
-    [STRING] [outputLocation] - The file location of the output.
-    [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
-        exclusion hit with a candidate.
-
-POST:
-    A query file will be created in the output directory.
-
-RETURN:
-    [STRING] [queryOutputLocation] - The file location of the query output.
-
-# =============================================================================
-"""
-def queryDatabase(
-        databaseLocation, queryLocation, outputLocation, filterPercent):
-
-    # COMMAND LINE
-    COMMAND = "blastn"
-
-    DATABASE = "-db"
-    QUERY = "-query"
-    OUTPUT = "-out"
-    OUTPUT_FORMAT = "-outfmt"
-    OUTPUT_FORMAT_STRING = "6 qseqid qlen sseqid length pident score"
-    PERCENT_IDENTITY = "-perc_identity"
-    WORD_SIZE = "-word_size"
-    WORD_SIZE_VALUE = 11
-    DUST = "-dust"
-    DUST_VALUE = "no"
-
-    queryOutputLocation = outputLocation + ".query"
-
-    args = [
-        COMMAND,
-        DATABASE, databaseLocation,
-        QUERY, queryLocation,
-        OUTPUT, queryOutputLocation,
-        OUTPUT_FORMAT, OUTPUT_FORMAT_STRING,
-        PERCENT_IDENTITY, str(filterPercent),
-        WORD_SIZE, str(WORD_SIZE_VALUE),
-        DUST, DUST_VALUE]
-
-    subprocess.check_call(args)
-
-    return queryOutputLocation
 
 """
 # =============================================================================
@@ -300,14 +129,14 @@ PURPOSE:
 
 INPUT:
     [HIT] [hit] - The hit object associated with the hit.
-    [(STRING) -> (HIT) DICTIONARY] - The best overall query hit dictionary.
-        This dictionary maps signature (query) IDs to hit objects.
+    [(STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall query-to-hit
+        dictionary. This dictionary maps signature (query) IDs to hit objects.
 
 RETURN:
     [NONE]
 
 POST:
-    The passed dictionary object will be updated.
+    The passed [dictionary] object will be updated.
 
 # =============================================================================
 """
@@ -334,15 +163,15 @@ PURPOSE:
 
 INPUT:
     [HIT] [hit] - The hit object associated with the hit.
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query-to-hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
 
 RETURN:
     [NONE]
 
 POST:
-    The passed dictionary object will be updated.
+    The passed [dictionary] object will be updated.
 
 # =============================================================================
 """
@@ -353,16 +182,16 @@ def updateHitPairDictionary(hit, dictionary):
     if key not in dictionary:
 
         hit.neptuneScore = (
-            (float(hit.alignmentLength) / float(hit.length))
-            * (float(hit.percentIdentity) / float(100)))
+            (float(hit.alignmentLength) / float(hit.length)) *
+            (float(hit.percentIdentity) / float(100)))
 
         dictionary[key] = hit
 
     elif hit.alignmentScore > dictionary[key].alignmentScore:
 
         hit.neptuneScore = (
-            (float(hit.alignmentLength) / float(hit.length))
-            * (float(hit.percentIdentity) / float(100)))
+            (float(hit.alignmentLength) / float(hit.length)) *
+            (float(hit.percentIdentity) / float(100)))
 
         dictionary[key] = hit
 
@@ -375,9 +204,9 @@ PURPOSE:
     Updates the exclusion score and negative component of the overall score.
 
 INPUT:
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
     [INT >= 1] [totalExclusion] - The total number of exclusion files.
 
 RETURN:
@@ -422,9 +251,9 @@ PURPOSE:
     Updates the inclusion score and positive component of the overall score.
 
 INPUT:
-    [(STRING, STRING) -> (HIT) DICTIONARY] - The best overall query hit
-        dictionary. This dictionary maps (query, reference) tuples to hit
-        objects.
+    [(STRING, STRING) -> (HIT) DICTIONARY] [dictionary] - The best overall
+        query hit dictionary. This dictionary maps (query, reference) tuples
+        to hit objects.
     [INT >= 1] [totalInclusion] - The total number of inclusion files.
 
 RETURN:
@@ -463,9 +292,34 @@ def updateInclusionScores(dictionary, totalInclusion):
 """
 # =============================================================================
 
+REPORT FILTERED CANDIDATES
+
+PURPOSE:
+    Reports all of the filtered candidate signatures to output. These are the
+    candidate signatures that were are not immediately removed by filtering
+    against the exclusion database.
+
+INPUT:
+    [FILE LOCATION] [candidatesLocation] - The file location of signature
+        candidates.
+    [FILE LOCATION] [outputLocation] - The file location of the filtered
+        candidate output.
+    [(STRING) -> (HIT) DICTIONARY] [hitOverallDictionary] - The best overall
+        query-to-hit dictionary. This dictionary maps signature (query) IDs to
+        hit objects.
+    [0.0 <= FLOAT <= 1.0] [filterLength] - The minimum fractional length
+        (alignment length) / (signature length) of the alignment-signature
+        before the candidate signature has a chance of being filtered out.
+
+RETURN:
+    [NONE]
+
+POST:
+    The filtered candidates will be written to the [outputLocation].
+
 # =============================================================================
 """
-def reportCandidates(
+def reportFilteredCandidates(
         candidatesLocation, outputLocation,
         hitOverallDictionary, filterLength):
 
@@ -480,8 +334,8 @@ def reportCandidates(
 
             hit = hitOverallDictionary[ID]
 
-            if (float(hit.alignmentLength) / float(signature.length)
-                    < float(filterLength)):
+            if (float(hit.alignmentLength) / float(signature.length) <
+                    float(filterLength)):
                 Signature.writeSignature(signature, outputFile)
 
         else:
@@ -491,6 +345,26 @@ def reportCandidates(
 
 """
 # =============================================================================
+
+REPORT SORTED
+
+PURPOSE:
+    Reports all of the filtered signatures in sorted order to output. This
+    function does not sort the signatures. The sorted order is informed by a
+    function parameter.
+
+INPUT:
+    [FILE LOCATION] [filteredLocation] - The file location of the filtered
+        signatures.
+    [FILE LOCATION] [outputLocation] - The file location of the output.
+    [(SIGNATURE ID) LIST] [sortedSignatureIDs] - An iterable list, in sorted
+        order, of signature IDs.
+
+RETURN:
+    [NONE]
+
+POST:
+    The sorted signatures will be written to the [outputLocation].
 
 # =============================================================================
 """
@@ -507,35 +381,23 @@ def reportSorted(filteredLocation, outputLocation, sortedSignatureIDs):
 
             signature = filteredSignatures[ID]
 
-            outputFile.write(">" + str(signature.ID))
-
+            # -- Score Signature -- #
             if ID in overallScore:
-                outputFile.write(
-                    " score=" + "{0:.2f}".format(
-                        round(overallScore[ID], 2)))
+                signature.score = overallScore[ID]
             else:
-                outputFile.write(" score=0.00")
+                signature.score = 0.0
 
             if ID in inclusionScore:
-                outputFile.write(
-                    " in=" + "{0:.2f}".format(
-                        round(inclusionScore[ID], 2)))
+                signature.inscore = inclusionScore[ID]
             else:
-                outputFile.write(" in=0.00")
+                signature.inscore = 0.0
 
             if ID in exclusionScore:
-                outputFile.write(
-                    " ex=" + "{0:.2f}".format(
-                        round(exclusionScore[ID], 2)))
+                signature.exscore = exclusionScore[ID]
             else:
-                outputFile.write(" ex=0.00")
+                signature.exscore = 0.0
 
-            outputFile.write(" len=" + str(signature.length))
-            outputFile.write(" ref=" + str(signature.reference))
-            outputFile.write(" pos=" + str(signature.position))
-            outputFile.write("\n")
-
-            outputFile.write(signature.sequence + "\n")
+            Signature.writeSignature(signature, outputFile)
 
     outputFile.close()
 
@@ -549,21 +411,21 @@ PURPOSE:
     filterable signatures.
 
 INPUT:
-    [STRING] [candidatesLocation] - The file location of the candidate
+    [FILE LOCATION] [candidatesLocation] - The file location of the candidate
         signatures.
-    [STRING] [exclusionQueryLocation] - The file location of the signaturess
-        to filter.
-    [STRING] [outputLocation] - The location for the output of the filtered
-        signatures.
+    [FILE LOCATION] [exclusionQueryLocation] - The file location of the
+        signatures to filter.
+    [FILE LOCATION] [outputLocation] - The location for the output of the
+        filtered signatures.
     [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
         exclusion hit with a candidate.
     [1 <= INT] [totalExclusion] - The total number of exclusion targets.
 
-POST:
-    A file of filterted signatures will be produced.
-
 RETURN:
     [STRING] [outputLocation] - The file location of the output.
+
+POST:
+    A file of filterted signatures will be produced.
 
 # =============================================================================
 """
@@ -579,7 +441,7 @@ def reportSignatures(
     # LOAD FILTER
     for line in exclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitOverallDictionary(hit, hitOverallDictionary)
         updateHitPairDictionary(hit, hitPairDictionary)
 
@@ -587,7 +449,7 @@ def reportSignatures(
 
     updateExclusionScores(hitPairDictionary, totalExclusion)
 
-    reportCandidates(
+    reportFilteredCandidates(
         candidateLocation, outputLocation, hitOverallDictionary, filterLength)
 
     return outputLocation
@@ -601,21 +463,22 @@ PURPOSE:
     Sorts the filtered signatures according to their signature score.
 
 INPUT:
-    [STRING] [filteredLocation] - The file location of the filtered signatures.
-    [STRING] [inclusionQueryLocation] - The file location of the filtered
-        signatures against the inclusion targets.
-    [STRING] [outputLocation] - The file output location of the sorted
+    [FILE LOCATION] [filteredLocation] - The file location of the filtered
         signatures.
-    [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
+    [FILE LOCATION] [inclusionQueryLocation] - The file location of the
+        filtered signatures against the inclusion targets.
+    [FILE LOCATION] [outputLocation] - The file output location of the sorted
+        signatures.
+    [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query-alignment length
         for the signature to be considered a hit and used in scoring.
-    [0 <= INT] [totalInclusion] - The total number of inclusion targets.
+    [1 <= INT] [totalInclusion] - The total number of inclusion targets.
+
+RETURN:
+    [STRING] [outputLocation] - The location of the output file.
 
 POST:
     The signatures will be written to the [outputLocation] in score-descending
     order.
-
-RETURN:
-    [STRING] [outputLocation] - The location of the output file.
 
 # =============================================================================
 """
@@ -630,7 +493,7 @@ def sortSignatures(
     # LOAD FILTER
     for line in inclusionQueryFile:
 
-        hit = Hit(line)
+        hit = Database.Hit(line)
         updateHitPairDictionary(hit, hitPairDictionary)
 
     inclusionQueryFile.close()
@@ -650,30 +513,34 @@ def sortSignatures(
 FILTER SIGNATURES
 
 PURPOSE:
-    Filters and prepares the candidate signatures for output to the user.
+    Reports the filtered signatures, both as a list of candidates and in sorted
+    order.
 
 INPUT:
-    [STRING] [inclusionDatabaseLocation] - The file location of the
+    [FILE LOCATION] [inclusionDatabaseLocation] - The file location of the
         inclusion database.
-    [STRING] [exclusionDatabaseLocation] - The file location of the
+    [FILE LOCATION] [exclusionDatabaseLocation] - The file location of the
         exclusion database.
-    [0 <= INT] [totalInclusion] - The total number of inclusion targets.
-    [0 <= INT] [totalExclusion] - The total number of exclusion targets.
-    [STRING] [candidateLocation] - The location of the candidate signatures.
-    [STRING] [filteredOutputLocation] - The file location to write the
-        filtered signatures.
-    [STRING] [sortedOutputLocation] - The file location to write the sorted
+    [1 <= INT] [totalInclusion] - The total number of inclusion targets.
+    [1 <= INT] [totalExclusion] - The total number of exclusion targets.
+    [FILE LOCATION] [candidateLocation] - The location of the candidate
         signatures.
+    [FILE LOCATION] [filteredOutputLocation] - The file location to write the
+        filtered signatures.
+    [FILE LOCATION] [sortedOutputLocation] - The file location to write the
+        sorted signatures.
     [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
         for the signature to be considered a hit and used in scoring.
     [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
         exclusion hit with a candidate.
+    [4 <= INT] [seedSize] - The seed size used in alignments.
+
+RETURN:
+    [NONE]
+
 POST:
     Filtered signatures will be written to [filteredOutputLocation] and
     sorted signatures will be written to [sortedOutputLocation].
-
-RETURN:
-    NONE
 
 # =============================================================================
 """
@@ -681,22 +548,22 @@ def filterSignatures(
         inclusionDatabaseLocation, exclusionDatabaseLocation,
         totalInclusion, totalExclusion, candidateLocation,
         filteredOutputLocation, sortedOutputLocation, filterLength,
-        filterPercent):
+        filterPercent, seedSize):
 
-    # BLASTN - EXCLUSION
-    exclusionQueryLocation = queryDatabase(
-        exclusionDatabaseLocation, candidateLocation, filteredOutputLocation,
-        filterPercent)
+    # QUERY DB - EXCLUSION
+    exclusionQueryLocation = Database.queryDatabase(
+        exclusionDatabaseLocation, candidateLocation,
+        filteredOutputLocation, filterPercent, seedSize)
 
     # FILTER
     filteredLocation = reportSignatures(
         candidateLocation, exclusionQueryLocation, filteredOutputLocation,
         filterLength, totalExclusion)
 
-    # BLASTN - INCLUSION
-    inclusionQueryLocation = queryDatabase(
+    # QUERY DB - INCLUSION
+    inclusionQueryLocation = Database.queryDatabase(
         inclusionDatabaseLocation, filteredLocation,
-        sortedOutputLocation, filterPercent)
+        sortedOutputLocation, filterPercent, seedSize)
 
     # SORT
     sortSignatures(
@@ -783,6 +650,13 @@ def main():
             with a candidate",
         type=float, required=False, default=0.50)
 
+    parser.add_argument(
+        SEED_SIZE_SHORT,
+        SEED_SIZE_LONG,
+        dest=SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False, default=11)
+
     args = parser.parse_args()
 
     inclusionDatabaseLocation = args.inclusionDatabase
@@ -794,12 +668,13 @@ def main():
     sortedOutputLocation = args.sortedOutput
     filterLength = args.filterLength
     filterPercent = args.filterPercent
+    seedSize = args.seedSize
 
     filterSignatures(
         inclusionDatabaseLocation, exclusionDatabaseLocation,
         totalInclusion, totalExclusion, inputLocation,
         filteredOutputLocation, sortedOutputLocation, filterLength,
-        filterPercent)
+        filterPercent, seedSize)
 
 if __name__ == '__main__':
 

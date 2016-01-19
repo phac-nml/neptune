@@ -29,9 +29,6 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-Author: Eric Marinier
-Date: 17 April 2015
-
 This script extracts candidate signatures from one or more inclusion files
 within the context of one or more exclusion files. The signatures are extracted
 from a reference using k-mers generated from all inputs.
@@ -67,6 +64,8 @@ import os
 from Utility import reverseComplement
 from Utility import buildReferences
 from Utility import estimateReferenceParameters
+
+import Signature
 
 from scipy.stats import norm
 
@@ -154,8 +153,9 @@ PURPOSE:
     those dictionaries.
 
 INPUT:
-    [STRING ITERABLE] [references] - A set of string references. This is
-        intended to correspond to a single or multi-fasta file.
+    [STRING ITERABLE] [references] - An iterable object of string references.
+        This is intended to correspond to a list of single or multi-fasta
+        files.
     [INT >= 1] [k] - The k-mer size.
     [STRING DICTIONARY] [inmers] - The inclusion k-mers dictionary.
     [STRING DICTIONARY] [exmers] - The inclusion k-mers dictionary.
@@ -260,12 +260,11 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
 
     for i in range(len(regions)):
 
-        outputFile.write(
-            ">" + str(i) + " " + str(len(regions[i].sequence))
-            + " " + str(regions[i].reference) + " "
-            + str(regions[i].position) + "\n")
+        signature = Signature.Signature(
+            i, 0.0, 0.0, 0.0, regions[i].sequence,
+            regions[i].reference, regions[i].position)
 
-        outputFile.write(regions[i].sequence + "\n")
+        Signature.writeSignature(signature, outputFile)
 
 """
 # =============================================================================
@@ -297,10 +296,10 @@ def calculateProbHBMM(GC):
 
     # P(X_M = Y_M)_H
     probHBMM = (
-        2 * math.pow(GC / (GC + 1), 2)
-        + math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) \
-        + (2 * math.pow((1 - GC) / (2 - GC), 2)
-            + math.pow(GC / (2 - GC), 2)) * (GC)
+        2 * math.pow(GC / (GC + 1), 2) +
+        math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) +\
+        (2 * math.pow((1 - GC) / (2 - GC), 2) +
+            math.pow(GC / (2 - GC), 2)) * (GC)
 
     return probHBMM
 
@@ -421,8 +420,7 @@ def estimateSignatureSize(kmerSize):
 ESTIMATE GAP SIZE
 
 PURPOSE:
-    This function estimates the maximum gap size before abandoning a candidate
-    region.
+    Estimates the maximum gap size before abandoning a candidate region.
 
 INPUT:
     [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
@@ -478,13 +476,13 @@ def estimateGapSize(mutationRate, GC, kmerSize, confidence):
 ESTIMATE EXCLUSION HITS
 
 PURPOSE:
-    This function estimates the minimum number of exclusion hits to prevent
-    candidate building.
+    Estimates the minimum number of exclusion hits to prevent candidate
+    building.
 
 INPUT:
     [INT >= 0] [totalExclusion] - The total number of exclusion targets.
-    [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
-        mutating.
+    [0 <= FLOAT <= 1] [rate] - The probability of an arbitrary base
+        mismatching (ex: SNV).
     [INT >= 1] [kmerSize] - The size of the k-mers, such that 1 <= kmerSize.
 
 RETURN:
@@ -505,8 +503,8 @@ def estimateExclusionHits(totalExclusion, rate, kmerSize):
 ESTIMATE INCLUSION HITS
 
 PURPOSE:
-    This function estimates the minimum number of inclusion hits required for
-    confident candidate building.
+    Estimates the minimum number of inclusion hits required for confident
+    candidate building.
 
 INPUT:
     [INT >= 0] [totalInclusion] - The total number of inclusion targets.
@@ -563,7 +561,7 @@ def estimateInclusionHits(
 ESTIMATE K
 
 PURPOSE:
-    This function estimates the size of k from the k-mers file.
+    Estimates the size of k from the k-mers file.
 
 INPUT:
     [FILE] [kmerFile] - The file of aggregated k-mers.
@@ -588,15 +586,15 @@ def estimateK(kmerFile):
 BUILD K-MERS
 
 PURPOSE:
-    This function fills the inclusion and exclusion k-mer dictionaries from a
-    single aggregated k-mer file.
+    Builds the inclusion and exclusion k-mer dictionaries from a single
+    aggregated k-mer file.
 
 INPUT:
-    [FILE] [kmerFile] - The file of aggregated k-mers.
-    [STRING DICTIONARY] [inmers] - The inclusion k-mer dictionary to fill with
-        k-mers.
-    [STRING DICTIONARY] [exmers] - The exclusion k-mer dictionary to fill with
-        k-mers.
+    [FILE] [kmerFile] - A readable file-like object of aggregated k-mers.
+    [(STRING KMER) -> (INT) DICTIONARY] [inmers] - The inclusion k-mer
+        dictionary to fill with k-mers.
+    [(STRING KMER) -> (INT) DICTIONARY] [exmers] - The exclusion k-mer
+        dictionary to fill with k-mers.
     [INT >= 0] [inhits] - The minimum number of inclusion k-mers for a
         candidate.
     [INT >= 0] [exhits] - The maximum number of exclusion k-mers for a
@@ -634,8 +632,9 @@ PURPOSE:
     This function outputs the parameters to standard output.
 
 INPUT:
-    [STRING] [reportLocation] - The location of the report file.
-    [FILE] [referenceFile] - The single reference to extract candidates from.
+    [FILE] [reportFile] - The writable file-like object to write the report.
+    [FILE LOCATION] [referenceLocation] - The single reference to extract
+        candidates from.
     [INT >= 0] [referenceSize] - The size of the reference.
     [0 <= FLOAT <= 1] [rate] - The rate of mutations and/or errors.
     [INT >= 0] [totalInclusion] - The number of inclusion genome files.
@@ -643,13 +642,13 @@ INPUT:
     [INT >= 0] [inhits] - The minimum number of inclusion k-mer hits.
     [INT >= 0] [exhits] - The maximum number of exclusion k-mer hits.
     [INT >= 1] [k] - The size of the k-mer.
-    [FILE] kmerFile - The file containing aggregated k-mers.
-    [INT >= 1] gap - The maximum inclusion k-mer gap size.
-    [INT >= 1] size - The minimum size of any candidate.
-    [0 <= FLOAT <= 1] GC - The GC-content of the environment.
+    [FILE LOCATION] [kmerLocation] - The file containing aggregated k-mers.
+    [INT >= 1] [gap] - The maximum inclusion k-mer gap size.
+    [INT >= 1] [size] - The minimum size of any candidate.
+    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
 
 POST:
-    The parameters will be written to the report file location.
+    The parameters will be written to [reportFile].
 
 # =============================================================================
 """
@@ -664,7 +663,7 @@ def reportParameters(
     reportFile.write("Reference Size = " + str(referenceSize) + "\n")
     reportFile.write("GC-Content = %.2f" % (GC) + "\n")
     reportFile.write("\n")
-    reportFile.write("Mutation / Error Rate = " + str(rate) + "\n")
+    reportFile.write("SNV Rate = " + str(rate) + "\n")
     reportFile.write("\n")
     reportFile.write("Inclusion Genomes = " + str(totalInclusion) + "\n")
     reportFile.write("Minimum Inclusion Hits = " + str(inhits) + "\n")
