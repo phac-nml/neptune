@@ -45,7 +45,7 @@ QUERY DATABASE
 
 # =============================================================================
 """
-class TestQueryDataBase(unittest.TestCase):
+class TestQueryDatabase(unittest.TestCase):
 
     """ 
     # =============================================================================
@@ -72,9 +72,9 @@ class TestQueryDataBase(unittest.TestCase):
     """
     def test_simple(self):
 
-        databaseLocation = "tests/data/filter/long.database/LONG"
-        queryLocation = "tests/data/filter/long.query"
-        outputLocation = "tests/output/filter/temp.out"
+        databaseLocation = "tests/data/database/long.database/LONG"
+        queryLocation = "tests/data/database/long.query"
+        outputLocation = "tests/output/database/temp.out"
         filterPercent = 0.50
         seedSize = 11
 
@@ -89,7 +89,6 @@ class TestQueryDataBase(unittest.TestCase):
         self.assertTrue(expected in result)
 
         os.remove(queryOutputLocation)
-
 
     """ 
     # =============================================================================
@@ -115,9 +114,9 @@ class TestQueryDataBase(unittest.TestCase):
     """
     def test_missing(self):
 
-        databaseLocation = "tests/data/filter/long.database/LONG"
-        queryLocation = "tests/data/filter/missing.query"
-        outputLocation = "tests/output/filter/temp.out"
+        databaseLocation = "tests/data/database/long.database/LONG"
+        queryLocation = "tests/data/database/missing.query"
+        outputLocation = "tests/output/database/temp.out"
         filterPercent = 0.50
         seedSize = 11
 
@@ -132,6 +131,60 @@ class TestQueryDataBase(unittest.TestCase):
         self.assertEquals(result, expected)
 
         os.remove(queryOutputLocation)
+
+"""
+# =============================================================================
+
+CREATE DATABASE
+
+# =============================================================================
+"""
+class TestCreateDatabase(unittest.TestCase):
+
+    """ 
+    # =============================================================================
+
+    test_simple
+
+    PURPOSE:
+        Tests a simple database construction.
+
+    INPUT:
+
+        >record1
+        ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
+        >record2
+        ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT
+
+
+    EXPECTED:
+        
+        The following files exist:
+
+        DB.nhr
+        DB.nin
+        DB.nsq
+
+    # =============================================================================
+    """
+    def test_simple(self):
+
+        inputLocation = "tests/data/database/multiple.fasta"
+
+        outputBaseLocation = "tests/output/database/DB"
+        outputNHRLocation = "tests/output/database/DB.nhr"
+        outputNINLocation = "tests/output/database/DB.nin"
+        outputNSQLocation = "tests/output/database/DB.nsq"
+
+        createDatabaseJob(inputLocation, outputBaseLocation)
+
+        self.assertTrue(os.path.isfile(outputNHRLocation))
+        self.assertTrue(os.path.isfile(outputNINLocation))
+        self.assertTrue(os.path.isfile(outputNSQLocation))
+
+        os.remove(outputNHRLocation)
+        os.remove(outputNINLocation)
+        os.remove(outputNSQLocation)
 
 if __name__ == '__main__':
     
