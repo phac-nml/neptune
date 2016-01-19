@@ -2,7 +2,7 @@
 
 All notable changes to Neptune will be documented in this file.
 
-## [1.1.0] - 2016-01-XX
+## [1.1.0] - 2016-01-19
 
 This release of Neptune introduces a simple signature consolidation step, which
 consolidates signatures produced from multiple files into a single file.
