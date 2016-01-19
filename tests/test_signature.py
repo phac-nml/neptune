@@ -99,7 +99,7 @@ class TestWriteSignatures(unittest.TestCase):
 
     INPUT:
 
-        signature = Signature("ACGTACGT", "0", "ref", "20")
+        signature = Signature("0", 0.0, 0.0, 0.0, "ACGTACGT", "ref", "20")
 
     EXPECTED:
 
@@ -118,6 +118,52 @@ class TestWriteSignatures(unittest.TestCase):
 
         expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=8 ref=ref pos=20\nACGTACGT\n"
         self.assertEquals(result, expected)
+
+"""
+# =============================================================================
+
+SORT SIGNATURES
+
+# =============================================================================
+"""
+class TestSortSignatures(unittest.TestCase):
+
+    """ 
+    # =============================================================================
+
+    test_simple
+
+    PURPOSE:
+        Tests a simple signature sorting example.
+
+    INPUT:
+
+        signature1 = Signature("0", 0.1, 0.1, 0.0, "ACGTACGT", "ref1", "20")
+        signature2 = Signature("0", 0.9, 0.9, 0.0, "ACGTACGT", "ref2", "20")
+        signature3 = Signature("0", 0.5, 0.5, 0.0, "ACGTACGT", "ref3", "20")
+
+    EXPECTED:
+
+        [signature2, signature3, signature1]
+
+    # =============================================================================
+    """
+    def test_simple(self):
+
+        signature1 = Signature("1", 0.1, 0.1, 0.0, "ACGTACGT", "ref1", "20")
+        signature2 = Signature("2", 0.9, 0.9, 0.0, "ACGTACGT", "ref2", "20")
+        signature3 = Signature("3", 0.5, 0.5, 0.0, "ACGTACGT", "ref3", "20")
+
+        signatures = {}
+        signatures[signature1.ID] = signature1
+        signatures[signature2.ID] = signature2
+        signatures[signature3.ID] = signature3
+
+        sortedSignatures = sortSignatures(signatures)
+
+        self.assertEquals(sortedSignatures[0], signature2)
+        self.assertEquals(sortedSignatures[1], signature3)
+        self.assertEquals(sortedSignatures[2], signature1)
 
 if __name__ == '__main__':
     
