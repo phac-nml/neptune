@@ -228,6 +228,10 @@ It may be necessary to specify job submission parameters that are required by yo
   \textbf{-{}-filterSpecification [string]} \hfill \\
   DRMAA-specific command line arguments for candidate signature filtering. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
+  \item[consolidate specification] \hfill \\
+  \textbf{-{}-consolidateSpecification [string]} \hfill \\
+  DRMAA-specific command line arguments for signature consolidation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
+  
 \end{description}
 
 \newpage
@@ -349,7 +353,7 @@ Where:
 
 \subsection{Consolidated Signatures}
 
-The sorted signatures from all references are combined into a single ``consolidated.fasta`` file, located within the ''consolidated`` directory. Signatures are added to the consolidated signatures file in a greedy manner by selecting the next highest scoring signature available from all references. While effort is taken to prevent signatures from overlapping entirely, it is possible for consolidate signatures to have a small amount of overlap.
+The sorted signatures from all references are combined into a single ``consolidated.fasta'' file, located within the ``consolidated'' directory. Signatures are added to the consolidated signatures file in a greedy manner by selecting the next highest scoring signature available from all references. While effort is taken to prevent signatures from overlapping entirely, it is possible for consolidate signatures to have a small amount of overlap.
 
 \subsection{Databases}
 
