@@ -37,6 +37,8 @@ import Utility
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
+import JobManagerDRMAA
+import JobManagerParallel
 
 """
 # =============================================================================
@@ -62,7 +64,7 @@ LOG = "log"
 
 # ARGUMENT NAMES
 OUTPUT = "output"
-PARALLELIZATION = "parallelization"
+CENTRALIZED = "central"
 DEFAULT_SPECIFICATION = "defaultSpecification"
 COUNT_SPECIFICATION = "countSpecification"
 AGGREGATE_SPECIFICATION = "aggregateSpecification"
@@ -75,6 +77,7 @@ CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
 LONG = "--"
 
 OUTPUT_LONG = LONG + OUTPUT
+CENTRALIZED_LONG = LONG + CENTRALIZED
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
 AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
@@ -483,6 +486,97 @@ def consolidateSignatures(execution, sortedLocations):
 """
 # =============================================================================
 
+EXECUTE
+
+# =============================================================================
+"""
+def execute(execution):
+
+    # --- K-MER COUNTING ---
+    inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+
+    # --- K-MER AGGREGATION ---
+    aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
+
+    # --- SIGNATURE EXTRACTION ---
+    candidateLocations = extractSignatures(execution)
+
+    # --- SIGNATURE FILTERING ---
+    sortedLocations = filterSignatures(execution, candidateLocations)
+
+    # Are all the signature files empty?
+    if(all((os.stat(location).st_size == 0)
+            for location in sortedLocations)):
+
+        print "NOTICE: No signatures were identified."
+        return
+
+    # --- CONSOLIDATE SIGNATURES ---
+    consolidateSignatures(execution, sortedLocations)
+
+    execution.produceReceipt()
+
+"""
+# =============================================================================
+
+EXECUTE DRMAA
+
+# =============================================================================
+"""
+def executeDRMAA(parameters):
+
+    with drmaa.Session() as session:
+
+        outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
+
+        logDirectoryLocation = os.path.abspath(
+            os.path.join(outputDirectoryLocation, LOG))
+
+        jobManager = JobManagerDRMAA.JobManagerDRMAA(
+            outputDirectoryLocation, logDirectoryLocation,
+            session, parameters[DEFAULT_SPECIFICATION])
+
+        execution = Execution.Execution(jobManager, parameters)
+        execute(execution)
+
+"""
+# =============================================================================
+
+EXECUTE PARALLEL
+
+# =============================================================================
+"""
+def executeParallel(parameters):
+
+    outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
+
+    logDirectoryLocation = os.path.abspath(
+        os.path.join(outputDirectoryLocation, LOG))
+
+    jobManager = JobManagerParallel.JobManagerParallel(
+        outputDirectoryLocation, logDirectoryLocation)
+
+    execution = Execution.Execution(jobManager, parameters)
+    execute(execution)
+
+"""
+# =============================================================================
+
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    if parameters.get(CENTRALIZED):
+        executeParallel(parameters)
+
+    else:
+        executeDRMAA(parameters)
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -620,6 +714,12 @@ def main():
         type=int, default=0)
 
     parser.add_argument(
+        CENTRALIZED_LONG,
+        dest=CENTRALIZED,
+        help="runs Neptune on a single machine, without using DRMAA",
+        action='store_true')
+
+    parser.add_argument(
         DEFAULT_SPECIFICATION_LONG,
         dest=DEFAULT_SPECIFICATION,
         help="DRM-specific parameters for all jobs",
@@ -675,36 +775,8 @@ def main():
                 str(sys.argv[i + 1])[0:])
 
     args = parser.parse_args()
-
-    # --- Job Control ---
-    with drmaa.Session() as session:
-
-        execution = Execution.Execution(session, args)
-
-        # --- K-MER COUNTING ---
-        inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
-
-        # --- K-MER AGGREGATION ---
-        aggregateKMers(
-            execution, inclusionKMerLocations, exclusionKMerLocations)
-
-        # --- SIGNATURE EXTRACTION ---
-        candidateLocations = extractSignatures(execution)
-
-        # --- SIGNATURE FILTERING ---
-        sortedLocations = filterSignatures(execution, candidateLocations)
-
-        # Are all the signature files empty?
-        if(all((os.stat(location).st_size == 0)
-                for location in sortedLocations)):
-
-            print "NOTICE: No signatures were identified."
-            return
-
-        # --- CONSOLIDATE SIGNATURES ---
-        consolidateSignatures(execution, sortedLocations)
-
-        execution.produceReceipt()
+    parameters = vars(args)
+    parse(parameters)
 
 """
 # =============================================================================
