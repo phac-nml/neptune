@@ -113,6 +113,12 @@ FILTER_PERCENT_SHORT = LONG + "fp"
 FILTER_LENGTH_SHORT = SHORT + "fl"
 SEED_SIZE_SHORT = SHORT + "ss"
 
+# DEFAULTS
+
+FILTER_PERCENT_DEFAULT = 0.50
+FILTER_LENGTH_DEFAULT = 0.50
+SEED_SIZE_DEFAULT = 11
+
 # SCORE DICTIONARIES
 overallScore = {}
 inclusionScore = {}
@@ -573,6 +579,38 @@ def filterSignatures(
 """
 # =============================================================================
 
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    inclusionDatabaseLocation = parameters[INCLUSION_DATABASE]
+    exclusionDatabaseLocation = parameters[EXCLUSION_DATABASE]
+    totalInclusion = len(parameters[INCLUSION])
+    totalExclusion = len(parameters[EXCLUSION])
+    inputLocation = parameters[INPUT]
+    filteredOutputLocation = parameters[FILTERED_OUTPUT]
+    sortedOutputLocation = parameters[SORTED_OUTPUT]
+
+    filterLength = parameters[FILTER_LENGTH] \
+        if parameters[FILTER_LENGTH] else FILTER_LENGTH_DEFAULT
+
+    filterPercent = parameters[FILTER_PERCENT] \
+        if parameters[FILTER_PERCENT] else FILTER_PERCENT_DEFAULT
+
+    seedSize = parameters[SEED_SIZE] \
+        if parameters[SEED_SIZE] else SEED_SIZE_DEFAULT
+
+    filterSignatures(
+        inclusionDatabaseLocation, exclusionDatabaseLocation,
+        totalInclusion, totalExclusion, inputLocation,
+        filteredOutputLocation, sortedOutputLocation, filterLength,
+        filterPercent, seedSize)
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -640,7 +678,7 @@ def main():
         FILTER_PERCENT_LONG,
         dest=FILTER_PERCENT,
         help="the maximum percent identity of an exclusion hit",
-        type=float, required=False, default=0.50)
+        type=float, required=False)
 
     parser.add_argument(
         FILTER_LENGTH_SHORT,
@@ -648,34 +686,23 @@ def main():
         dest=FILTER_LENGTH,
         help="the maximum shared fractional length of an exclusion hit \
             with a candidate",
-        type=float, required=False, default=0.50)
+        type=float, required=False)
 
     parser.add_argument(
         SEED_SIZE_SHORT,
         SEED_SIZE_LONG,
         dest=SEED_SIZE,
         help="the seed size used during alignment",
-        type=int, required=False, default=11)
+        type=int, required=False)
 
     args = parser.parse_args()
+    parameters = vars(args)
+    parse(parameters)
 
-    inclusionDatabaseLocation = args.inclusionDatabase
-    exclusionDatabaseLocation = args.exclusionDatabase
-    totalInclusion = len(args.inclusion)
-    totalExclusion = len(args.exclusion)
-    inputLocation = args.input
-    filteredOutputLocation = args.filteredOutput
-    sortedOutputLocation = args.sortedOutput
-    filterLength = args.filterLength
-    filterPercent = args.filterPercent
-    seedSize = args.seedSize
-
-    filterSignatures(
-        inclusionDatabaseLocation, exclusionDatabaseLocation,
-        totalInclusion, totalExclusion, inputLocation,
-        filteredOutputLocation, sortedOutputLocation, filterLength,
-        filterPercent, seedSize)
-
+"""
+# =============================================================================
+# =============================================================================
+"""
 if __name__ == '__main__':
 
     main()

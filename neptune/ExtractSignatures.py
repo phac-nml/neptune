@@ -680,6 +680,115 @@ def reportParameters(
 """
 # =============================================================================
 
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    # --- Reference ---
+    print "\n==== Building References ====\n"
+
+    if not os.path.isfile(parameters[REFERENCE]):
+            raise RuntimeError("ERROR: Could not open the reference file.\n")
+
+    referenceLocation = parameters[REFERENCE]
+    referenceFile = open(referenceLocation, 'r')
+    references = buildReferences(referenceFile)
+    referenceFile.close()
+
+    print "\nDone!"
+
+    # --- Reference Size & GC-Content ---
+    if not parameters[REFERENCE_SIZE] or not parameters[GC_CONTENT]:
+        referenceSize, GC = estimateReferenceParameters(references)
+
+    if parameters[REFERENCE_SIZE]:
+        referenceSize = parameters[REFERENCE_SIZE]
+
+    if parameters[GC_CONTENT]:
+        GC = parameters[GC_CONTENT]
+
+    # --- Rate ---
+    rate = parameters[RATE] if parameters[RATE] else 0.01
+
+    # --- Statistical Confidence ---
+    confidence = parameters[CONFIDENCE] if parameters[CONFIDENCE] else 0.95
+
+    # --- k-mer Size ---
+    if not os.path.isfile(parameters[KMERS]):
+            raise RuntimeError("ERROR: Could not open k-mer file.\n")
+
+    kmerLocation = parameters[KMERS]
+    kmerFile = open(kmerLocation, 'r')
+    k = estimateK(kmerFile)
+    kmerFile.close()
+
+    # --- Minimum Inclusion Hits ---
+    totalInclusion = len(parameters[INCLUSION])
+
+    if parameters[INHITS]:
+        inhits = parameters[INHITS]
+
+    else:
+        inhits = estimateInclusionHits(totalInclusion, rate, GC, k, confidence)
+
+    # --- Maximum Exclusion Hits ---
+    totalExclusion = len(parameters[EXCLUSION])
+
+    if parameters[EXHITS]:
+        exhits = parameters[EXHITS]
+
+    else:
+        exhits = estimateExclusionHits(totalExclusion, rate, k)
+
+    # --- k-mer Tables ---
+    print "\n==== Building k-mer Tables ====\n"
+
+    kmerFile = open(parameters[KMERS], 'r')
+    inmers = {}
+    exmers = {}
+    buildKMers(kmerFile, inmers, exmers, inhits, exhits)
+    kmerFile.close()
+
+    print "Done!"
+
+    # --- Gap Size ---
+    if parameters[GAP]:
+        gap = parameters[GAP]
+
+    else:
+        gap = estimateGapSize(rate, GC, k, confidence)
+
+    # --- Minimum Signature Size ---
+    if parameters[SIZE]:
+        size = parameters[SIZE]
+
+    else:
+        size = estimateSignatureSize(k)
+
+    # --- Report ---
+    reportLocation = str(parameters[OUTPUT]) + ".report"
+    reportFile = open(reportLocation, 'w')
+    reportParameters(
+        reportFile, referenceLocation, referenceSize, rate,
+        totalInclusion, totalExclusion, inhits, exhits,
+        k, kmerLocation, gap, size, GC)
+    reportFile.close()
+
+    # --- Extraction ---
+    print "\n==== Extracing Signatures ====\n"
+    outputFile = open(parameters[OUTPUT], 'w')
+    extract(references, k, inmers, exmers, size, gap, outputFile)
+    outputFile.close()
+
+    print "Done!"
+
+    print "\n==== Exiting ====\n"
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -710,7 +819,7 @@ def main():
         RATE_LONG,
         dest=RATE,
         help="probability of a mutation or error at an arbitrary position",
-        type=float, default=0.01)
+        type=float)
 
     parser.add_argument(
         INCLUSION_SHORT,
@@ -774,7 +883,7 @@ def main():
         CONFIDENCE_LONG,
         dest=CONFIDENCE,
         help="statistical confidence level",
-        type=float, required=False, default=0.95)
+        type=float, required=False)
 
     parser.add_argument(
         OUTPUT_SHORT,
@@ -784,107 +893,13 @@ def main():
         type=str, required=True)
 
     args = parser.parse_args()
+    parameters = vars(args)
+    parse(parameters)
 
-    # --- Reference ---
-    print "\n==== Building References ====\n"
-
-    if not os.path.isfile(args.reference):
-            raise RuntimeError("ERROR: Could not open the reference file.\n")
-
-    referenceLocation = args.reference
-    referenceFile = open(referenceLocation, 'r')
-    references = buildReferences(referenceFile)
-    referenceFile.close()
-
-    print "\nDone!"
-
-    # --- Reference Size & GC-Content ---
-    if not args.referenceSize or not args.gcContent:
-        referenceSize, GC = estimateReferenceParameters(references)
-
-    if args.referenceSize:
-        referenceSize = args.referenceSize
-
-    if args.gcContent:
-        GC = args.gcContent
-
-    # --- Rate ---
-    rate = args.rate
-
-    # --- Statistical Confidence ---
-    confidence = args.confidence
-
-    # --- k-mer Size ---
-    if not os.path.isfile(args.kmers):
-            raise RuntimeError("ERROR: Could not open k-mer file.\n")
-
-    kmerLocation = args.kmers
-    kmerFile = open(kmerLocation, 'r')
-    k = estimateK(kmerFile)
-    kmerFile.close()
-
-    # --- Minimum Inclusion Hits ---
-    totalInclusion = len(args.inclusion)
-
-    if args.inhits:
-        inhits = args.inhits
-
-    else:
-        inhits = estimateInclusionHits(totalInclusion, rate, GC, k, confidence)
-
-    # --- Maximum Exclusion Hits ---
-    totalExclusion = len(args.exclusion)
-
-    if args.exhits:
-        exhits = args.exhits
-
-    else:
-        exhits = estimateExclusionHits(totalExclusion, rate, k)
-
-    # --- k-mer Tables ---
-    print "\n==== Building k-mer Tables ====\n"
-
-    kmerFile = open(args.kmers, 'r')
-    inmers = {}
-    exmers = {}
-    buildKMers(kmerFile, inmers, exmers, inhits, exhits)
-    kmerFile.close()
-
-    print "Done!"
-
-    # --- Gap Size ---
-    if args.gap:
-        gap = args.gap
-
-    else:
-        gap = estimateGapSize(rate, GC, k, confidence)
-
-    # --- Minimum Signature Size ---
-    if args.size:
-        size = args.size
-
-    else:
-        size = estimateSignatureSize(k)
-
-    # --- Report ---
-    reportLocation = str(args.output) + ".report"
-    reportFile = open(reportLocation, 'w')
-    reportParameters(
-        reportFile, referenceLocation, referenceSize, rate,
-        totalInclusion, totalExclusion, inhits, exhits,
-        k, kmerLocation, gap, size, GC)
-    reportFile.close()
-
-    # --- Output File ---
-    print "\n==== Extracing Signatures ====\n"
-    outputFile = open(args.output, 'w')
-    extract(references, k, inmers, exmers, size, gap, outputFile)
-    outputFile.close()
-
-    print "Done!"
-
-    print "\n==== Exiting ====\n"
-
+"""
+# =============================================================================
+# =============================================================================
+"""
 if __name__ == '__main__':
 
     main()

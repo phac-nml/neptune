@@ -33,7 +33,8 @@ from scipy.misc import comb
 
 import Neptune
 import Utility
-import JobManager
+import JobManagerDRMAA
+import JobManagerParallel
 
 """
 # =============================================================================
@@ -240,9 +241,8 @@ class Execution():
             os.makedirs(self.logDirectoryLocation)
 
         # -- job manager --
-        self.jobManager = JobManager.JobManager(
-            session, self.outputDirectoryLocation,
-            self.logDirectoryLocation, args.defaultSpecification)
+        self.jobManager = JobManagerParallel.JobManagerParallel(
+            self.outputDirectoryLocation, self.logDirectoryLocation)
 
         # -- job specifications --
         if args.countSpecification:
@@ -425,7 +425,7 @@ class Execution():
         self.reportCommandLine(receiptFile)
         self.reportFiles(receiptFile)
         self.reportGeneralParameters(receiptFile)
-        self.reportDRMAAParameters(receiptFile)
+        #self.reportDRMAAParameters(receiptFile) # TODO REPLACE?
 
         receiptFile.close()
 

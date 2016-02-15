@@ -78,6 +78,10 @@ COMPILED_DATABASE = "compiled.db"
 COMPILED_DATABASE_QUERY = COMPILED_DATABASE + ".query"
 CONSOLIDATED_SIGNATURES = "consolidated.fasta"
 
+# DEFAULTS
+
+SEED_SIZE_DEFAULT = 11
+
 """
 # =============================================================================
 
@@ -269,6 +273,26 @@ def consolidateSignatures(
 """
 # =============================================================================
 
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    signatureLocations = []
+    Utility.expandInput(parameters[SIGNATURES], signatureLocations)
+
+    outputDirectoryLocation = parameters[OUTPUT]
+
+    seedSize = parameters[SEED_SIZE] \
+        if parameters[SEED_SIZE] else SEED_SIZE_DEFAULT
+
+    consolidateSignatures(
+        signatureLocations, seedSize, outputDirectoryLocation)
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
@@ -300,20 +324,16 @@ def main():
         SEED_SIZE_LONG,
         dest=SEED_SIZE,
         help="the seed size used during alignment",
-        type=int, required=False, default=11)
+        type=int, required=False)
 
     args = parser.parse_args()
+    parameters = vars(args)
+    parse(parameters)
 
-    signatureLocations = []
-    Utility.expandInput(args.signatures, signatureLocations)
-
-    outputDirectoryLocation = args.output
-
-    seedSize = args.seedSize
-
-    consolidateSignatures(
-        signatureLocations, seedSize, outputDirectoryLocation)
-
+"""
+# =============================================================================
+# =============================================================================
+"""
 if __name__ == '__main__':
 
     main()

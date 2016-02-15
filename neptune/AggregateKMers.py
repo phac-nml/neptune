@@ -105,6 +105,10 @@ INCLUSION_SHORT = SHORT + "i"
 EXCLUSION_SHORT = SHORT + "e"
 OUTPUT_SHORT = SHORT + "o"
 
+# DEFAULTS
+
+DELETE_DEFAULT = False
+
 """
 # =============================================================================
 
@@ -219,12 +223,38 @@ POST:
 
 # =============================================================================
 """
-def aggregate(inclusionFiles, exclusionFiles, outputFile):
+def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
 
     SENTINEL = "~"              # sentinel value
 
     inclusionKMers = []         # current k-mer of inclusion files
     exclusionKMers = []         # current k-mer of exclusion files
+
+    # open files
+    inclusionFiles = []
+    exclusionFiles = []
+
+    # open inclusion files
+    for location in inclusionLocations:
+
+        if not os.path.isfile(location):
+            raise RuntimeError(
+                "ERROR: Could not open inclusion file: " +
+                str(location) + "\n")
+
+        inclusionFiles.append(open(location, 'r'))
+
+    # open exclusion files
+    for location in exclusionLocations:
+
+        if not os.path.isfile(location):
+            raise RuntimeError(
+                "ERROR: Could not open exclusion file: " +
+                str(location) + "\n")
+
+        exclusionFiles.append(open(location, 'r'))
+
+    outputFile = open(outputLocation, 'w')
 
     # initialize k-mers:
     for inclusionFile in inclusionFiles:
@@ -261,6 +291,44 @@ def aggregate(inclusionFiles, exclusionFiles, outputFile):
         # write aggregated k-mer to output
         outputString = str(kmer) + " " + str(incounts) + " " + str(excounts)
         outputFile.write(outputString + "\n")
+
+    # close files
+    for inclusion in inclusionFiles:
+
+        inclusion.close()
+
+    for exclusion in exclusionFiles:
+
+        exclusion.close()
+
+    outputFile.close()
+
+    # delete input files
+    if delete:
+
+        for filename in inclusionLocations + exclusionLocations:
+
+            if os.path.exists(filename):
+                    os.remove(filename)
+
+"""
+# =============================================================================
+
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    inclusionLocations = parameters[INCLUSION]
+    exclusionLocations = parameters[EXCLUSION]
+    outputLocation = parameters[OUTPUT]
+
+    delete = parameters[DELETE] \
+        if parameters[DELETE] else DELETE_DEFAULT
+
+    # aggregate
+    aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
 """
 # =============================================================================
@@ -307,70 +375,16 @@ def main():
         DELETE_LONG,
         dest=DELETE,
         help="delete input flag",
-        action='store_true', default=False)
+        action='store_true')
 
     args = parser.parse_args()
-
-    inclusionLocations = args.inclusion
-    exclusionLocations = args.exclusion
-    outputLocation = args.output
-    delete = args.delete
-
-    # open files
-    inclusionFiles = []
-    exclusionFiles = []
-
-    # open inclusion files
-    for location in inclusionLocations:
-
-        if not os.path.isfile(location):
-            raise RuntimeError(
-                "ERROR: Could not open inclusion file: " +
-                str(location) + "\n")
-
-        inclusionFiles.append(open(location, 'r'))
-
-    # open exclusion files
-    for location in exclusionLocations:
-
-        if not os.path.isfile(location):
-            raise RuntimeError(
-                "ERROR: Could not open exclusion file: " +
-                str(location) + "\n")
-
-        exclusionFiles.append(open(location, 'r'))
-
-    outputFile = open(outputLocation, 'w')
-
-    # aggregate
-    aggregate(inclusionFiles, exclusionFiles, outputFile)
-
-    # close files
-    for inclusion in inclusionFiles:
-
-        inclusion.close()
-
-    for exclusion in exclusionFiles:
-
-        exclusion.close()
-
-    outputFile.close()
-
-    # delete input files
-    if delete:
-
-        for filename in inclusionLocations + exclusionLocations:
-
-            if os.path.exists(filename):
-                    os.remove(filename)
+    parameters = vars(args)
+    parse(parameters)
 
 """
 # =============================================================================
-
-PARSING
-
 # =============================================================================
 """
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     main()
