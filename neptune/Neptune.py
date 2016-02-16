@@ -64,7 +64,7 @@ LOG = "log"
 
 # ARGUMENT NAMES
 OUTPUT = "output"
-CENTRALIZED = "central"
+DRMAA = "drmaa"
 DEFAULT_SPECIFICATION = "defaultSpecification"
 COUNT_SPECIFICATION = "countSpecification"
 AGGREGATE_SPECIFICATION = "aggregateSpecification"
@@ -77,7 +77,7 @@ CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
 LONG = "--"
 
 OUTPUT_LONG = LONG + OUTPUT
-CENTRALIZED_LONG = LONG + CENTRALIZED
+DRMAA_LONG = LONG + DRMAA
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
 AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
@@ -568,11 +568,11 @@ PARSE
 """
 def parse(parameters):
 
-    if parameters.get(CENTRALIZED):
-        executeParallel(parameters)
+    if parameters.get(DRMAA):
+        executeDRMAA(parameters)
 
     else:
-        executeDRMAA(parameters)
+        executeParallel(parameters)
 
 """
 # =============================================================================
@@ -714,8 +714,8 @@ def main():
         type=int, default=0)
 
     parser.add_argument(
-        CENTRALIZED_LONG,
-        dest=CENTRALIZED,
+        DRMAA_LONG,
+        dest=DRMAA,
         help="runs Neptune on a single machine, without using DRMAA",
         action='store_true')
 
