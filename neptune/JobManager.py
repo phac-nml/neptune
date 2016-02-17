@@ -35,6 +35,8 @@ managing the creation and execution of DRMAA jobs.
 # =============================================================================
 """
 
+import abc
+
 import drmaa
 import os
 import sys
@@ -55,6 +57,8 @@ JOB MANAGER
 """
 
 class JobManager:
+
+    __metaclass__ = abc.ABCMeta
 
     NEPTUNE_JOB = "Neptune"
     COUNT_JOB = "Neptune-CountKMers"
@@ -110,3 +114,42 @@ class JobManager:
         self.ID += 1
 
         return int(self.ID)
+
+    @abc.abstractmethod
+    def runJobs(self, jobs):
+        return
+
+    @abc.abstractmethod
+    def createCountJob(
+            self, inputLocation, outputLocation, k, parallelization):
+        return
+
+    @abc.abstractmethod
+    def createAggregateJob(
+            self, inclusionLocations, exclusionLocations,
+            outputLocation, tag):
+        return
+
+    @abc.abstractmethod
+    def createExtractJob(
+            self, referenceLocation, referenceSize, rate, inclusion, inhits,
+            exclusion, exhits, gap, size, GC, confidence, aggregateLocation,
+            outputLocation):
+        return
+
+    @abc.abstractmethod
+    def createDatabaseJob(
+            self, inputLocations, aggregatedLocation, outputLocation):
+        return
+
+    @abc.abstractmethod
+    def createFilterJob(
+            self, inclusionDatabaseLocation, exclusionDatabaseLocation,
+            inclusion, exclusion, inputLocation, filteredOutputLocation,
+            sortedOutputLocation, filterLength, filterPercent, seedSize):
+        return
+
+    @abc.abstractmethod
+    def createConsolidateJob(
+            self, signatureLocations, seedSize, outputDirectoryLocation):
+        return
