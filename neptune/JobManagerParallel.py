@@ -58,7 +58,7 @@ JOB MANAGER
 
 class JobManagerParallel(JobManager.JobManager):
 
-    outputQueue = multiprocessing.Queue()    # Multiprocessing Output Queue
+    pool = multiprocessing.Pool(processes=8)
 
     """
     # =========================================================================
@@ -103,9 +103,6 @@ class JobManagerParallel(JobManager.JobManager):
     """
     def runJobs(self, jobs):
 
-        for job in jobs:
-            job.start()
-
         print "Submitted " + str(len(jobs)) + " jobs."
         self.synchronize(jobs)
 
@@ -134,9 +131,8 @@ class JobManagerParallel(JobManager.JobManager):
     """
     def synchronize(self, jobs):
 
-        # Synchronize:
         for job in jobs:
-            job.join()
+            job.wait()
 
     """
     # =========================================================================
@@ -167,9 +163,7 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[CountKMers.KMER] = k
         parameters[CountKMers.PARALLEL] = parallelization
 
-        job = multiprocessing.Process(
-            target=CountKMers.parse,
-            args=(parameters,))
+        job = self.pool.apply_async(CountKMers.parse, args=(parameters,))
 
         return job
 
@@ -226,9 +220,7 @@ class JobManagerParallel(JobManager.JobManager):
         # DELETE
         parameters[AggregateKMers.DELETE] = True
 
-        job = multiprocessing.Process(
-            target=AggregateKMers.parse,
-            args=(parameters,))
+        job = self.pool.apply_async(AggregateKMers.parse, args=(parameters,))
 
         return job
 
@@ -322,9 +314,7 @@ class JobManagerParallel(JobManager.JobManager):
         # OUTPUT
         parameters[ExtractSignatures.OUTPUT] = outputLocation
 
-        job = multiprocessing.Process(
-            target=ExtractSignatures.parse,
-            args=(parameters,))
+        job = self.pool.apply_async(ExtractSignatures.parse, args=(parameters,))
 
         return job
 
@@ -370,9 +360,7 @@ class JobManagerParallel(JobManager.JobManager):
 
         aggregatedFile.close()
 
-        job = multiprocessing.Process(
-            target=Database.createDatabaseJob,
-            args=(aggregatedLocation, outputLocation,))
+        job = self.pool.apply_async(Database.createDatabaseJob, args=(aggregatedLocation, outputLocation,))
 
         return job
 
@@ -448,9 +436,7 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[FilterSignatures.SEED_SIZE] = seedSize \
             if seedSize else None
 
-        job = multiprocessing.Process(
-            target=FilterSignatures.parse,
-            args=(parameters,))
+        job = self.pool.apply_async(FilterSignatures.parse, args=(parameters,))
 
         return job
 
@@ -491,8 +477,6 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[ConsolidateSignatures.OUTPUT] = outputDirectoryLocation \
             if outputDirectoryLocation else None
 
-        job = multiprocessing.Process(
-            target=ConsolidateSignatures.parse,
-            args=(parameters,))
+        job = self.pool.apply_async(ConsolidateSignatures.parse, args=(parameters,))
 
         return job
