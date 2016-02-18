@@ -29,8 +29,10 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-This file contains the JobManager class. JobManager is responsible for
-managing the creation and execution of DRMAA jobs.
+This file contains the JobManagerParallel class. JobManagerParallel is
+responsible for managing the creation and execution of Python multiprocessing
+parallel jobs. This class is designed for Neptune execution on a single CPU or
+node.
 
 # =============================================================================
 """
@@ -67,9 +69,9 @@ class JobManagerParallel(JobManager.JobManager):
 
     INPUT:
         [FILE LOCATION] [outputDirectoryLocation] - The directory location to
-            write DRMAA output.
+            write Neptune output.
         [FILE LOCATION] [logDirectoryLocation] - The directory location to
-            write DRMAA output logs and error logs.
+            write output logs and error logs.
 
     # =========================================================================
     """
@@ -86,12 +88,11 @@ class JobManagerParallel(JobManager.JobManager):
     RUN JOBS
 
     PURPOSE:
-        Runs all the DRMAA jobs provided to the function. The jobs are
+        Runs all the Neptune jobs provided to the function. The jobs are
         synchronized and execution problems are reported if possible.
 
     INPUT:
-        [DRMAA JOB TEMPLATE ITERATOR] [jobs] - The DRMAA jobs to run in
-            parallel.
+        [JOB] [jobs] - The jobs to run in parallel.
 
     RETURN:
         [NONE]
@@ -140,7 +141,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE COUNT JOB
 
     PURPOSE:
-        Creates a count k-mer job.
+        Creates a CountKMers job.
 
     INPUT:
         [FILE LOCATION] [inputLocation] - The location of the input file.
@@ -149,7 +150,7 @@ class JobManagerParallel(JobManager.JobManager):
         [0 <= INT] [parallelization] - The degree of parallelization.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A CountKMer DRMAA job.
+        [JOB] [job] - A CountKMers job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -173,7 +174,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE AGGREGATE JOB
 
     PURPOSE:
-        Creates an aggregate k-mer job.
+        Creates an AggregateKMers job.
 
     INPUT:
         [STRING ITERATOR] [inclusionLocations] - An iterable object of all
@@ -185,7 +186,7 @@ class JobManagerParallel(JobManager.JobManager):
             appropriate file names from the inclusion and exclusion iterators.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - An aggregate k-mers job.
+        [JOB] [job] - An AggregateKMers job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -230,7 +231,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE EXTRACT JOB
 
     PURPOSE:
-        Creates an extract signatures job.
+        Creates an ExtractSignatures job.
 
     INPUT:
         [FILE LOCATION] [referenceLocation] - The location of the reference to
@@ -254,7 +255,8 @@ class JobManagerParallel(JobManager.JobManager):
         [FILE LOCATION] [outputLocation] - The location of the output file.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - An extract signatures job.
+        [JOB] [job] - An ExtractSignatures job that may be passed to
+            RunJobs(...).
 
     # =========================================================================
     """
@@ -324,7 +326,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE DATABASE JOB
 
     PURPOSE:
-        Creates a build database job.
+        Creates a BuildDatabase job.
 
     INPUT:
         [(FILE LOCATION) ITERATOR] [inputLocations] - The input locations of
@@ -332,7 +334,7 @@ class JobManagerParallel(JobManager.JobManager):
         [FILE LOCATION] [outputLocation] - The output location of the database.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A create database job.
+        [JOB] [job] - An BuildDatabase job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -370,7 +372,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE FILTER JOB
 
     PURPOSE:
-        Creates a filter signatures job.
+        Creates a FilterSignatures job.
 
     INPUT:
         [FILE LOCATION] [inclusionDatabaseLocation] - The location of the
@@ -390,7 +392,8 @@ class JobManagerParallel(JobManager.JobManager):
         [4 <= INT] [seedSize] - The seed size used in alignments.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A filter signatures job.
+        [JOB] [job] - A FilterSignatures job that may be passed to
+            RunJobs(...).
 
     # =========================================================================
     """
@@ -446,7 +449,7 @@ class JobManagerParallel(JobManager.JobManager):
     CREATE CONSOLIDATE JOB
 
     PURPOSE:
-        Creates a consolidate signatures job.
+        Creates a ConsolidateSignatures job.
 
     INPUT:
         [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune
@@ -456,7 +459,8 @@ class JobManagerParallel(JobManager.JobManager):
             to write the output files.
 
     RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A consolidate signatures job.
+        [JOB] [job] - A ConsolidateSignatures job that may be passed to
+            RunJobs(...).
 
     # =========================================================================
     """
