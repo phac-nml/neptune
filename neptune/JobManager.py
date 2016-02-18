@@ -37,17 +37,6 @@ managing the creation and execution of Neptune jobs.
 
 import abc
 
-import drmaa
-import os
-import sys
-import inspect
-
-import CountKMers
-import AggregateKMers
-import ExtractSignatures
-import FilterSignatures
-import ConsolidateSignatures
-
 """
 # =============================================================================
 

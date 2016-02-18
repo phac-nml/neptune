@@ -38,9 +38,6 @@ node.
 """
 
 import multiprocessing
-import os
-import sys
-import inspect
 
 import JobManager
 import CountKMers
@@ -164,7 +161,9 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[CountKMers.KMER] = k
         parameters[CountKMers.PARALLEL] = parallelization
 
-        job = self.pool.apply_async(CountKMers.parse, args=(parameters,))
+        job = self.pool.apply_async(
+            CountKMers.parse,
+            args=(parameters,))
 
         return job
 
@@ -221,7 +220,9 @@ class JobManagerParallel(JobManager.JobManager):
         # DELETE
         parameters[AggregateKMers.DELETE] = True
 
-        job = self.pool.apply_async(AggregateKMers.parse, args=(parameters,))
+        job = self.pool.apply_async(
+            AggregateKMers.parse,
+            args=(parameters,))
 
         return job
 
@@ -316,7 +317,9 @@ class JobManagerParallel(JobManager.JobManager):
         # OUTPUT
         parameters[ExtractSignatures.OUTPUT] = outputLocation
 
-        job = self.pool.apply_async(ExtractSignatures.parse, args=(parameters,))
+        job = self.pool.apply_async(
+            ExtractSignatures.parse,
+            args=(parameters,))
 
         return job
 
@@ -362,7 +365,9 @@ class JobManagerParallel(JobManager.JobManager):
 
         aggregatedFile.close()
 
-        job = self.pool.apply_async(Database.createDatabaseJob, args=(aggregatedLocation, outputLocation,))
+        job = self.pool.apply_async(
+            Database.createDatabaseJob,
+            args=(aggregatedLocation, outputLocation,))
 
         return job
 
@@ -405,10 +410,12 @@ class JobManagerParallel(JobManager.JobManager):
         parameters = {}
 
         # INCLUSION DATABASE
-        parameters[FilterSignatures.INCLUSION_DATABASE] = inclusionDatabaseLocation
+        parameters[FilterSignatures.INCLUSION_DATABASE] = \
+            inclusionDatabaseLocation
 
         # EXCLUSION DATABASE
-        parameters[FilterSignatures.EXCLUSION_DATABASE] = exclusionDatabaseLocation
+        parameters[FilterSignatures.EXCLUSION_DATABASE] = \
+            exclusionDatabaseLocation
 
         # INCLUSION
         parameters[FilterSignatures.INCLUSION] = inclusion \
@@ -439,7 +446,9 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[FilterSignatures.SEED_SIZE] = seedSize \
             if seedSize else None
 
-        job = self.pool.apply_async(FilterSignatures.parse, args=(parameters,))
+        job = self.pool.apply_async(
+            FilterSignatures.parse,
+            args=(parameters,))
 
         return job
 
@@ -481,6 +490,8 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[ConsolidateSignatures.OUTPUT] = outputDirectoryLocation \
             if outputDirectoryLocation else None
 
-        job = self.pool.apply_async(ConsolidateSignatures.parse, args=(parameters,))
+        job = self.pool.apply_async(
+            ConsolidateSignatures.parse,
+            args=(parameters,))
 
         return job

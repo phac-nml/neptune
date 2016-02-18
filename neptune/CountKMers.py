@@ -285,7 +285,7 @@ def parse(parameters):
     k = parameters[KMER]
 
     parallelization = parameters[PARALLEL] \
-        if parameters[PARALLEL] else PARALLELIZATION_DEFAULT 
+        if parameters[PARALLEL] else PARALLELIZATION_DEFAULT
 
     count(inputLocation, outputLocation, k, parallelization)
 

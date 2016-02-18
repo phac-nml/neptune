@@ -33,10 +33,8 @@ from scipy.misc import comb
 
 import Neptune
 import CountKMers
-import AggregateKMers
 import ExtractSignatures
 import FilterSignatures
-import ConsolidateSignatures
 import Utility
 
 """
@@ -104,8 +102,8 @@ class Execution():
         # -- GC-content --
         # 0.0 <= gc <= 1.0
         if (parameters.get(ExtractSignatures.GC_CONTENT) is not None and
-                (float(parameters.get(ExtractSignatures.GC_CONTENT)) < 0.0 or
-                    float(parameters.get(ExtractSignatures.GC_CONTENT)) > 1.0)):
+            (float(parameters.get(ExtractSignatures.GC_CONTENT)) < 0.0 or
+                float(parameters.get(ExtractSignatures.GC_CONTENT)) > 1.0)):
             raise RuntimeError("The GC-content is out of range.")
 
         self.gcContent = parameters.get(ExtractSignatures.GC_CONTENT)
@@ -113,8 +111,8 @@ class Execution():
         # -- statistical confidence --
         # 0.0 < confidence < 1.0
         if (parameters.get(ExtractSignatures.CONFIDENCE) is not None and
-                (float(parameters.get(ExtractSignatures.CONFIDENCE)) <= 0.0 or
-                    float(parameters.get(ExtractSignatures.CONFIDENCE)) >= 1.0)):
+            (float(parameters.get(ExtractSignatures.CONFIDENCE)) <= 0.0 or
+                float(parameters.get(ExtractSignatures.CONFIDENCE)) >= 1.0)):
             raise RuntimeError("The statistical confidence is out of range.")
 
         self.confidence = parameters.get(ExtractSignatures.CONFIDENCE)
@@ -122,8 +120,8 @@ class Execution():
         # -- filter length --
         # 0.0 <= filterLength <= 1.0
         if (parameters.get(FilterSignatures.FILTER_LENGTH) is not None and
-                (float(parameters.get(FilterSignatures.FILTER_LENGTH)) < 0.0 or
-                    float(parameters.get(FilterSignatures.FILTER_LENGTH)) > 1.0)):
+            (float(parameters.get(FilterSignatures.FILTER_LENGTH)) < 0.0 or
+                float(parameters.get(FilterSignatures.FILTER_LENGTH)) > 1.0)):
             raise RuntimeError("The filter length is out of range.")
 
         self.filterLength = parameters.get(FilterSignatures.FILTER_LENGTH)
@@ -131,8 +129,8 @@ class Execution():
         # -- filter percent --
         # 0.0 <= filterPercent <= 1.0
         if (parameters.get(FilterSignatures.FILTER_PERCENT) is not None and
-                (float(parameters.get(FilterSignatures.FILTER_PERCENT)) < 0.0 or
-                    float(parameters.get(FilterSignatures.FILTER_PERCENT)) > 1.0)):
+            (float(parameters.get(FilterSignatures.FILTER_PERCENT)) < 0.0 or
+                float(parameters.get(FilterSignatures.FILTER_PERCENT)) > 1.0)):
             raise RuntimeError("The filter percent is out of range.")
 
         self.filterPercent = parameters.get(FilterSignatures.FILTER_PERCENT)
@@ -159,7 +157,8 @@ class Execution():
             raise RuntimeError("Inclusion sequence(s) are missing.")
 
         self.inclusionLocations = []
-        Utility.expandInput(parameters.get(ExtractSignatures.INCLUSION),
+        Utility.expandInput(
+            parameters.get(ExtractSignatures.INCLUSION),
             self.inclusionLocations)
 
         if len(parameters.get(ExtractSignatures.INCLUSION)) is 0:
@@ -171,7 +170,8 @@ class Execution():
             raise RuntimeError("Exclusion sequence(s) are missing.")
 
         self.exclusionLocations = []
-        Utility.expandInput(parameters.get(ExtractSignatures.EXCLUSION),
+        Utility.expandInput(
+            parameters.get(ExtractSignatures.EXCLUSION),
             self.exclusionLocations)
 
         if len(parameters.get(ExtractSignatures.EXCLUSION)) is 0:
@@ -200,7 +200,8 @@ class Execution():
         else:
             self.estimateKMerSize()
 
-        self.outputDirectoryLocation = os.path.abspath(parameters.get(Neptune.OUTPUT))
+        self.outputDirectoryLocation = os.path.abspath(
+            parameters.get(Neptune.OUTPUT))
 
         if not os.path.exists(self.outputDirectoryLocation):
             os.makedirs(self.outputDirectoryLocation)
@@ -429,7 +430,7 @@ class Execution():
         self.reportCommandLine(receiptFile)
         self.reportFiles(receiptFile)
         self.reportGeneralParameters(receiptFile)
-        #self.reportDRMAAParameters(receiptFile) # TODO REPLACE?
+        # self.reportDRMAAParameters(receiptFile) # TODO REPLACE?
 
         receiptFile.close()
 
