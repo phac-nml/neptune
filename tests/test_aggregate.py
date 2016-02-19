@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -52,25 +52,23 @@ class TestFindSmallest(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case.
+        Tests a simple use case of finding the smallest element in a list.
 
     INPUT:
-        0: strings = ["a", "b", "c"], SENTINEL = "~"
+        strings = ["a", "b", "c"], SENTINEL = "~"
 
     EXPECTED:
-        0: "a"
+        "a"
 
     # =============================================================================
     """
     def test_simple(self):
 
-        # 0: strings = ["a", "b", "c"], SENTINEL = "~"
         strings = ["a", "b", "c"]
         SENTINEL = "~"
 
-        expected = "a"
         result = findSmallest(strings, SENTINEL)
-
+        expected = "a"
         self.assertEquals(result, expected)
 
     """ 
@@ -79,25 +77,23 @@ class TestFindSmallest(unittest.TestCase):
     test_empty_strings
 
     PURPOSE:
-        Tests when all strings are empty.
+        Tests finding the SENTINEL when all strings in the list are empty.
 
     INPUT:
-        0: strings = ["", "", ""], SENTINEL = "~"
+        strings = ["", "", ""], SENTINEL = "~"
 
     EXPECTED:
-        0: "~"
+        "~"
 
     # =============================================================================
     """
     def test_empty_strings(self):
 
-        # 0: strings = ["", "", ""], SENTINEL = "~"
         strings = ["", "", ""]
         SENTINEL = "~"
 
-        expected = SENTINEL
         result = findSmallest(strings, SENTINEL)
-
+        expected = SENTINEL
         self.assertEquals(result, expected)
 
     """ 
@@ -106,25 +102,24 @@ class TestFindSmallest(unittest.TestCase):
     test_mix
 
     PURPOSE:
-        Tests a mix of empty and non-empty strings.
+        Tests finding the smallest element in a list containing a mix of empty and
+        non-empty strings.
 
     INPUT:
-        0: strings = ["c", "", "a"], SENTINEL = "~"
+        strings = ["c", "", "a"], SENTINEL = "~"
 
     EXPECTED:
-        0: "a"
+        "a"
 
     # =============================================================================
     """
     def test_mix(self):
 
-        # 0: strings = ["c", "", "a"], SENTINEL = "~"
         strings = ["c", "", "a"]
         SENTINEL = "~"
 
-        expected = "a"
         result = findSmallest(strings, SENTINEL)
-
+        expected = "a"
         self.assertEquals(result, expected)
 
 """
@@ -142,10 +137,9 @@ class TestAggregate(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case.
+        Tests a simple k-mer aggregation use case.
 
     INPUT:
-        0:
 
         IN1: aggregate1.kmers:
         AAA
@@ -165,8 +159,8 @@ class TestAggregate(unittest.TestCase):
         TAA
 
     EXPECTED:
-        0:
 
+        OUT:
         AAA 2 0
         CAA 1 1
         GAA 1 1
@@ -176,20 +170,26 @@ class TestAggregate(unittest.TestCase):
     """
     def test_simple(self):
 
-        aggregateFile1 = open("tests/data/aggregate/aggregate1.kmers", 'r')
-        aggregateFile2 = open("tests/data/aggregate/aggregate2.kmers", 'r')
-        aggregateFile3 = open("tests/data/aggregate/aggregate3.kmers", 'r')
-        aggregateFile4 = open("tests/data/aggregate/aggregate4.kmers", 'r')
+        aggregateLocation1 = "tests/data/aggregate/aggregate1.kmers"
+        aggregateLocation2 = "tests/data/aggregate/aggregate2.kmers"
+        aggregateLocation3 = "tests/data/aggregate/aggregate3.kmers"
+        aggregateLocation4 = "tests/data/aggregate/aggregate4.kmers"
 
-        inclusionFiles = [aggregateFile1, aggregateFile2]
-        exclusionFiles = [aggregateFile3, aggregateFile4]
+        inclusionLocations = [aggregateLocation1, aggregateLocation2]
+        exclusionLocations = [aggregateLocation3, aggregateLocation4]
+        outputLocation = "tests/output/aggregate/kmers.out"
+        delete = False
 
-        output = StringIO.StringIO()
-        aggregate(inclusionFiles, exclusionFiles, output)
-        result = output.getvalue()
+        aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
-        expected = "AAA 2 0\nCAA 1 1\nGAA 1 1\nTAA 2 1\n"
-        self.assertEquals(result, expected)
+        # check the output
+        with open(outputLocation, "r") as myfile:
+
+            result = myfile.read()
+            expected = "AAA 2 0\nCAA 1 1\nGAA 1 1\nTAA 2 1\n"
+            self.assertEquals(result, expected)
+
+        os.remove(outputLocation)
 
     """ 
     # =============================================================================
@@ -197,10 +197,9 @@ class TestAggregate(unittest.TestCase):
     test_all_inclusion
 
     PURPOSE:
-        Tests when all files are inclusion.
+        Tests aggregation when there are inclusion files, but no exclusion files.
 
     INPUT:
-        0:
 
         IN1: aggregate1.kmers:
         AAA
@@ -213,8 +212,8 @@ class TestAggregate(unittest.TestCase):
         TAA
 
     EXPECTED:
-        0:
 
+        OUT:
         AAA 2 0
         CAA 1 0
         GAA 1 0
@@ -224,18 +223,24 @@ class TestAggregate(unittest.TestCase):
     """
     def test_all_inclusion(self):
 
-        aggregateFile1 = open("tests/data/aggregate/aggregate1.kmers", 'r')
-        aggregateFile2 = open("tests/data/aggregate/aggregate2.kmers", 'r')
+        aggregateLocation1 = "tests/data/aggregate/aggregate1.kmers"
+        aggregateLocation2 = "tests/data/aggregate/aggregate2.kmers"
 
-        inclusionFiles = [aggregateFile1, aggregateFile2]
-        exclusionFiles = []
+        inclusionLocations = [aggregateLocation1, aggregateLocation2]
+        exclusionLocations = []
+        outputLocation = "tests/output/aggregate/kmers.out"
+        delete = False
 
-        output = StringIO.StringIO()
-        aggregate(inclusionFiles, exclusionFiles, output)
-        result = output.getvalue()
+        aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
-        expected = "AAA 2 0\nCAA 1 0\nGAA 1 0\nTAA 2 0\n"
-        self.assertEquals(result, expected)
+        # check the output
+        with open(outputLocation, "r") as myfile:
+
+            result = myfile.read()
+            expected = "AAA 2 0\nCAA 1 0\nGAA 1 0\nTAA 2 0\n"
+            self.assertEquals(result, expected)
+
+        os.remove(outputLocation)
 
     """ 
     # =============================================================================
@@ -243,10 +248,9 @@ class TestAggregate(unittest.TestCase):
     test_all_exclusion
 
     PURPOSE:
-        Tests when all files are exclusion.
+        Tests aggregation when there are exclusion files, but not inclusion files.
 
     INPUT:
-        0:
 
         EX1: aggregate3.kmers:
         CAA
@@ -256,8 +260,8 @@ class TestAggregate(unittest.TestCase):
         TAA
 
     EXPECTED:
-        0:
 
+        OUT:
         CAA 0 1
         GAA 0 1
         TAA 0 1
@@ -266,18 +270,25 @@ class TestAggregate(unittest.TestCase):
     """
     def test_all_exclusion(self):
 
-        aggregateFile3 = open("tests/data/aggregate/aggregate3.kmers", 'r')
-        aggregateFile4 = open("tests/data/aggregate/aggregate4.kmers", 'r')
+        aggregateLocation3 = "tests/data/aggregate/aggregate3.kmers"
+        aggregateLocation4 = "tests/data/aggregate/aggregate4.kmers"
 
-        inclusionFiles = []
-        exclusionFiles = [aggregateFile3, aggregateFile4]
+        inclusionLocations = []
+        exclusionLocations = [aggregateLocation3, aggregateLocation4]
+        outputLocation = "tests/output/aggregate/kmers.out"
+        delete = False
 
-        output = StringIO.StringIO()
-        aggregate(inclusionFiles, exclusionFiles, output)
-        result = output.getvalue()
+        aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
-        expected = "CAA 0 1\nGAA 0 1\nTAA 0 1\n"
-        self.assertEquals(result, expected)
+        # check the output
+        with open(outputLocation, "r") as myfile:
+
+            result = myfile.read()
+            expected = "CAA 0 1\nGAA 0 1\nTAA 0 1\n"
+            self.assertEquals(result, expected)
+
+        os.remove(outputLocation)
+        
 
     """ 
     # =============================================================================
@@ -285,27 +296,34 @@ class TestAggregate(unittest.TestCase):
     test_nothing
 
     PURPOSE:
-        Tests when there are no input files.
+        Tests aggregation when there are neither inclusion or exclusion input
+        files.
 
     INPUT:
-        0: [NONE]
+        [NONE]
 
     EXPECTED:
-        0: [EMPTY STRING]
+        [EMPTY STRING] ("")
 
     # =============================================================================
     """
     def test_nothing(self):
 
-        inclusionFiles = []
-        exclusionFiles = []
+        inclusionLocations = []
+        exclusionLocations = []
+        outputLocation = "tests/output/aggregate/kmers.out"
+        delete = False
 
-        output = StringIO.StringIO()
-        aggregate(inclusionFiles, exclusionFiles, output)
-        result = output.getvalue()
+        aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
-        expected = ""
-        self.assertEquals(result, expected)
+        # check the output
+        with open(outputLocation, "r") as myfile:
+
+            result = myfile.read()
+            expected = ""
+            self.assertEquals(result, expected)
+
+        os.remove(outputLocation)
 
 """
 # =============================================================================
@@ -322,10 +340,9 @@ class TestMain(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case.
+        Tests a simple use case of the entire AggregateKMers execution.
 
     INPUT:
-        0:
 
         IN1: aggregate1.kmers:
         AAA
@@ -345,8 +362,8 @@ class TestMain(unittest.TestCase):
         TAA
 
     EXPECTED:
-        0:
 
+        OUT:
         AAA 2 0
         CAA 1 1
         GAA 1 1
@@ -369,6 +386,7 @@ class TestMain(unittest.TestCase):
 
         main()
 
+        # check the output
         with open(outputLocation, "r") as myfile:
 
             result = myfile.read()
@@ -383,10 +401,10 @@ class TestMain(unittest.TestCase):
     test_inclusion_file_missing
 
     PURPOSE:
-        Tests when an inclusion file is missing.
+        Tests the entire AggregateKMers execution when an inclusion file is
+        specified, but no such file exists on the file system.
 
     INPUT:
-        0:
 
         IN1: aggregate1.kmers:
         AAA
@@ -409,7 +427,7 @@ class TestMain(unittest.TestCase):
         TAA
 
     EXPECTED:
-        0: RuntimeError
+        [RuntimeError]
 
     # =============================================================================
     """
@@ -436,10 +454,10 @@ class TestMain(unittest.TestCase):
     test_exclusion_file_missing
 
     PURPOSE:
-        Tests when an exclusion file is missing.
+        Tests the entire AggregateKMers execution when an exclusion file is
+        specified, but no such file exists on the file system.
 
     INPUT:
-        0:
 
         IN1: aggregate1.kmers:
         AAA
@@ -462,7 +480,7 @@ class TestMain(unittest.TestCase):
         [DOES NOT EXIST]
 
     EXPECTED:
-        0: RuntimeError
+        [RuntimeError]
 
     # =============================================================================
     """
@@ -489,10 +507,10 @@ class TestMain(unittest.TestCase):
     test_delete_input
 
     PURPOSE:
-        Tests deleting the input files.
+        Tests the entire AggregateKMers execution with file deletion after
+        execution.
 
     INPUT:
-        0:
 
         IN1: tempLocation1.kmers
         AAA
@@ -503,7 +521,7 @@ class TestMain(unittest.TestCase):
         GAA
 
     EXPECTED:
-        0: files tempLocation1.kmers and tempLocation2.kmers do not exist
+        (files tempLocation1.kmers and tempLocation2.kmers do not exist)
 
     # =============================================================================
     """
