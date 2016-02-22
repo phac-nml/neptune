@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -391,7 +391,7 @@ class Execution():
                 return
 
         # No suitable k estimated.
-        raise RuntimeError("ERROR: No suitable value for k determined. \n")
+        raise RuntimeError("ERROR: No suitable value for k determined.\n")
 
     """
     # =========================================================================

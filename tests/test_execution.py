@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -26,6 +26,8 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
+import unittest
+
 import drmaa
 import os
 import sys
@@ -37,161 +39,474 @@ prepareSystemPath()
 
 from neptune.Execution import *
 
-import unittest
+import neptune.JobManager
+import neptune.JobManagerParallel
+import neptune.JobManagerDRMAA
+
+import neptune.Neptune
+import neptune.CountKMers
+import neptune.ExtractSignatures
+import neptune.FilterSignatures
+import neptune.Utility
 
 class DefaultArgs():
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 5
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        confidence = 0.95
-        parallelization = 0
-        inclusion = [getPath("tests/data/simple.fasta")]
-        exclusion = [getPath("tests/data/alternative.fasta")]
-        referenceSize = 12
-        reference = ["tests/data/simple.fasta"]
-        output = getPath("tests/output/temp.dir")
-        seedSize = 11
+        def __init__(self):
 
-        defaultSpecification = None
-        countSpecification = None
-        aggregateSpecification = None
-        extractSpecification = None
-        databaseSpecification = None
-        filterSpecification = None
-        consolidateSpecification = None
+            parameters = {}
 
+            parameters[CountKMers.KMER] = 5
+            parameters[CountKMers.PARALLEL] = 0
+
+            parameters[ExtractSignatures.RATE] = 0.01
+            parameters[ExtractSignatures.INHITS] = 1
+            parameters[ExtractSignatures.EXHITS] = 2
+            parameters[ExtractSignatures.GAP] = 5
+            parameters[ExtractSignatures.SIZE] = 5
+            parameters[ExtractSignatures.GC_CONTENT] = 0.5
+            parameters[ExtractSignatures.CONFIDENCE] = 0.95
+            parameters[ExtractSignatures.INCLUSION] = [getPath("tests/data/execution/simple.fasta")]
+            parameters[ExtractSignatures.EXCLUSION] = [getPath("tests/data/execution/alternative.fasta")]
+            parameters[ExtractSignatures.REFERENCE] = ["tests/data/execution/simple.fasta"]
+            parameters[ExtractSignatures.REFERENCE_SIZE] = 12
+
+            parameters[FilterSignatures.FILTER_LENGTH] = 0.5
+            parameters[FilterSignatures.FILTER_PERCENT] = 0.5
+            parameters[FilterSignatures.SEED_SIZE] = 9
+
+            parameters[Neptune.OUTPUT] = getPath("tests/output/execution/temp.dir")
+
+            parameters[Neptune.DEFAULT_SPECIFICATION] = None
+            parameters[Neptune.COUNT_SPECIFICATION] = None
+            parameters[Neptune.AGGREGATE_SPECIFICATION] = None
+            parameters[Neptune.EXTRACT_SPECIFICATION] = None
+            parameters[Neptune.DATABASE_SPECIFICATION] = None
+            parameters[Neptune.FILTER_SPECIFICATION] = None
+            parameters[Neptune.CONSOLIDATE_SPECIFICATION] = None
+
+            self.parameters = parameters
+
+def buildParallelJobManager():
+
+    outputDirectoryLocation = "tests/output/execution/temp.dir"
+    logDirectoryLocation = "tests/output/execution/temp.dir"
+
+    jobManager = neptune.JobManagerParallel.JobManagerParallel(
+        outputDirectoryLocation, logDirectoryLocation)
+
+    return jobManager
+
+def buildDRMAAJobManager(session, defaultSpecification):
+
+    outputDirectoryLocation = "tests/output/execution/temp.dir"
+    logDirectoryLocation = "tests/output/execution/temp.dir"
+
+    jobManager = neptune.JobManagerDRMAA.JobManagerDRMAA(
+        outputDirectoryLocation, logDirectoryLocation,
+        session, defaultSpecification)
+
+    return jobManager
+
+""" 
+# =============================================================================
+
+TEST EXECUTION CONSTRUCTOR
+
+# =============================================================================
+"""
 class TestExecutionConstructor(unittest.TestCase):
 
+    """ 
+    # =============================================================================
+
+    test_simple
+
+    PURPOSE:
+        Tests a simple case of Execution construction.
+
+    INPUT:
+        ParallelJobManager
+        DefaultArgs().parameters
+
+    EXPECTED:
+        The execution does not encounter any errors.
+
+    # =============================================================================
+    """
     def test_simple(self):
 
-        args = DefaultArgs()
+        jobManager = buildParallelJobManager()
 
-        with drmaa.Session() as session:
-            execution = Execution(session, args)
+        parameters = DefaultArgs().parameters
 
+        execution = Execution(jobManager, parameters)
+
+    """ 
+    # =============================================================================
+
+    test_no_inclusion
+
+    PURPOSE:
+        Tests Execution construction when the inclusion targets are missing.
+
+    INPUT:
+        ParallelJobManager
+        DefaultArgs().parameters
+
+        parameters[ExtractSignatures.INCLUSION] = None
+
+    EXPECTED:
+        A RuntimeError occurs.
+
+    # =============================================================================
+    """
     def test_no_inclusion(self):
 
-        args = DefaultArgs()
-        args.inclusion = None
+        jobManager = buildParallelJobManager()   
 
-        with drmaa.Session() as session:
-            with self.assertRaises(RuntimeError):
-                execution = Execution(session, args)
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.INCLUSION] = None
 
+        with self.assertRaises(RuntimeError):
+            execution = Execution(jobManager, parameters)
+
+    """ 
+    # =============================================================================
+
+    test_no_exclusion
+
+    PURPOSE:
+        Tests Execution construction when the exclusion targets are missing.
+
+    INPUT:
+        ParallelJobManager
+        DefaultArgs().parameters
+
+        parameters[ExtractSignatures.EXCLUSION] = None
+
+    EXPECTED:
+        A RuntimeError occurs.
+
+    # =============================================================================
+    """
     def test_no_exclusion(self):
 
-        args = DefaultArgs()
-        args.exclusion = None
+        jobManager = buildParallelJobManager()
 
-        with drmaa.Session() as session:
-            with self.assertRaises(RuntimeError):
-                execution = Execution(session, args)
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.EXCLUSION] = None
 
+        with self.assertRaises(RuntimeError):
+            execution = Execution(jobManager, parameters)
+
+    """ 
+    # =============================================================================
+
+    test_no_output
+
+    PURPOSE:
+        Tests Execution construction when the output is None.
+
+    INPUT:
+        ParallelJobManager
+        DefaultArgs().parameters
+
+        parameters[Neptune.OUTPUT] = None
+
+    EXPECTED:
+        A RuntimeError occurs.
+
+    # =============================================================================
+    """
     def test_no_output(self):
 
-        args = DefaultArgs()
-        args.output = None
+        jobManager = buildParallelJobManager() 
 
-        with drmaa.Session() as session:
-            with self.assertRaises(RuntimeError):
-                execution = Execution(session, args)
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.OUTPUT] = None
 
+        with self.assertRaises(RuntimeError):
+            execution = Execution(jobManager, parameters)
+
+    """ 
+    # =============================================================================
+
+    test_default_specification
+
+    PURPOSE:
+        Tests Execution construction when the default specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.DEFAULT_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The count, aggregate, extract, database, filter, and consolidate
+        specifications all match the provided default specification.
+
+    # =============================================================================
+    """
     def test_default_specification(self):
 
-        args = DefaultArgs()
         defaultSpecification = "-l h_vmem=2G -pe smp 1"
-        args.defaultSpecification = defaultSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.DEFAULT_SPECIFICATION] = defaultSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, defaultSpecification)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, defaultSpecification)
             self.assertEquals(execution.jobManager.aggregateSpecification, defaultSpecification)
             self.assertEquals(execution.jobManager.extractSpecification, defaultSpecification)
             self.assertEquals(execution.jobManager.databaseSpecification, defaultSpecification)
             self.assertEquals(execution.jobManager.filterSpecification, defaultSpecification)
+            self.assertEquals(execution.jobManager.consolidateSpecification, defaultSpecification)
 
-    def test_count_specification(self):
+    """ 
+    # =============================================================================
 
-        args = DefaultArgs()
+    test_count_specification
+
+    PURPOSE:
+        Tests Execution construction when the count specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.COUNT_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, count specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
+    def test_count_specification(self): 
+
         countSpecification = "-l h_vmem=2G -pe smp 1"
-        args.countSpecification = countSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.COUNT_SPECIFICATION] = countSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, countSpecification)
             self.assertEquals(execution.jobManager.aggregateSpecification, None)
             self.assertEquals(execution.jobManager.extractSpecification, None)
             self.assertEquals(execution.jobManager.databaseSpecification, None)
             self.assertEquals(execution.jobManager.filterSpecification, None)
+            self.assertEquals(execution.jobManager.consolidateSpecification, None)
 
+    """ 
+    # =============================================================================
+
+    test_aggregate_specification
+
+    PURPOSE:
+        Tests Execution construction when the aggregate specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.AGGREGATE_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, aggregate specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
     def test_aggregate_specification(self):
 
-        args = DefaultArgs()
         aggregateSpecification = "-l h_vmem=2G -pe smp 1"
-        args.aggregateSpecification = aggregateSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.AGGREGATE_SPECIFICATION] = aggregateSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, None)
             self.assertEquals(execution.jobManager.aggregateSpecification, aggregateSpecification)
             self.assertEquals(execution.jobManager.extractSpecification, None)
             self.assertEquals(execution.jobManager.databaseSpecification, None)
             self.assertEquals(execution.jobManager.filterSpecification, None)
+            self.assertEquals(execution.jobManager.consolidateSpecification, None)
 
+    """ 
+    # =============================================================================
+
+    test_extract_specification
+
+    PURPOSE:
+        Tests Execution construction when the extract specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.EXTRACT_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, extract specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
     def test_extract_specification(self):
 
-        args = DefaultArgs()
         extractSpecification = "-l h_vmem=2G -pe smp 1"
-        args.extractSpecification = extractSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.EXTRACT_SPECIFICATION] = extractSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, None)
             self.assertEquals(execution.jobManager.aggregateSpecification, None)
             self.assertEquals(execution.jobManager.extractSpecification, extractSpecification)
             self.assertEquals(execution.jobManager.databaseSpecification, None)
             self.assertEquals(execution.jobManager.filterSpecification, None)
+            self.assertEquals(execution.jobManager.consolidateSpecification, None)
 
+    """ 
+    # =============================================================================
+
+    test_database_specification
+
+    PURPOSE:
+        Tests Execution construction when the database specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.DATABASE_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, database specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
     def test_database_specification(self):
 
-        args = DefaultArgs()
         databaseSpecification = "-l h_vmem=2G -pe smp 1"
-        args.databaseSpecification = databaseSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.DATABASE_SPECIFICATION] = databaseSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, None)
             self.assertEquals(execution.jobManager.aggregateSpecification, None)
             self.assertEquals(execution.jobManager.extractSpecification, None)
             self.assertEquals(execution.jobManager.databaseSpecification, databaseSpecification)
             self.assertEquals(execution.jobManager.filterSpecification, None)
+            self.assertEquals(execution.jobManager.consolidateSpecification, None)
 
-    def test_filter_specification(self):
+    """ 
+    # =============================================================================
 
-        args = DefaultArgs()
+    test_filter_specification
+
+    PURPOSE:
+        Tests Execution construction when the filter specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.FILTER_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, filter specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
+    def test_filter_specification(self):  
+
         filterSpecification = "-l h_vmem=2G -pe smp 1"
-        args.filterSpecification = filterSpecification
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.FILTER_SPECIFICATION] = filterSpecification
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
 
             self.assertEquals(execution.jobManager.countSpecification, None)
             self.assertEquals(execution.jobManager.aggregateSpecification, None)
             self.assertEquals(execution.jobManager.extractSpecification, None)
             self.assertEquals(execution.jobManager.databaseSpecification, None)
             self.assertEquals(execution.jobManager.filterSpecification, filterSpecification)
+            self.assertEquals(execution.jobManager.consolidateSpecification, None)
+
+    """ 
+    # =============================================================================
+
+    test_consolidate_specification
+
+    PURPOSE:
+        Tests Execution construction when the consolidate specification is provided.
+
+    INPUT:
+        JobManagerDRMAA
+        DefaultArgs().parameters
+
+        parameters[Neptune.CONSOLIDATE_SPECIFICATION] = "-l h_vmem=2G -pe smp 1"
+
+    EXPECTED:
+        The native specifications are all None. However, consolidate specification
+        matches the provided specification.
+
+    # =============================================================================
+    """
+    def test_consolidate_specification(self):  
+
+        consolidateSpecification = "-l h_vmem=2G -pe smp 1"
+
+        parameters = DefaultArgs().parameters
+        parameters[Neptune.CONSOLIDATE_SPECIFICATION] = consolidateSpecification
+
+        with drmaa.Session() as session:
+
+            jobManager = buildDRMAAJobManager(session, None)
+
+            execution = Execution(jobManager, parameters)
+
+            self.assertEquals(execution.jobManager.countSpecification, None)
+            self.assertEquals(execution.jobManager.aggregateSpecification, None)
+            self.assertEquals(execution.jobManager.extractSpecification, None)
+            self.assertEquals(execution.jobManager.databaseSpecification, None)
+            self.assertEquals(execution.jobManager.filterSpecification, None)
+            self.assertEquals(execution.jobManager.consolidateSpecification, consolidateSpecification)
 
 """ 
 # =============================================================================
@@ -208,10 +523,10 @@ class CalculateExpectedKMerHits(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case.
+        Tests a simple use case of calculating the expected number of k-mer hits.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.50
         length = 10000
         k-mer size = 11
@@ -239,7 +554,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the GC-content is low.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.01
         length = 10000
         k-mer size = 11
@@ -267,7 +582,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the GC-content is high.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.99
         length = 10000
         k-mer size = 11
@@ -295,7 +610,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the genome size is short.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.50
         length = 12
         k-mer size = 11
@@ -323,7 +638,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the genome size is long.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.50
         length = 1000000000
         k-mer size = 11
@@ -351,7 +666,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the k-mer size is small.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.50
         length = 10000
         k-mer size = 2
@@ -379,7 +694,7 @@ class CalculateExpectedKMerHits(unittest.TestCase):
         Tests when the k-mer size is large.
 
     INPUT:
-        DEFAULT ARGS:
+
         gc-content = 0.50
         length = 10000
         k-mer size = 101
@@ -416,7 +731,7 @@ class EstimateKMerSize(unittest.TestCase):
         Tests a simple use case.
 
     INPUT:
-        DEFAULT ARGS:
+
         GC = 0.50
         length = 12
 
@@ -427,12 +742,14 @@ class EstimateKMerSize(unittest.TestCase):
     """
     def test_simple(self):
 
-        args = DefaultArgs()
-        args.inclusion = [getPath("tests/data/simple.fasta")]
+        jobManager = buildParallelJobManager()
+
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.INCLUSION] = [getPath("tests/data/simple.fasta")]
 
         with drmaa.Session() as session:
-            execution = Execution(session, args)
 
+            execution = Execution(jobManager, parameters)
             execution.estimateKMerSize()
 
 if __name__ == '__main__':
