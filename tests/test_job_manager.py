@@ -35,20 +35,29 @@ from TestingUtility import *
 prepareSystemPath()
 
 from neptune.JobManager import *
+from neptune.JobManagerDRMAA import JobManagerDRMAA
+from neptune.JobManagerParallel import JobManagerParallel
+
+import neptune.CountKMers as CountKMers
+import neptune.AggregateKMers as AggregateKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
+import neptune.Utility as Utility
 
 import unittest
 
-class TestConstructor(unittest.TestCase):
+class TestDRMAAConstructor(unittest.TestCase):
 
     def test_no_defaults(self):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             defaultSpecification = None
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, defaultSpecification)
+            jobManager = JobManagerDRMAA(
+                outputDirectoryLocation, logDirectoryLocation, session, defaultSpecification)
 
             self.assertEquals(jobManager.session, session)
             self.assertEquals(jobManager.outputDirectoryLocation, outputDirectoryLocation)
@@ -64,11 +73,12 @@ class TestConstructor(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             defaultSpecification = "-l h_vmem=16G -pe smp 8"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, defaultSpecification)
+            jobManager = JobManagerDRMAA(
+                outputDirectoryLocation, logDirectoryLocation, session, defaultSpecification)
 
             self.assertEquals(jobManager.session, session)
             self.assertEquals(jobManager.outputDirectoryLocation, outputDirectoryLocation)
@@ -79,6 +89,17 @@ class TestConstructor(unittest.TestCase):
             self.assertEquals(jobManager.databaseSpecification, defaultSpecification)
             self.assertEquals(jobManager.filterSpecification, defaultSpecification)
 
+class TestParallelConstructor(unittest.TestCase):
+
+    def test_simple(self):
+
+        outputDirectoryLocation = getPath("tests/output/manager")
+        logDirectoryLocation = getPath("tests/output/manager/log")
+
+        jobManager = JobManagerParallel(outputDirectoryLocation, logDirectoryLocation)
+
+        self.assertEquals(jobManager.outputDirectoryLocation, outputDirectoryLocation)
+        self.assertEquals(jobManager.logDirectoryLocation, logDirectoryLocation)
 
 class TestSetCount(unittest.TestCase):
 
@@ -88,7 +109,7 @@ class TestSetCount(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            jobManager = JobManager(session, getPath("tests/output"), getPath("tests/output/log"), None)
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
 
             self.assertEquals(jobManager.countSpecification, None)
             jobManager.setCountSpecification(specification)
@@ -102,7 +123,7 @@ class TestSetAggregate(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            jobManager = JobManager(session, getPath("tests/output"), getPath("tests/output/log"), None)
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
 
             self.assertEquals(jobManager.aggregateSpecification, None)
             jobManager.setAggregateSpecification(specification)
@@ -116,7 +137,7 @@ class TestSetExtract(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            jobManager = JobManager(session, getPath("tests/output"), getPath("tests/output/log"), None)
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
 
             self.assertEquals(jobManager.extractSpecification, None)
             jobManager.setExtractSpecification(specification)
@@ -130,7 +151,7 @@ class TestSetDatabase(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            jobManager = JobManager(session, getPath("tests/output"), getPath("tests/output/log"), None)
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
 
             self.assertEquals(jobManager.databaseSpecification, None)
             jobManager.setDatabaseSpecification(specification)
@@ -144,39 +165,51 @@ class TestSetFilter(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            jobManager = JobManager(session, getPath("tests/output"), getPath("tests/output/log"), None)
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
 
             self.assertEquals(jobManager.filterSpecification, None)
             jobManager.setFilterSpecification(specification)
             self.assertEquals(jobManager.filterSpecification, specification)
 
+class TestSetConsolidate(unittest.TestCase):
+
+    def test_simple(self):
+
+        specification = "-l h_vmem=16G -pe smp 8"
+
+        with drmaa.Session() as session:
+
+            jobManager = JobManagerDRMAA(getPath("tests/output/manager"), getPath("tests/output/manager/log"), session, None)
+
+            self.assertEquals(jobManager.consolidateSpecification, None)
+            jobManager.setConsolidateSpecification(specification)
+            self.assertEquals(jobManager.consolidateSpecification, specification)
+
 class TestRunJobs(unittest.TestCase):
 
     def test_simple(self):
 
-        with drmaa.Session() as session:
+        outputDirectoryLocation = getPath("tests/output/manager/output")
+        logDirectoryLocation = getPath("tests/output/manager/log")
+        jobManager = JobManagerParallel(outputDirectoryLocation, logDirectoryLocation)
 
-            outputDirectoryLocation = getPath("tests/output/manager/output")
-            logDirectoryLocation = getPath("tests/output/manager/log")
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+        inputLocation = getPath("tests/data/manager/simple.fasta")
+        outputLocation = getPath("tests/output/manager/temp.out")
+        k = 7
+        parallelization = 0
 
-            inputLocation = getPath("tests/data/manager/simple.fasta")
-            outputLocation = getPath("tests/output/manager/temp.out")
-            k = 7
-            parallelization = 0
+        job = jobManager.createCountJob(inputLocation, outputLocation, k, parallelization)
 
-            job = jobManager.createCountJob(inputLocation, outputLocation, k, parallelization)
+        jobManager.runJobs([job])
 
-            jobManager.runJobs([job])
+        with open (outputLocation, "r") as myfile:
+            result = myfile.read()
 
-            with open (outputLocation, "r") as myfile:
-                result = myfile.read()
+        expected = "ACGTACG 4\nGTACGTA 2\n"
 
-            expected = "ACGTACG 4\nGTACGTA 2\n"
+        self.assertEquals(result, expected)
 
-            self.assertEquals(result, expected)
-
-            os.remove(outputLocation)
+        os.remove(outputLocation)
 
 class TestCreateJob(unittest.TestCase):
 
@@ -184,11 +217,11 @@ class TestCreateJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             defaultSpecification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, defaultSpecification)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, defaultSpecification)
 
             job = jobManager.createJob()
             self.assertTrue(job)
@@ -203,11 +236,11 @@ class TestCreateCountJob(unittest.TestCase):
             logDirectoryLocation = getPath("tests/output/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setCountSpecification(specification)
 
-            inputLocation = "tests/data/simple.fasta"
-            outputLocation = getPath("tests/output/temp.out")
+            inputLocation = "tests/data/manager/simple.fasta"
+            outputLocation = getPath("tests/output/manager/temp.out")
             k = 7
             parallelization = 0
 
@@ -230,23 +263,23 @@ class TestCreateAggregateJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setAggregateSpecification(specification)
 
-            inclusionLocations = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            exclusionLocations = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            outputLocation = getPath("tests/output/temp.out")
+            inclusionLocations = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            exclusionLocations = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            outputLocation = getPath("tests/output/manager/temp.out")
             tag = "A"
 
             job = jobManager.createAggregateJob(inclusionLocations, exclusionLocations, outputLocation, tag)
 
             args = [
-                AggregateKMers.INCLUSION_LONG, "tests/data/simple.fasta" + "." + tag, "tests/data/alternative.fasta" + "." + tag,
-                AggregateKMers.EXCLUSION_LONG, "tests/data/simple.fasta" + "." + tag, "tests/data/alternative.fasta" + "." + tag,
+                AggregateKMers.INCLUSION_LONG, "tests/data/manager/simple.fasta" + "." + tag, "tests/data/manager/alternative.fasta" + "." + tag,
+                AggregateKMers.EXCLUSION_LONG, "tests/data/manager/simple.fasta" + "." + tag, "tests/data/manager/alternative.fasta" + "." + tag,
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
@@ -259,23 +292,23 @@ class TestCreateAggregateJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setAggregateSpecification(specification)
 
-            inclusionLocations = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            exclusionLocations = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            outputLocation = getPath("tests/output/temp.out")
+            inclusionLocations = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            exclusionLocations = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            outputLocation = getPath("tests/output/manager/temp.out")
             tag = None
 
             job = jobManager.createAggregateJob(inclusionLocations, exclusionLocations, outputLocation, tag)
 
             args = [
-                AggregateKMers.INCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta",
-                AggregateKMers.EXCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta",
+                AggregateKMers.INCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta",
+                AggregateKMers.EXCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta",
                 AggregateKMers.OUTPUT_LONG, outputLocation,
                 AggregateKMers.DELETE_LONG]
 
@@ -290,26 +323,26 @@ class TestCreateExtractJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setExtractSpecification(specification)
 
-            referenceLocation = "tests/data/simple.fasta"
+            referenceLocation = "tests/data/manager/simple.fasta"
             referenceSize = 12
             rate = 0.01
-            inclusion = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
+            inclusion = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
             inhits = 2
-            exclusion = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
+            exclusion = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
             exhits = 2
             gap = 3
             size = 5
             GC = 0.5
             confidence = 0.95
-            aggregateLocation = "tests/data/simple.kmers"
-            outputLocation = getPath("tests/output/temp.out")
+            aggregateLocation = "tests/data/manager/simple.kmers"
+            outputLocation = getPath("tests/output/manager/temp.out")
 
             job = jobManager.createExtractJob(referenceLocation, referenceSize, rate, inclusion, inhits, 
 		        exclusion, exhits, gap, size, GC, confidence, aggregateLocation, outputLocation)
@@ -318,9 +351,9 @@ class TestCreateExtractJob(unittest.TestCase):
 			    ExtractSignatures.REFERENCE_LONG, str(referenceLocation), 
 			    ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize), 
 			    ExtractSignatures.RATE_LONG, str(rate), 
-			    ExtractSignatures.INCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta",
+			    ExtractSignatures.INCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta",
                 ExtractSignatures.INHITS_LONG, str(inhits),
-                ExtractSignatures.EXCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta",
+                ExtractSignatures.EXCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta",
                 ExtractSignatures.EXHITS_LONG, str(exhits),
                 ExtractSignatures.GAP_LONG, str(gap),
                 ExtractSignatures.SIZE_LONG, str(size),
@@ -340,16 +373,16 @@ class TestCreateDatabaseJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setDatabaseSpecification(specification)
 
-            inputLocations = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            aggregatedLocation = getPath("tests/output/aggregated.out")
-            outputLocation = getPath("tests/output/temp.out")
+            inputLocations = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            aggregatedLocation = getPath("tests/output/manager/aggregated.out")
+            outputLocation = getPath("tests/output/manager/temp.out")
 
             job = jobManager.createDatabaseJob(inputLocations, aggregatedLocation, outputLocation)
 
@@ -370,20 +403,20 @@ class TestCreateFilterJob(unittest.TestCase):
 
         with drmaa.Session() as session:
 
-            outputDirectoryLocation = getPath("tests/output")
-            logDirectoryLocation = getPath("tests/output/log")
+            outputDirectoryLocation = getPath("tests/output/manager")
+            logDirectoryLocation = getPath("tests/output/manager/log")
             specification = "-l h_vmem=2G -pe smp 1"
 
-            jobManager = JobManager(session, outputDirectoryLocation, logDirectoryLocation, None)
+            jobManager = JobManagerDRMAA(outputDirectoryLocation, logDirectoryLocation, session, None)
             jobManager.setFilterSpecification(specification)
 
-            inclusionDatabaseLocation = "tests/data/FAKE_IN_DB.FAKE"
-            exclusionDatabaseLocation = "tests/data/FAKE_EX_DB.FAKE"
-            inclusion = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            exclusion = ["tests/data/simple.fasta", "tests/data/alternative.fasta"]
-            inputLocation = "tests/data/simple.fasta"
-            filteredOutputLocation = getPath("tests/output/simple.filtered")
-            sortedOutputLocation = getPath("tests/output/simple.sorted")
+            inclusionDatabaseLocation = "tests/data/manager/FAKE_IN_DB.FAKE"
+            exclusionDatabaseLocation = "tests/data/manager/FAKE_EX_DB.FAKE"
+            inclusion = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            exclusion = ["tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta"]
+            inputLocation = "tests/data/manager/simple.fasta"
+            filteredOutputLocation = getPath("tests/output/manager/simple.filtered")
+            sortedOutputLocation = getPath("tests/output/manager/simple.sorted")
             filterLength = 0.5
             filterPercent = 0.5
             seedSize = 11
@@ -395,8 +428,8 @@ class TestCreateFilterJob(unittest.TestCase):
             args = [
 			    FilterSignatures.INCLUSION_DATABASE_LONG, str(inclusionDatabaseLocation), 
                 FilterSignatures.EXCLUSION_DATABASE_LONG, str(exclusionDatabaseLocation), 
-                FilterSignatures.INCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta", 
-                FilterSignatures.EXCLUSION_LONG, "tests/data/simple.fasta", "tests/data/alternative.fasta", 
+                FilterSignatures.INCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta", 
+                FilterSignatures.EXCLUSION_LONG, "tests/data/manager/simple.fasta", "tests/data/manager/alternative.fasta", 
                 FilterSignatures.INPUT_LONG, str(inputLocation), 
                 FilterSignatures.FILTERED_OUTPUT_LONG, str(filteredOutputLocation), 
                 FilterSignatures.SORTED_OUTPUT_LONG, str(sortedOutputLocation), 
