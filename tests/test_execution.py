@@ -745,7 +745,7 @@ class EstimateKMerSize(unittest.TestCase):
         jobManager = buildParallelJobManager()
 
         parameters = DefaultArgs().parameters
-        parameters[ExtractSignatures.INCLUSION] = [getPath("tests/data/simple.fasta")]
+        parameters[ExtractSignatures.INCLUSION] = [getPath("tests/data/execution/simple.fasta")]
 
         with drmaa.Session() as session:
 
