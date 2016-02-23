@@ -38,14 +38,12 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.1.0**
+**Neptune 1.1.1**
 
 2016 January 19
 
-This release of Neptune introduces a simple signature consolidation step, which
-consolidates signatures produced from multiple files into a single file.
-Furthermore, the software has been updated to be compatible with the Slurm
-scheduler.
+This release of Neptune updates the installation instructions to be more
+informative.
 
 ## Requirements ##
 ------------------
@@ -64,16 +62,42 @@ the following dependencies must be installed by the user:
 ## Installation ##
 ------------------
 
-Please refer to the manual for full installation instructions.
+**
+It is strongly recommended you refer to the manual for full installation
+instructions. The following description is an abridged version of the
+installation process.
+**
 
-The user will need to install and configure a DRMAA-compliant scheduler and
-Python DRMAA bindings. Please refer to the instructions available at:
+Install and configure a DRMAA-compliant scheduler and Python DRMAA bindings.
+This process may require considerable time. Please refer to the
+instructions available at:
 
 	https://github.com/pygridtools/drmaa-python
 
-Neptune may be installed using pipsi:
+The pipsi tool is installed using the following command:
 
-	pipsi install /path/to/neptune/
+	curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
+
+You may need to add the pipsi install location to your PATH variable. For BASH
+shells, this can be done by adding the following line to your bashrc (usually
+~/.bashrc) file:
+
+	export PATH=$PATH:~/.local/bin
+
+You will then need to source your bashrc file:
+
+	source ~/.bashrc
+
+You may use the following command to ensure the PATH was updated correctly. It
+should display your PATH with "local/bin" highlighted. If nothing is displayed,
+then you have not updated your PATH correctly.
+
+	echo $PATH | grep local/bin
+
+Install Neptune using the pipsi tool:
+
+	pipsi install /path/to/neptune/download/location/
+
 
 ## Running Neptune ##
 ---------------------
