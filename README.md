@@ -70,23 +70,23 @@ considerable time. Please refer to the instructions available at:
 
 	https://github.com/pygridtools/drmaa-python
 
-The pipsi tool is installed using the following command:
+The pipsi tool may be installed using the following command:
 
-	curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
+	$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
 
 You may need to add the pipsi install location to your PATH variable. For BASH
-shells, this can be done by adding the following line to your bashrc (usually
-~/.bashrc) file:
+shells, this can be done by adding the following line to your bashrc file
+(usually ~/.bashrc):
 
 	export PATH=$PATH:~/.local/bin
 
-You will then need to source your bashrc file:
+You will then likely need to source your bashrc file:
 
-	source ~/.bashrc
+	$ source ~/.bashrc
 
-Install Neptune using the pipsi tool:
+Finally, install Neptune using pipsi:
 
-	pipsi install /path/to/neptune/download/location/
+	$ pipsi install /path/to/neptune/download/location/
 
 
 ## Running Neptune ##
@@ -94,11 +94,11 @@ Install Neptune using the pipsi tool:
 
 Neptune's command line arguments can be found by running:
 
-	neptune --help
+	$ neptune --help
 
 A simple example of running Neptune:
 
-	neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
+	$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
 		--output /path/to/output/ --parallelization 3
 
 Please refer to the documentation for more details.
