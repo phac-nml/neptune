@@ -40,7 +40,7 @@ probabilistic models instead of heuristic strategies.
 
 **Neptune 1.1.1**
 
-2016 February 23
+2016 February 24
 
 This release of Neptune updates the installation instructions to be more
 informative.
