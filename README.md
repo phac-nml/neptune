@@ -62,15 +62,11 @@ the following dependencies must be installed by the user:
 ## Installation ##
 ------------------
 
-**
 It is strongly recommended you refer to the manual for full installation
 instructions. The following description is an abridged version of the
-installation process.
-**
-
-Install and configure a DRMAA-compliant scheduler and Python DRMAA bindings.
-This process may require considerable time. Please refer to the
-instructions available at:
+installation process. The user will need to install and configure a
+DRMAA-compliant scheduler and Python DRMAA bindings. This process may require
+considerable time. Please refer to the instructions available at:
 
 	https://github.com/pygridtools/drmaa-python
 
@@ -87,12 +83,6 @@ shells, this can be done by adding the following line to your bashrc (usually
 You will then need to source your bashrc file:
 
 	source ~/.bashrc
-
-You may use the following command to ensure the PATH was updated correctly. It
-should display your PATH with "local/bin" highlighted. If nothing is displayed,
-then you have not updated your PATH correctly.
-
-	echo $PATH | grep local/bin
 
 Install Neptune using the pipsi tool:
 
