@@ -39,6 +39,21 @@ from neptune.Database import *
 
 import unittest
 
+class DefaultFilterSignatures():
+
+    def __init__(self):
+
+        candidatesLocation = getPath("tests/data/filter/long.fasta")
+        filteredLocation = getPath("tests/output/filter/temp.out")
+        sortedLocation = getPath("tests/output/filter/temp.out")
+        totalInclusion = 1
+        totalExclusion = 1
+        filterLength = 0.5
+
+        self.default = FilterSignatures(
+            candidatesLocation, filteredLocation, sortedLocation,
+            totalInclusion, totalExclusion, filterLength)
+
 """
 # =============================================================================
 
@@ -98,44 +113,44 @@ class TestUpdateHitOverallDictionary(unittest.TestCase):
     """
     def test_simple(self):
 
-        bestOverall = {}
+        filterSignatures = DefaultFilterSignatures().default
 
         query1 = "query1"
         query2 = "query2"
 
         # empty
-        self.assertDictEqual(bestOverall, {})
+        self.assertDictEqual(filterSignatures.hitOverallDictionary, {})
 
         #0:
         hit1 = Hit(str(query1) + " 10 subject 20 0.50 1")
-        updateHitOverallDictionary(hit1, bestOverall)
+        filterSignatures.updateHitOverallDictionary(hit1)
         expected = {}
         expected[query1] = hit1
-        self.assertDictEqual(bestOverall, expected)
+        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
 
         #1:
         hit2 = Hit(str(query2) + " 10 subject 20 0.50 1")
-        updateHitOverallDictionary(hit2, bestOverall)
+        filterSignatures.updateHitOverallDictionary(hit2)
         expected = {}
         expected[query1] = hit1
         expected[query2] = hit2
-        self.assertDictEqual(bestOverall, expected)
+        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
 
         #2:
         hit3 = Hit(str(query1) + " 13 subject 20 0.60 3")
-        updateHitOverallDictionary(hit3, bestOverall)
+        filterSignatures.updateHitOverallDictionary(hit3)
         expected = {}
         expected[query1] = hit3
         expected[query2] = hit2
-        self.assertDictEqual(bestOverall, expected)
+        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
 
         #3:
         hit4 = Hit(str(query2) + " 13 subject 20 0.60 3")
-        updateHitOverallDictionary(hit4, bestOverall)
+        filterSignatures.updateHitOverallDictionary(hit4)
         expected = {}
         expected[query1] = hit3
         expected[query2] = hit4
-        self.assertDictEqual(bestOverall, expected)
+        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
 
 """
 # =============================================================================
@@ -182,7 +197,7 @@ class TestUpdateHitPairDictionary(unittest.TestCase):
     """
     def test_simple(self):
 
-        bestPairs = {}
+        filterSignatures = DefaultFilterSignatures().default
 
         pair1 = ("query1", "subject1")
         pair2 = ("query1", "subject2")
@@ -199,73 +214,73 @@ class TestUpdateHitPairDictionary(unittest.TestCase):
         hit8 = Hit("query2 13 subject2 20 0.60 3")
 
         # empty
-        self.assertDictEqual(bestPairs, {})
+        self.assertDictEqual(filterSignatures.hitPairDictionary, {})
 
         #0:
-        updateHitPairDictionary(hit1, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
         expected = {}
         expected[pair1] = hit1
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #1:
-        updateHitPairDictionary(hit2, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit2)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #2:
-        updateHitPairDictionary(hit3, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit3)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
         expected[pair3] = hit3
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #3:
-        updateHitPairDictionary(hit4, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit4)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #4:
-        updateHitPairDictionary(hit5, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit5)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit2
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #5:
-        updateHitPairDictionary(hit6, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit6)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #6:
-        updateHitPairDictionary(hit7, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit7)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit7
         expected[pair4] = hit4
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
         #7:
-        updateHitPairDictionary(hit8, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit8)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit7
         expected[pair4] = hit8
-        self.assertDictEqual(bestPairs, expected)
+        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
 
 """
 # =============================================================================
@@ -302,31 +317,30 @@ class TestUpdateExclusionScores(unittest.TestCase):
     """
     def test_simple(self):
 
-        overallScore.clear()
-        exclusionScore.clear()
+        filterSignatures = DefaultFilterSignatures().default
+        filterSignatures.totalExclusion = 2
 
         hit1 = Hit("query1 20 subject1 10 20 1")
         hit2 = Hit("query1 20 subject2 10 40 1")
         hit3 = Hit("query2 20 subject1 10 60 1")
         hit4 = Hit("query2 20 subject2 10 80 1")
 
-        bestPairs = {}
-        updateHitPairDictionary(hit1, bestPairs)
-        updateHitPairDictionary(hit2, bestPairs)
-        updateHitPairDictionary(hit3, bestPairs)
-        updateHitPairDictionary(hit4, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updateHitPairDictionary(hit4)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(exclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.exclusionScore, {})
 
-        updateExclusionScores(bestPairs, 2)
+        filterSignatures.updateExclusionScores()
   
-        self.assertAlmostEqual(overallScore["query1"], -0.15)
-        self.assertAlmostEqual(overallScore["query2"], -0.35)
+        self.assertAlmostEqual(filterSignatures.overallScore["query1"], -0.15)
+        self.assertAlmostEqual(filterSignatures.overallScore["query2"], -0.35)
 
-        self.assertAlmostEqual(exclusionScore["query1"], -0.15)
-        self.assertAlmostEqual(exclusionScore["query2"], -0.35)
+        self.assertAlmostEqual(filterSignatures.exclusionScore["query1"], -0.15)
+        self.assertAlmostEqual(filterSignatures.exclusionScore["query2"], -0.35)
 
     """ 
     # =============================================================================
@@ -354,31 +368,30 @@ class TestUpdateExclusionScores(unittest.TestCase):
     """
     def test_longer_alignment(self):
 
-        overallScore.clear()
-        exclusionScore.clear()
+        filterSignatures = DefaultFilterSignatures().default
+        filterSignatures.totalExclusion = 2
 
         hit1 = Hit("query1 10 subject1 20 10 1")
         hit2 = Hit("query1 10 subject2 20 20 1")
         hit3 = Hit("query2 10 subject1 20 30 1")
         hit4 = Hit("query2 10 subject2 20 40 1")
 
-        bestPairs = {}
-        updateHitPairDictionary(hit1, bestPairs)
-        updateHitPairDictionary(hit2, bestPairs)
-        updateHitPairDictionary(hit3, bestPairs)
-        updateHitPairDictionary(hit4, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updateHitPairDictionary(hit4)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(exclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.exclusionScore, {})
 
-        updateExclusionScores(bestPairs, 2)
+        filterSignatures.updateExclusionScores()
   
-        self.assertAlmostEqual(overallScore["query1"], -0.30)
-        self.assertAlmostEqual(overallScore["query2"], -0.70)
+        self.assertAlmostEqual(filterSignatures.overallScore["query1"], -0.30)
+        self.assertAlmostEqual(filterSignatures.overallScore["query2"], -0.70)
 
-        self.assertAlmostEqual(exclusionScore["query1"], -0.30)
-        self.assertAlmostEqual(exclusionScore["query2"], -0.70)
+        self.assertAlmostEqual(filterSignatures.exclusionScore["query1"], -0.30)
+        self.assertAlmostEqual(filterSignatures.exclusionScore["query2"], -0.70)
 
 """
 # =============================================================================
@@ -415,31 +428,30 @@ class TestUpdateInclusionScores(unittest.TestCase):
     """
     def test_simple(self):
 
-        overallScore.clear()
-        inclusionScore.clear()
+        filterSignatures = DefaultFilterSignatures().default
+        filterSignatures.totalInclusion = 2
 
         hit1 = Hit("query1 20 subject1 10 20 1")
         hit2 = Hit("query1 20 subject2 10 40 1")
         hit3 = Hit("query2 20 subject1 10 60 1")
         hit4 = Hit("query2 20 subject2 10 80 1")
 
-        bestPairs = {}
-        updateHitPairDictionary(hit1, bestPairs)
-        updateHitPairDictionary(hit2, bestPairs)
-        updateHitPairDictionary(hit3, bestPairs)
-        updateHitPairDictionary(hit4, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updateHitPairDictionary(hit4)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(inclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.inclusionScore, {})
 
-        updateInclusionScores(bestPairs, 2)
+        filterSignatures.updateInclusionScores()
   
-        self.assertAlmostEqual(overallScore["query1"], 0.15)
-        self.assertAlmostEqual(overallScore["query2"], 0.35)
+        self.assertAlmostEqual(filterSignatures.overallScore["query1"], 0.15)
+        self.assertAlmostEqual(filterSignatures.overallScore["query2"], 0.35)
 
-        self.assertAlmostEqual(inclusionScore["query1"], 0.15)
-        self.assertAlmostEqual(inclusionScore["query2"], 0.35)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["query1"], 0.15)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["query2"], 0.35)
 
     """ 
     # =============================================================================
@@ -467,31 +479,30 @@ class TestUpdateInclusionScores(unittest.TestCase):
     """
     def test_longer_alignment(self):
 
-        overallScore.clear()
-        inclusionScore.clear()
+        filterSignatures = DefaultFilterSignatures().default
+        filterSignatures.totalInclusion = 2
 
         hit1 = Hit("query1 10 subject1 20 10 1")
         hit2 = Hit("query1 10 subject2 20 20 1")
         hit3 = Hit("query2 10 subject1 20 30 1")
         hit4 = Hit("query2 10 subject2 20 40 1")
 
-        bestPairs = {}
-        updateHitPairDictionary(hit1, bestPairs)
-        updateHitPairDictionary(hit2, bestPairs)
-        updateHitPairDictionary(hit3, bestPairs)
-        updateHitPairDictionary(hit4, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updateHitPairDictionary(hit4)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(inclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.inclusionScore, {})
 
-        updateInclusionScores(bestPairs, 2)
+        filterSignatures.updateInclusionScores()
   
-        self.assertAlmostEqual(overallScore["query1"], 0.30)
-        self.assertAlmostEqual(overallScore["query2"], 0.70)
+        self.assertAlmostEqual(filterSignatures.overallScore["query1"], 0.30)
+        self.assertAlmostEqual(filterSignatures.overallScore["query2"], 0.70)
 
-        self.assertAlmostEqual(inclusionScore["query1"], 0.30)
-        self.assertAlmostEqual(inclusionScore["query2"], 0.70)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["query1"], 0.30)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["query2"], 0.70)
 
 """
 # =============================================================================
@@ -520,26 +531,25 @@ class TestReportCandidates(unittest.TestCase):
     # =============================================================================
     """
     def test_simple(self):
+
+        filterSignatures = DefaultFilterSignatures().default
         
-        candidatesLocation = getPath("tests/data/filter/long.fasta")
-        outputLocation = getPath("tests/output/filter/temp.out")
-
-        hitOverallDictionary = {}
-
-        filterLength = 0.5
+        filterSignatures.candidatesLocation = getPath("tests/data/filter/long.fasta")
+        filterSignatures.filteredLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures.filterLength = 0.5
 
         hit1 = Hit("long 84 subject 40 100 10")
-        updateHitOverallDictionary(hit1, hitOverallDictionary)
+        filterSignatures.updateHitOverallDictionary(hit1)
 
-        reportFilteredCandidates(candidatesLocation, outputLocation, hitOverallDictionary, filterLength)
+        filterSignatures.reportFilteredCandidates()
 
-        with open (outputLocation, "r") as myfile:
+        with open (filterSignatures.filteredLocation, "r") as myfile:
 
             result = myfile.read()
             expected = ">long score=0.0000 in=0.0000 ex=0.0000 len=84 ref=reference pos=0\nACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
             self.assertEquals(result, expected)
 
-        os.remove(outputLocation)
+        os.remove(filterSignatures.filteredLocation)
 
     """ 
     # =============================================================================
@@ -558,26 +568,25 @@ class TestReportCandidates(unittest.TestCase):
     # =============================================================================
     """
     def test_too_large(self):
+
+        filterSignatures = DefaultFilterSignatures().default
         
-        candidatesLocation = getPath("tests/data/filter/long.fasta")
-        outputLocation = getPath("tests/output/filter/temp.out")
-
-        bestOverall = {}
-
-        filterLength = 0.5
+        filterSignatures.candidatesLocation = getPath("tests/data/filter/long.fasta")
+        filterSignatures.filteredLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures.filterLength = 0.5
 
         hit1 = Hit("long 84 subject 50 100 10")
-        updateHitOverallDictionary(hit1, bestOverall)
+        filterSignatures.updateHitOverallDictionary(hit1)
 
-        reportFilteredCandidates(candidatesLocation, outputLocation, bestOverall, filterLength)
+        filterSignatures.reportFilteredCandidates()
 
-        with open (outputLocation, "r") as myfile:
+        with open (filterSignatures.filteredLocation, "r") as myfile:
 
             result = myfile.read()
             expected = ""
             self.assertEquals(result, expected)
 
-        os.remove(outputLocation)
+        os.remove(filterSignatures.filteredLocation)
 
 """
 # =============================================================================
@@ -607,35 +616,33 @@ class TestReportSorted(unittest.TestCase):
     """
     def test_simple(self):
 
-        filteredLocation = getPath("tests/data/filter/long.fasta")
-        outputLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures = DefaultFilterSignatures().default
 
-        overallScore.clear()
-        inclusionScore.clear()
-        exclusionScore.clear()
+        filterSignatures.filteredLocation = getPath("tests/data/filter/long.fasta")
+        filterSignatures.sortedLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures.totalInclusion = 2
 
         hit1 = Hit("long 84 subject1 42 20 1")
         hit2 = Hit("long 84 subject2 42 40 1")
 
-        bestPairs = {}
-        updateHitPairDictionary(hit1, bestPairs)
-        updateHitPairDictionary(hit2, bestPairs)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(inclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.inclusionScore, {})
 
-        updateInclusionScores(bestPairs, 2)
+        filterSignatures.updateInclusionScores()
   
-        self.assertAlmostEqual(overallScore["long"], 0.15)
-        self.assertAlmostEqual(inclusionScore["long"], 0.15)
+        self.assertAlmostEqual(filterSignatures.overallScore["long"], 0.15)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["long"], 0.15)
 
         sortedSignatureIDs = [ID for (ID, score) in sorted(
-            overallScore.items(), key=operator.itemgetter(1), reverse=True)]
+            filterSignatures.overallScore.items(), key=operator.itemgetter(1), reverse=True)]
 
-        reportSorted(filteredLocation, outputLocation, sortedSignatureIDs)
+        filterSignatures.reportSorted(sortedSignatureIDs)
 
-        with open (outputLocation, "r") as myfile:
+        with open (filterSignatures.sortedLocation, "r") as myfile:
 
             result = myfile.read()
 
@@ -645,7 +652,7 @@ class TestReportSorted(unittest.TestCase):
 
             self.assertEquals(result, expected)
 
-        os.remove(outputLocation)
+        os.remove(filterSignatures.sortedLocation)
 
     """ 
     # =============================================================================
@@ -669,12 +676,11 @@ class TestReportSorted(unittest.TestCase):
     """
     def test_multiple_signatures(self):
 
-        filteredLocation = getPath("tests/data/filter/multiple.fasta")
-        outputLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures = DefaultFilterSignatures().default
 
-        overallScore.clear()
-        inclusionScore.clear()
-        exclusionScore.clear()
+        filterSignatures.filteredLocation = getPath("tests/data/filter/multiple.fasta")
+        filterSignatures.sortedLocation = getPath("tests/output/filter/temp.out")
+        filterSignatures.totalInclusion = 4
 
         hit1 = Hit("long1 84 reference1 84 80 60")
         hit2 = Hit("long1 84 reference2 84 100 84")
@@ -682,30 +688,29 @@ class TestReportSorted(unittest.TestCase):
         hit3 = Hit("long2 84 reference3 84 60 40")
         hit4 = Hit("long2 84 reference4 84 80 60")
 
-        hitPairDictionary = {}
-        updateHitPairDictionary(hit1, hitPairDictionary)
-        updateHitPairDictionary(hit2, hitPairDictionary)
-        updateHitPairDictionary(hit3, hitPairDictionary)
-        updateHitPairDictionary(hit4, hitPairDictionary)
+        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updateHitPairDictionary(hit4)
 
         # empty
-        self.assertDictEqual(overallScore, {})
-        self.assertDictEqual(inclusionScore, {})
+        self.assertDictEqual(filterSignatures.overallScore, {})
+        self.assertDictEqual(filterSignatures.inclusionScore, {})
 
-        updateInclusionScores(hitPairDictionary, 4)
+        filterSignatures.updateInclusionScores()
   
-        self.assertAlmostEqual(overallScore["long1"], 0.45)
-        self.assertAlmostEqual(inclusionScore["long1"], 0.45)
+        self.assertAlmostEqual(filterSignatures.overallScore["long1"], 0.45)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["long1"], 0.45)
 
-        self.assertAlmostEqual(overallScore["long2"], 0.35)
-        self.assertAlmostEqual(inclusionScore["long2"], 0.35)
+        self.assertAlmostEqual(filterSignatures.overallScore["long2"], 0.35)
+        self.assertAlmostEqual(filterSignatures.inclusionScore["long2"], 0.35)
 
         sortedSignatureIDs = [ID for (ID, score) in sorted(
-            overallScore.items(), key=operator.itemgetter(1), reverse=True)]
+            filterSignatures.overallScore.items(), key=operator.itemgetter(1), reverse=True)]
 
-        reportSorted(filteredLocation, outputLocation, sortedSignatureIDs)
+        filterSignatures.reportSorted(sortedSignatureIDs)
 
-        with open (outputLocation, "r") as myfile:
+        with open (filterSignatures.sortedLocation, "r") as myfile:
 
             result = myfile.read()
             expected = (
@@ -715,7 +720,7 @@ class TestReportSorted(unittest.TestCase):
                 + "ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT\n")
             self.assertEquals(result, expected)
 
-        os.remove(outputLocation)
+        os.remove(filterSignatures.sortedLocation)
 
 if __name__ == '__main__':
     
