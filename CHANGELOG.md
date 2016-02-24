@@ -2,6 +2,15 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.1.1] - 2016-02-24
+
+This release of Neptune updates the installation instructions to be more
+informative.
+
+### Changed
+- Updated README and manual installation instructions.
+- Modified the style of code examples in the manual.
+
 ## [1.1.0] - 2016-01-19
 
 This release of Neptune introduces a simple signature consolidation step, which
