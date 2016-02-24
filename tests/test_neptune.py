@@ -666,6 +666,55 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    # designed to catch possible parallel race-condition failure with many files
+    def test_multiple_files(self):
+
+        kmer = 5
+        rate = 0.01
+        inhits = 1
+        exhits = 2
+        gap = 5
+        size = 4
+        gcContent = 0.5
+        filterLength = 0.5
+        filterPercent = 0.5
+        parallelization = 0
+        inclusion = getPath("tests/data/neptune/large_inclusion")
+        exclusion = getPath("tests/data/neptune/large_exclusion")
+        referenceSize = 12
+        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
+        sortedDirectoryLocation = os.path.join(outputDirectoryLocation, "sorted")
+
+        sys.argv[1:] = [
+            CountKMers.KMER_LONG, str(kmer),
+            ExtractSignatures.RATE_LONG, str(rate),
+            ExtractSignatures.INHITS_LONG, str(inhits),
+            ExtractSignatures.EXHITS_LONG, str(exhits),
+            ExtractSignatures.GAP_LONG, str(gap),
+            ExtractSignatures.SIZE_LONG, str(size),
+            ExtractSignatures.GC_LONG, str(gcContent),
+            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
+            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
+            CountKMers.PARALLEL_LONG, str(parallelization),
+            ExtractSignatures.INCLUSION_LONG, str(inclusion),
+            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
+            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
+            OUTPUT_LONG, str(outputDirectoryLocation)]
+
+        main()
+
+        with open (os.path.join(sortedDirectoryLocation, "in0.fasta"), "r") as myfile:
+
+            result = myfile.readline()
+            expected = ">0 score=0.8889 in=1.0000 ex=-0.1111 len=99 ref=inclusion0 pos=999"
+            self.assertEquals(result, expected)
+
+            result = myfile.readline()
+            expected = "CGGTTTCTTCATATATAACCCCGTCGGCGCTTCAGAAAACAGGGATGTATAGAATCTCTGCGTCAGAACGGCATCTAAAATCAAAACGGTATTGATGAC\n"
+            self.assertEquals(result, expected)
+
+        shutil.rmtree(outputDirectoryLocation)
+
 if __name__ == '__main__':
     
     unittest.main()
