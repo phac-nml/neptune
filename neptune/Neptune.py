@@ -711,7 +711,7 @@ def main():
         CountKMers.PARALLEL_LONG,
         dest=CountKMers.PARALLEL,
         help="number of base positions used in parallelization",
-        type=int, default=0)
+        type=int, default=3)
 
     parser.add_argument(
         DRMAA_LONG,
