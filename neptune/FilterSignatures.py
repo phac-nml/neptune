@@ -373,7 +373,6 @@ class FilterSignatures():
                     Signature.writeSignature(signature, outputFile)
 
             else:
-
                 Signature.writeSignature(signature, outputFile)
 
         outputFile.close()
@@ -460,7 +459,7 @@ class FilterSignatures():
 
         exclusionQueryFile = open(exclusionQueryLocation, 'r')
 
-        # LOAD FILTER
+        # LOAD EXCLUSION DATABASE FILE
         for line in exclusionQueryFile:
 
             hit = Database.Hit(line)
@@ -498,7 +497,7 @@ class FilterSignatures():
 
         inclusionQueryFile = open(inclusionQueryLocation, 'r')
 
-        # LOAD FILTER
+        # LOAD INCLUSION DATABASE FILE
         for line in inclusionQueryFile:
 
             hit = Database.Hit(line)
