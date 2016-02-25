@@ -38,630 +38,263 @@ from neptune.Neptune import *
 
 import unittest
 
+class DefaultArgs():
+
+        def __init__(self):
+
+            parameters = {}
+
+            parameters[CountKMers.KMER] = 5
+            parameters[CountKMers.PARALLEL] = 0
+
+            parameters[ExtractSignatures.RATE] = 0.01
+            parameters[ExtractSignatures.INHITS] = 1
+            parameters[ExtractSignatures.EXHITS] = 2
+            parameters[ExtractSignatures.GAP] = 5
+            parameters[ExtractSignatures.SIZE] = 5
+            parameters[ExtractSignatures.GC_CONTENT] = 0.5
+            parameters[ExtractSignatures.CONFIDENCE] = 0.95
+            parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/simple.fasta")
+            parameters[ExtractSignatures.EXCLUSION] = getPath("tests/data/neptune/alternative.fasta")
+            parameters[ExtractSignatures.REFERENCE] = ["tests/data/neptune/simple.fasta"]
+            parameters[ExtractSignatures.REFERENCE_SIZE] = 12
+
+            parameters[FilterSignatures.FILTER_LENGTH] = 0.5
+            parameters[FilterSignatures.FILTER_PERCENT] = 0.5
+            parameters[FilterSignatures.SEED_SIZE] = 9
+
+            parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
+
+            parameters[DEFAULT_SPECIFICATION] = None
+            parameters[COUNT_SPECIFICATION] = None
+            parameters[AGGREGATE_SPECIFICATION] = None
+            parameters[EXTRACT_SPECIFICATION] = None
+            parameters[DATABASE_SPECIFICATION] = None
+            parameters[FILTER_SPECIFICATION] = None
+            parameters[CONSOLIDATE_SPECIFICATION] = None
+
+            self.parameters = parameters
+
+def setCommandLineArguments(parameters):
+
+        sys.argv[1:] = [
+            CountKMers.KMER_LONG, str(parameters[CountKMers.KMER]),
+            ExtractSignatures.RATE_LONG, str(parameters[ExtractSignatures.RATE]),
+            ExtractSignatures.INHITS_LONG, str(parameters[ExtractSignatures.INHITS]),
+            ExtractSignatures.EXHITS_LONG, str(parameters[ExtractSignatures.EXHITS]),
+            ExtractSignatures.GAP_LONG, str(parameters[ExtractSignatures.GAP]),
+            ExtractSignatures.SIZE_LONG, str(parameters[ExtractSignatures.SIZE]),
+            ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
+            FilterSignatures.FILTER_LENGTH_LONG, str(parameters[FilterSignatures.FILTER_LENGTH]),
+            FilterSignatures.FILTER_PERCENT_LONG, str(parameters[FilterSignatures.FILTER_PERCENT]),
+            CountKMers.PARALLEL_LONG, str(parameters[CountKMers.PARALLEL]),
+            ExtractSignatures.INCLUSION_LONG, str(parameters[ExtractSignatures.INCLUSION]),
+            ExtractSignatures.EXCLUSION_LONG, str(parameters[ExtractSignatures.EXCLUSION]),
+            ExtractSignatures.REFERENCE_SIZE_LONG, str(parameters[ExtractSignatures.REFERENCE_SIZE]),
+            OUTPUT_LONG, str(parameters[OUTPUT])]
+
 class TestMain(unittest.TestCase):
 
     def test_simple(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 4
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/neptune/simple.fasta")
-        exclusion = getPath("tests/data/neptune/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
-        sortedDirectoryLocation = os.path.join(outputDirectoryLocation, "sorted")
+        parameters = DefaultArgs().parameters
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
-
+        setCommandLineArguments(parameters)
         main()
 
-        with open (os.path.join(sortedDirectoryLocation, "simple.fasta"), "r") as myfile:
+        sortedOutputDirectory = os.path.join(parameters[OUTPUT], "sorted")
+        with open (os.path.join(sortedOutputDirectory, "simple.fasta"), "r") as myfile:
 
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
             self.assertEquals(result, expected)
 
-        shutil.rmtree(outputDirectoryLocation)
+        shutil.rmtree(parameters[OUTPUT])
 
-    def test_simple_directories(self):
+    def test_simple_input_directories(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 4
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/neptune/simple_inclusion")
-        exclusion = getPath("tests/data/neptune/simple_exclusion")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
-        sortedDirectoryLocation = os.path.join(outputDirectoryLocation, "sorted")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/simple_inclusion")
+        parameters[ExtractSignatures.EXCLUSION] = getPath("tests/data/neptune/simple_exclusion")
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
-
+        setCommandLineArguments(parameters)
         main()
 
-        with open (os.path.join(sortedDirectoryLocation, "inclusion1.fasta"), "r") as myfile:
+        sortedOutputDirectory = os.path.join(parameters[OUTPUT], "sorted")
+        with open (os.path.join(sortedOutputDirectory, "inclusion1.fasta"), "r") as myfile:
 
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
             self.assertEquals(result, expected)
 
-        shutil.rmtree(outputDirectoryLocation)
+        shutil.rmtree(parameters[OUTPUT])
 
     def test_parallel(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 4
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 1
-        inclusion = getPath("tests/data/neptune/simple.fasta")
-        exclusion = getPath("tests/data/neptune/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
-        sortedDirectoryLocation = os.path.join(outputDirectoryLocation, "sorted")
+        parameters = DefaultArgs().parameters
+        parameters[CountKMers.PARALLEL] = 1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
-
+        setCommandLineArguments(parameters)
         main()
 
-        with open (os.path.join(sortedDirectoryLocation, "simple.fasta"), "r") as myfile:
+        sortedOutputDirectory = os.path.join(parameters[OUTPUT], "sorted")
+        with open (os.path.join(sortedOutputDirectory, "simple.fasta"), "r") as myfile:
 
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
             self.assertEquals(result, expected)
 
-        shutil.rmtree(outputDirectoryLocation)
+        shutil.rmtree(parameters[OUTPUT])
 
     def test_specify_reference(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 4
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/neptune/simple.fasta")
-        exclusion = getPath("tests/data/neptune/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
-        sortedDirectoryLocation = os.path.join(outputDirectoryLocation, "sorted")
-        reference = getPath("tests/data/neptune/simple.fasta")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.REFERENCE] = getPath("tests/data/neptune/simple.fasta")
 
-        sys.argv[1:] = [
-            ExtractSignatures.REFERENCE_LONG, str(reference),
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
-
+        setCommandLineArguments(parameters)
         main()
 
-        with open (os.path.join(sortedDirectoryLocation, "simple.fasta"), "r") as myfile:
+        sortedOutputDirectory = os.path.join(parameters[OUTPUT], "sorted")
+        with open (os.path.join(sortedOutputDirectory, "simple.fasta"), "r") as myfile:
 
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
             self.assertEquals(result, expected)
 
-        shutil.rmtree(outputDirectoryLocation)
+        shutil.rmtree(parameters[OUTPUT])
 
     def test_invalid_k(self):
 
-        kmer = -1
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/neptune/simple.fasta")
-        exclusion = getPath("tests/data/neptune/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[CountKMers.KMER] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_rate(self):
 
-        kmer = 5
-        rate = -0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.RATE] = -0.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
-        rate = 1.01
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.RATE] = -0.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_inhits(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = -1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.INHITS] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_exhits(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = -2
-        gap = 5
-        size = 7
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.EXHITS] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_gap(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = -1
-        size = 7
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.GAP] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_size(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = -1
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.SIZE] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_gc(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = -0.01
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.GC_CONTENT] = -0.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
-        gcContent = 1.01
+        parameters = DefaultArgs().parameters
+        parameters[ExtractSignatures.GC_CONTENT] = 1.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_filter_length(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = 0.05
-        filterLength = -0.01
-        filterPercent = 0.5
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[FilterSignatures.FILTER_LENGTH] = -0.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
-        filterLength = 1.01
+        parameters = DefaultArgs().parameters
+        parameters[FilterSignatures.FILTER_LENGTH] = 1.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_filter_percent(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 7
-        gcContent = 0.05
-        filterLength = 0.5
-        filterPercent = -0.01
-        parallelization = 0
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[FilterSignatures.FILTER_PERCENT] = -0.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
-        filterPercent = 1.01
+        parameters = DefaultArgs().parameters
+        parameters[FilterSignatures.FILTER_PERCENT] = 1.01
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
     def test_invalid_parallelization(self):
 
-        kmer = 5
-        rate = 0.01
-        inhits = 1
-        exhits = 2
-        gap = 5
-        size = 5
-        gcContent = 0.5
-        filterLength = 0.5
-        filterPercent = 0.5
-        parallelization = -1
-        inclusion = getPath("tests/data/simple.fasta")
-        exclusion = getPath("tests/data/alternative.fasta")
-        referenceSize = 12
-        outputDirectoryLocation = getPath("tests/output/temp.dir")
+        parameters = DefaultArgs().parameters
+        parameters[CountKMers.PARALLEL] = -1
 
-        sys.argv[1:] = [
-            CountKMers.KMER_LONG, str(kmer),
-            ExtractSignatures.RATE_LONG, str(rate),
-            ExtractSignatures.INHITS_LONG, str(inhits),
-            ExtractSignatures.EXHITS_LONG, str(exhits),
-            ExtractSignatures.GAP_LONG, str(gap),
-            ExtractSignatures.SIZE_LONG, str(size),
-            ExtractSignatures.GC_LONG, str(gcContent),
-            FilterSignatures.FILTER_LENGTH_LONG, str(filterLength),
-            FilterSignatures.FILTER_PERCENT_LONG, str(filterPercent),
-            CountKMers.PARALLEL_LONG, str(parallelization),
-            ExtractSignatures.INCLUSION_LONG, str(inclusion),
-            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
-            ExtractSignatures.REFERENCE_SIZE_LONG, str(referenceSize),
-            OUTPUT_LONG, str(outputDirectoryLocation)]
+        setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
