@@ -128,7 +128,8 @@ FILTER SIGNATURES
 """
 class FilterSignatures():
 
-    def __init__(self, candidatesLocation, filteredLocation, sortedLocation,
+    def __init__(
+            self, candidatesLocation, filteredLocation, sortedLocation,
             totalInclusion, totalExclusion, filterLength):
 
         self.candidatesLocation = candidatesLocation    # Candidate signatures.
@@ -139,7 +140,7 @@ class FilterSignatures():
         self.totalExclusion = totalExclusion        # Number of exclusion.
 
         self.filterLength = filterLength            # The min filtering size.
-        
+
         self.hitOverallDictionary = {}  # The best (hit.ID, X).
         self.hitPairDictionary = {}     # The best (hit.ID, hit.reference).
 
@@ -333,8 +334,7 @@ class FilterSignatures():
     def reportFilteredCandidates(self):
 
         outputFile = open(self.filteredLocation, 'w')   # The output.
-        candidateSignatures = \
-            Signature.readSignatures(
+        candidateSignatures = Signature.readSignatures(
             self.candidatesLocation)                    # The input.
         dictionary = self.hitOverallDictionary          # Overall dictionary.
 
@@ -367,8 +367,8 @@ class FilterSignatures():
         the [sortedSignatureIDs] parameter.
 
     INPUT:
-        [(SIGNATURE ID) LIST] [sortedSignatureIDs] - An iterable list, in sorted
-            order, of signature IDs.
+        [(SIGNATURE ID) LIST] [sortedSignatureIDs] - An iterable list, in
+            sorted order, of signature IDs.
 
     RETURN:
         [NONE]
@@ -380,8 +380,8 @@ class FilterSignatures():
     """
     def reportSorted(self, sortedSignatureIDs):
 
-        filteredSignatures = \
-            Signature.readSignatures(self.filteredLocation) # The output file.
+        filteredSignatures = (
+            Signature.readSignatures(self.filteredLocation))    # The output.
 
         # REPORT SORTED SIGNATURES
         outputFile = open(self.sortedLocation, 'w')
@@ -487,7 +487,8 @@ class FilterSignatures():
         self.updateInclusionScores()
 
         sortedSignatureIDs = [ID for (ID, score) in sorted(
-            self.overallScore.items(), key=operator.itemgetter(1), reverse=True)]
+            self.overallScore.items(), key=operator.itemgetter(1),
+            reverse=True)]
 
         self.reportSorted(sortedSignatureIDs)
 
