@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -38,6 +38,13 @@ from neptune.Neptune import *
 
 import unittest
 
+"""
+# =============================================================================
+
+DEFAULT ARGS
+
+# =============================================================================
+"""
 class DefaultArgs():
 
         def __init__(self):
@@ -75,6 +82,28 @@ class DefaultArgs():
 
             self.parameters = parameters
 
+"""
+# =============================================================================
+
+SET COMMAND LINE ARGUMENTS
+
+PURPOSE:
+    Sets the Python command line arguments for Neptune using the provided
+    [parameters].
+
+INPUT:
+    [(STRING -> STRING) DICTIONARY] [parameters] - The Neptune command line
+    parameters. These parameters are in a dictionary mapping the argument to
+    it's parameter value.
+
+RETURN:
+    [NONE]
+
+POST:
+    The [sys.argv] command line arguments will be set.
+
+# =============================================================================
+"""
 def setCommandLineArguments(parameters):
 
         sys.argv[1:] = [
@@ -93,8 +122,31 @@ def setCommandLineArguments(parameters):
             ExtractSignatures.REFERENCE_SIZE_LONG, str(parameters[ExtractSignatures.REFERENCE_SIZE]),
             OUTPUT_LONG, str(parameters[OUTPUT])]
 
+"""
+# =============================================================================
+
+TEST MAIN
+
+# =============================================================================
+"""
 class TestMain(unittest.TestCase):
 
+    """
+    # =========================================================================
+
+    test_simple
+
+    PURPOSE:
+        Tests a simple execution of Neptune from the main method.
+
+    INPUT:
+        [DefaultArgs()]
+
+    EXPECT:
+        Signature: "ACGTACGTACGTACGTACGTACGTACGT\n"
+
+    # =========================================================================
+    """
     def test_simple(self):
 
         parameters = DefaultArgs().parameters
@@ -112,6 +164,25 @@ class TestMain(unittest.TestCase):
 
         shutil.rmtree(parameters[OUTPUT])
 
+    """
+    # =========================================================================
+
+    test_simple_input_directories
+
+    PURPOSE:
+        Tests a simple execution of Neptune with inclusion and exclusion input
+        directories instead of single files.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/simple_inclusion")
+        parameters[ExtractSignatures.EXCLUSION] = getPath("tests/data/neptune/simple_exclusion")
+
+    EXPECTED:
+        Signature: "ACGTACGTACGTACGTACGTACGTACGT\n"
+
+    # =========================================================================
+    """
     def test_simple_input_directories(self):
 
         parameters = DefaultArgs().parameters
@@ -131,6 +202,23 @@ class TestMain(unittest.TestCase):
 
         shutil.rmtree(parameters[OUTPUT])
 
+    """
+    # =========================================================================
+
+    test_parallel
+
+    PURPOSE:
+        Tests a CountKMers parallel execution when running Neptune.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[CountKMers.PARALLEL] = 1
+
+    EXPECTED:
+        Signature: "ACGTACGTACGTACGTACGTACGTACGT\n"
+
+    # =========================================================================
+    """
     def test_parallel(self):
 
         parameters = DefaultArgs().parameters
@@ -149,6 +237,23 @@ class TestMain(unittest.TestCase):
 
         shutil.rmtree(parameters[OUTPUT])
 
+    """
+    # =========================================================================
+
+    test_specify_reference
+
+    PURPOSE:
+        Tests a Neptune execution when the reference is specified.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.REFERENCE] = getPath("tests/data/neptune/simple.fasta")
+
+    EXPECTED:
+        Signature: "ACGTACGTACGTACGTACGTACGTACGT\n"
+
+    # =========================================================================
+    """
     def test_specify_reference(self):
 
         parameters = DefaultArgs().parameters
@@ -167,6 +272,23 @@ class TestMain(unittest.TestCase):
 
         shutil.rmtree(parameters[OUTPUT])
 
+    """
+    # =========================================================================
+
+    test_invalid_k
+
+    PURPOSE:
+        Tests a Neptune execution when the k-mer size is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[CountKMers.KMER] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_k(self):
 
         parameters = DefaultArgs().parameters
@@ -177,6 +299,28 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_rate
+
+    PURPOSE:
+        Tests a Neptune execution when the SNV rate is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.RATE] = -0.01
+
+        AND
+
+        [DefaultArgs()]
+        parameters[ExtractSignatures.RATE] = 1.01
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_rate(self):
 
         parameters = DefaultArgs().parameters
@@ -188,13 +332,30 @@ class TestMain(unittest.TestCase):
             main()
 
         parameters = DefaultArgs().parameters
-        parameters[ExtractSignatures.RATE] = -0.01
+        parameters[ExtractSignatures.RATE] = 1.01
 
         setCommandLineArguments(parameters)
 
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_inhits
+
+    PURPOSE:
+        Tests a Neptune execution when the minimum inclusion hits is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.INHITS] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_inhits(self):
 
         parameters = DefaultArgs().parameters
@@ -205,6 +366,23 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_exhits
+
+    PURPOSE:
+        Tests a Neptune execution when the minimum exclusion hits is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.EXHITS] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_exhits(self):
 
         parameters = DefaultArgs().parameters
@@ -215,6 +393,23 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_gap
+
+    PURPOSE:
+        Tests a Neptune execution when the signature gap size is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.GAP] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_gap(self):
 
         parameters = DefaultArgs().parameters
@@ -225,6 +420,23 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_size
+
+    PURPOSE:
+        Tests a Neptune execution when the minimum signature size is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.SIZE] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_size(self):
 
         parameters = DefaultArgs().parameters
@@ -235,6 +447,28 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_gc
+
+    PURPOSE:
+        Tests a Neptune execution when the GC content is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[ExtractSignatures.GC_CONTENT] = -0.01
+
+        AND
+
+        [DefaultArgs()]
+        parameters[ExtractSignatures.GC_CONTENT] = 1.01
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_gc(self):
 
         parameters = DefaultArgs().parameters
@@ -253,6 +487,28 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_filter_length
+
+    PURPOSE:
+        Tests a Neptune execution when the alignment filter length is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[FilterSignatures.FILTER_LENGTH] = -0.01
+
+        AND
+
+        [DefaultArgs()]
+        parameters[FilterSignatures.FILTER_LENGTH] = 1.01
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_filter_length(self):
 
         parameters = DefaultArgs().parameters
@@ -271,6 +527,28 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_filter_percent
+
+    PURPOSE:
+        Tests a Neptune execution when the alignment filter percent is invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[FilterSignatures.FILTER_PERCENT] = -0.01
+
+        AND
+
+        [DefaultArgs()]
+        parameters[FilterSignatures.FILTER_PERCENT] = 1.01
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_filter_percent(self):
 
         parameters = DefaultArgs().parameters
@@ -289,6 +567,24 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_invalid_parallelization
+
+    PURPOSE:
+        Tests a Neptune execution when the CountKMers paralleization value is
+        invalid.
+
+    INPUT:
+        [DefaultArgs()]
+        parameters[CountKMers.PARALLEL] = -1
+
+    EXPECTED:
+        [RuntimeError]
+
+    # =========================================================================
+    """
     def test_invalid_parallelization(self):
 
         parameters = DefaultArgs().parameters
@@ -299,6 +595,28 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             main()
 
+    """
+    # =========================================================================
+
+    test_multiple_files
+
+    PURPOSE:
+        Tests an execution of Neptune for a possible parallel race-condition
+        when run with several input files.
+
+    INPUT:
+        inclusion = "tests/data/neptune/large_inclusion" (10 files)
+        exclusion = "tests/data/neptune/large_exclusion" (10 files)
+        output = "tests/output/neptune/temp.dir"
+
+    EXPECT:
+        signature:
+
+        ">0 score=0.8889 in=1.0000 ex=-0.1111 len=99 ref=inclusion0 pos=999\n"
+        "CGGTTTCTTCATATATAACCCCGTCGGCGCTTCAGAAAACAGGGATGTATAGAATCTCTGCGTCAGAACGGCATCTAAAATCAAAACGGTATTGATGAC\n"
+
+    # =========================================================================
+    """
     # designed to catch possible parallel race-condition failure with many files
     def test_multiple_files(self):
 
