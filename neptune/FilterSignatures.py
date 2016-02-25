@@ -128,6 +128,28 @@ FILTER SIGNATURES
 """
 class FilterSignatures():
 
+    """
+    # =========================================================================
+
+    INIT
+
+    PURPOSE:
+        Constructs the FilterSignatures object.
+
+    INPUT:
+        [FILE LOCATION] [candidatesLocation] - The location of the candidate
+            signatures.
+        [FILE LOCATION] [filteredLocation] - The file location to write the
+            filtered signatures.
+        [FILE LOCATION] [sortedLocation] - The file location to write the
+            sorted signatures.
+        [1 <= INT] [totalInclusion] - The total number of inclusion targets.
+        [1 <= INT] [totalExclusion] - The total number of exclusion targets.
+        [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
+            for the signature to be considered a hit and used in scoring.
+
+    # =========================================================================
+    """
     def __init__(
             self, candidatesLocation, filteredLocation, sortedLocation,
             totalInclusion, totalExclusion, filterLength):
@@ -516,7 +538,7 @@ INPUT:
         sorted signatures.
     [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
         for the signature to be considered a hit and used in scoring.
-    [0 <= FLOAT 0 <= 1] [filterLength] - The maximum percent length of an
+    [0 <= FLOAT 0 <= 1] [filterPercent] - The maximum percent identity of an
         exclusion hit with a candidate.
     [4 <= INT] [seedSize] - The seed size used in alignments.
 
