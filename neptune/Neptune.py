@@ -26,6 +26,8 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
+__version__ = '1.2.0'
+
 import drmaa
 import os
 import argparse
@@ -62,6 +64,7 @@ LOG = "log"
 
 # ARGUMENT NAMES
 OUTPUT = "output"
+VERSION = "version"
 PARALLELIZATION = "parallelization"
 DEFAULT_SPECIFICATION = "defaultSpecification"
 COUNT_SPECIFICATION = "countSpecification"
@@ -75,6 +78,7 @@ CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
 LONG = "--"
 
 OUTPUT_LONG = LONG + OUTPUT
+VERSION_LONG = LONG + VERSION
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
 AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
@@ -660,6 +664,11 @@ def main():
         dest=CONSOLIDATE_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
+
+    parser.add_argument(
+        VERSION_LONG,
+        action='version',
+        version='%(prog)s ' + str(__version__))
 
     # --- ArgParse Work-Around ---
     for i in range(len(sys.argv)):
