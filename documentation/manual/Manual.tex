@@ -27,6 +27,31 @@
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{courier}
+\usepackage[margin=1in]{geometry}
+
+\lstset{
+  frame=tb,
+  basicstyle={\small\ttfamily},
+  language=bash,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  numbers=none,
+  %numberstyle=\tiny\color{gray},
+  keywordstyle=\color{black},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+  %breakatwhitespace=true,
+  %tabsize=3
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \hypersetup{
     colorlinks,
@@ -36,10 +61,10 @@
 }
 
 \setlength\parindent{0pt}
-\setlength{\parskip}{1em}
+\setlength{\parskip}{0.5em}
 
 %opening
-\title{Neptune \\ \normalsize Version 1.1.0}
+\title{Neptune\\ \normalsize Version 1.1.1}
 \author{Eric Marinier}
 
 \begin{document}
@@ -57,13 +82,13 @@ Neptune locates genomic signatures using an exact \textit{k}-mer matching strate
 \newpage
 \section{Installation}
 
-Neptune achieves maximum parallelization by submitting jobs through a Python DRMAA binding to a DRMAA-compliant scheduler. This installation will require a substantial understanding of Unix if such a DRMAA-compliant scheduler additionally needs to be installed and configured. Nepune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
+This installation guide assumes the user is using the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager and the \href{https://en.wikipedia.org/wiki/Bash_(Unix_shell)}{BASH} Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on other environments is beyond the scope of this manual. Neptune achieves maximum parallelization by submitting jobs through a Python DRMAA binding to a DRMAA-compliant scheduler. This installation will require a substantial understanding of Unix if such a DRMAA-compliant scheduler additionally needs to be installed and configured. Neptune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
 
 \subsection{Requirements}
 
-Neptune should be installed and run on a standard 64-bit Linux environment. The software will attempt to automatically install many dependencies. However, the following dependencies must be manually installed by the user:
+Neptune should be installed and run on a standard 64-bit Unix environment. The installation process will attempt to automatically install many dependencies. However, the following dependencies must be manually installed by the user:
 
-\begin{itemize}
+\begin{enumerate}
   \item Python 2.7
   \item NumPy
   \item SciPy
@@ -71,9 +96,49 @@ Neptune should be installed and run on a standard 64-bit Linux environment. The 
   \item Python DRMAA
   \item BLAST+
   \item pipsi
-\end{itemize}
+\end{enumerate}
 
-\subsection{DRMAA}
+\subsubsection{Python 2.7}
+
+Python 2.7 is provided with many major distributions of Linux. However, if this is not the case with your distribution, then the following should install Python 2.7:
+
+\begin{lstlisting}
+# Install requirements:
+$ sudo apt-get install build-essential checkinstall
+$ sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+
+# Download Python 2.7.10:
+$ cd /usr/src
+$ wget https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
+
+# Extract:
+$ tar xzf Python-2.7.10.tgz
+
+# Compile Python source:
+$ cd Python-2.7.10
+$ sudo ./configure
+$ sudo make altinstall
+
+# Check the Python version:
+$ python2.7 -V
+\end{lstlisting}
+
+\subsubsection{NumPy and SciPy}
+
+NumPy and SciPy are provided with many major distributions of Linux. However, if this is not the case your distribution, then either refer to the \href{http://docs.scipy.org/doc/numpy-1.10.1/user/install.html}{official NumPy installation instructions} and \href{http://www.scipy.org/scipylib/building/linux.html}{official SciPy installation instructions}, or the following should install NumPy and SciPy:
+
+\begin{lstlisting}
+# Install NumPy requirements:
+$ sudo apt-get install gcc gfortran python-dev libblas-dev liblapack-dev cython
+
+# Install SciPy requirements:
+$ sudo apt-get install python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
+
+# Install NumPy and SciPy:
+$ sudo apt-get install python-numpy python-scipy
+\end{lstlisting}
+
+\subsubsection{DRMAA}
 
 Neptune uses a Python DRMAA binding to schedule parallel jobs. The user will first need to install and configure a DRMAA-compliant scheduler and further install the Python DRMAA bindings in order to use Neptune. Neptune has been tested using SGE installed on a single machine with the following instructions:
 \newline\newline
@@ -83,39 +148,65 @@ However, any DRMAA-compliant scheduler is expected to work. The instructions for
 \newline\newline
 \url{https://github.com/pygridtools/drmaa-python}
 
+\subsubsection{BLAST}
+
+BLAST may be installed using APT:
+
+\begin{lstlisting}
+# Install BLAST+:
+$ sudo apt-get install ncbi-blast+
+\end{lstlisting}
+
+\subsubsection{pipsi}
+
+The \href{https://github.com/mitsuhiko/pipsi}{pipsi} tool is a tool used to install Python packages using pip into shielded virtual environments. This reduces the problem of software installation creating conflicts with other installations using differing dependencies. The pipsi tool may be installed using curl and Python:
+
+\begin{lstlisting}
+# Install pipsi:
+$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
+\end{lstlisting}
+
+You may need to add the pipsi install location to your PATH variable.
+
+\begin{lstlisting}
+# Add the following line to your ~/.bashrc file:
+$ echo "export PATH=$PATH:~/.local/bin" | cat >> ~/.bashrc
+
+# Source the updated bashrc file:
+$ source ~/.bashrc
+
+# Ensure the PATH was updated correctly:
+$ echo $PATH | grep local/bin
+\end{lstlisting}
+
 \subsection{Neptune}
 
-Neptune executes in a Python environment and therefore does not need to be explicitly compiled. Neptune is best installed using pipsi by running the following command:
+Neptune executes in a Python environment and therefore does not need to be explicitly compiled. Neptune is best installed using pipsi, as it will install several Python dependencies automatically. The installation is performed by running the following:
 
-\begin{verbatim}
-  pipsi install /path/to/neptune/
-\end{verbatim}
+\begin{lstlisting}
+# Install Neptune:
+$ pipsi install /path/to/neptune/download/location/
 
-If the Neptune installation was successful, you should be able to run the following without error:
-
-\begin{verbatim}
-  neptune --help
-\end{verbatim}
+# Ensure installation was successful:
+$ neptune --help
+\end{lstlisting}
 
 \newpage
 \section{Parameters}
 
 A short help message may be viewed by running:
 
-\begin{verbatim}
-  neptune --help
-\end{verbatim}
+\begin{lstlisting}
+$ neptune --help
+\end{lstlisting}
 
 \subsection{Required Parameters}
 
 Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:
 
-\begin{verbatim}
-  neptune
-    --inclusion /path/to/inclusion/
-    --exclusion /path/to/exclusion/
-    --output /path/to/output/
-\end{verbatim}
+\begin{lstlisting}
+$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
+\end{lstlisting}
 
 The following is a description of the required command line parameters:
 
@@ -241,24 +332,24 @@ It may be necessary to specify job submission parameters that are required by yo
 
 The following example will allow Neptune to automatically calculate many of the parameters used in execution. However, Neptune will make assumptions about the probability two homologous bases are different and use fixed thresholds for signature filtering.
 
-\begin{verbatim}
-  neptune
+\begin{lstlisting}
+$ neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/ 
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{Parallel Aggregation}
 
 The execution time of Neptune can be greatly improved by enabling parallel \textit{k}-mer aggregation. The following example will run Neptune with this parallelization enabled.
 
-\begin{verbatim}
-  neptune
+\begin{lstlisting}
+$ neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/
     --parallelization 3
-\end{verbatim}
+\end{lstlisting}
 
 This example will create \(4^3 = 64\) parallel \textit{k}-mer aggregation instances. It is not recommended to create many more instances than there are processing nodes which may be employed by Neptune at one time.
 
@@ -266,38 +357,36 @@ This example will create \(4^3 = 64\) parallel \textit{k}-mer aggregation instan
 
 You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction.
 
-\begin{verbatim}
-  neptune
+\begin{lstlisting}
+$ neptune
     --inclusion inclusion_dir/ in1.fasta in2.fasta
     --exclusion exclusion_dir/ ex1.fasta ex2.fasta
     --reference in1.fasta in2.fasta    
     --output output/
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{DRMAA Parameters}
 
 It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-defaultSpecification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregateSpecification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
 
-\begin{verbatim}
-  neptune
+\begin{lstlisting}
+$ neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/
     --defaultSpecification "-l h_vmem=6G -pe smp 4"
     --aggregateSpecification "-l h_vmem=10G -pe smp 4"
-\end{verbatim}
+\end{lstlisting}
 
 Furthermore, it may be beneficial to use a submission wrapper script for Neptune to avoid entering the same native specification parameters for every submission. The following example automatically includes parallelization and native specification parameters, appropriate for the scheduling environment, which may be overwritten by the submitting user:
 
-\begin{verbatim}
-  #!/usr/bin/env bash
+\begin{lstlisting}
+#!/usr/bin/env bash
 
-  DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
+DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
 
-  /share/apps/neptune/neptune
-    --defaultSpecification "-n 1 --mem=10240"
-    --parallelization 3 $@
-\end{verbatim}
+/share/apps/neptune/neptune --defaultSpecification "-n 1 --mem=10240" --parallelization 3 $@
+\end{lstlisting}
 
 \newpage
 \section{Output}
