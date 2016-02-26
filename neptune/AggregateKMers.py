@@ -164,12 +164,12 @@ INPUT:
         when observed.
     [STRING LIST] [kmers] - A list of strings, which should understood as the
         head k-mer of files.
-    [FILE LIST] [files] - A list of open files associated with kmers list. It
-        is assumed: len([kmers]) == len([files])
+    [FILE LIST] [files] - A list of open files associated with the [kmers]
+        list. It is assumed: len([kmers]) == len([files])
 
 RETURN:
-    [INT >= 0] [count] - The number of exact k-mer matches found in the list of
-        k-mers.
+    [INT >= 0] [count] - The number of exact [kmer] matches found in the list
+        of [kmers].
 
 # =============================================================================
 """
