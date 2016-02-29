@@ -125,6 +125,10 @@ CONFIDENCE_SHORT = SHORT + "c"
 KMERS_SHORT = SHORT + "k"
 OUTPUT_SHORT = SHORT + "o"
 
+# DEFAULTS
+RATE_DEFAULT = 0.01
+CONFIDENCE_DEFAULT = 0.95
+
 """
 # =============================================================================
 
@@ -710,10 +714,12 @@ def parse(parameters):
         GC = parameters[GC_CONTENT]
 
     # --- Rate ---
-    rate = parameters[RATE] if parameters[RATE] else 0.01
+    rate = parameters.get(RATE) \
+        if parameters.get(RATE) else RATE_DEFAULT
 
     # --- Statistical Confidence ---
-    confidence = parameters[CONFIDENCE] if parameters[CONFIDENCE] else 0.95
+    confidence = parameters.get(CONFIDENCE) \
+        if parameters.get(CONFIDENCE) else CONFIDENCE_DEFAULT
 
     # --- k-mer Size ---
     if not os.path.isfile(parameters[KMERS]):
