@@ -34,9 +34,9 @@ either one or multiple k-mer files. Only the lexicographically smaller of a
 k-mer and it's reverse complement is reported. The k-mers are reported in
 sorted order.
 
-Multiple output files are written only when the degree of parallelization is
-specified. The number of output files is: (4^[parallelization]). Increasing the
-degree of parallelization will not speed up k-mer counting. However, it may
+Multiple output files are written only when the degree of organization is
+specified. The number of output files is: (4^[organization]). Increasing the
+degree of organization will not speed up k-mer counting. However, it may
 improve the speed of tools which use these k-mers, such as AggregateKMers.
 
 INPUT:
@@ -57,7 +57,7 @@ reference.kmers.T
 Such that all k-mers in reference.kmers.A begin with "A".
 
 script.py -h
-script.py -k K -i INPUT -o OUTPUT [-p PARALLELIZATION]
+script.py -k K -i INPUT -o OUTPUT [-p ORGANIZATION]
 
 EXAMPLES:
 
@@ -85,7 +85,7 @@ GLOBALS
 INPUT = "input"
 OUTPUT = "output"
 KMER = "kmer"
-PARALLEL = "parallelization"
+ORGANIZATION = "organization"
 
 # ARGUMENTS
 LONG = "--"
@@ -93,18 +93,18 @@ LONG = "--"
 INPUT_LONG = LONG + INPUT
 OUTPUT_LONG = LONG + OUTPUT
 KMER_LONG = LONG + KMER
-PARALLEL_LONG = LONG + PARALLEL
+ORGANIZATION_LONG = LONG + ORGANIZATION
 
 SHORT = "-"
 
 INPUT_SHORT = SHORT + "i"
 OUTPUT_SHORT = SHORT + "o"
 KMER_SHORT = SHORT + "k"
-PARALLEL_SHORT = SHORT + "p"
+ORGANIZATION_SHORT = SHORT + "p"
 
 # DEFAULTS
 
-PARALLELIZATION_DEFAULT = 0
+ORGANIZATION_DEFAULT = 0
 
 """
 # =============================================================================
@@ -284,10 +284,10 @@ def parse(parameters):
     outputLocation = parameters[OUTPUT]
     k = parameters[KMER]
 
-    parallelization = parameters[PARALLEL] \
-        if parameters[PARALLEL] else PARALLELIZATION_DEFAULT
+    organization = parameters[ORGANIZATION] \
+        if parameters[ORGANIZATION] else ORGANIZATION_DEFAULT
 
-    count(inputLocation, outputLocation, k, parallelization)
+    count(inputLocation, outputLocation, k, organization)
 
 """
 # =============================================================================
@@ -329,12 +329,12 @@ def main():
         help="k-mer size",
         type=int, required=True)
 
-    # parallelization
+    # organization
     parser.add_argument(
-        PARALLEL_SHORT,
-        PARALLEL_LONG,
-        dest=PARALLEL,
-        help="degree of parallelization; produces 4^[parallelization] files",
+        ORGANIZATION_SHORT,
+        ORGANIZATION_LONG,
+        dest=ORGANIZATION,
+        help="degree of organization; produces 4^[organization] output files",
         type=int)
 
     args = parser.parse_args()

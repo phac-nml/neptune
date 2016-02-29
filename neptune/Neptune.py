@@ -149,7 +149,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             inclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     # EXCLUSION
@@ -165,7 +165,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             exclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     execution.jobManager.runJobs(jobs)
@@ -205,7 +205,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
     print("AggregateKMers starting ...")
 
-    if execution.parallelization:
+    if execution.organization:
 
         aggregateMultipleFiles(
             execution,
@@ -250,7 +250,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
     jobs = []
     outputLocations = []
 
-    for tag in Utility.getAggregationTags(execution.parallelization):
+    for tag in Utility.getAggregationTags(execution.organization):
 
         outputLocation = execution.aggregateLocation + "." + tag
         outputLocations.append(outputLocation)
@@ -714,10 +714,10 @@ def main():
         type=str, required=True)
 
     parser.add_argument(
-        CountKMers.PARALLEL_SHORT,
-        CountKMers.PARALLEL_LONG,
-        dest=CountKMers.PARALLEL,
-        help="number of base positions used in parallelization",
+        CountKMers.ORGANIZATION_SHORT,
+        CountKMers.ORGANIZATION_LONG,
+        dest=CountKMers.ORGANIZATION,
+        help="number of base positions used in k-mer organization",
         type=int, default=3)
 
     parser.add_argument(

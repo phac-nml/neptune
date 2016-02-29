@@ -143,13 +143,13 @@ class Execution():
 
         self.seedSize = parameters.get(FilterSignatures.SEED_SIZE)
 
-        # -- parallelization --
-        # 1 <= parallelization
-        if (parameters.get(CountKMers.PARALLEL) is not None and
-                (int(parameters.get(CountKMers.PARALLEL)) < 0)):
-            raise RuntimeError("The parallelization is out of range.")
+        # -- k-mer organization --
+        # 1 <= organization
+        if (parameters.get(CountKMers.ORGANIZATION) is not None and
+                (int(parameters.get(CountKMers.ORGANIZATION)) < 0)):
+            raise RuntimeError("The organization is out of range.")
 
-        self.parallelization = parameters.get(CountKMers.PARALLEL)
+        self.organization = parameters.get(CountKMers.ORGANIZATION)
 
         # -- inclusion locations --
         # inclusion exists
@@ -526,8 +526,8 @@ class Execution():
             str(self.filterPercent) + "\n")
 
         receiptFile.write(
-            "Parallelization = " +
-            str(self.parallelization) + "\n")
+            "k-mer Organization = " +
+            str(self.organization) + "\n")
 
         receiptFile.write(
             "Reference Size = " +
