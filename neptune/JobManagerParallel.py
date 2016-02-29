@@ -29,13 +29,23 @@ specific language governing permissions and limitations under the License.
 """
 # =============================================================================
 
-This file contains the JobManager abstract class. JobManager is responsible for
-managing the creation and execution of Neptune jobs.
+This file contains the JobManagerParallel class. JobManagerParallel is
+responsible for managing the creation and execution of Python multiprocessing
+parallel jobs. This class is designed for Neptune execution on a single CPU or
+node.
 
 # =============================================================================
 """
 
-import abc
+import multiprocessing
+
+import JobManager
+import CountKMers
+import AggregateKMers
+import ExtractSignatures
+import FilterSignatures
+import ConsolidateSignatures
+import Database
 
 """
 # =============================================================================
@@ -45,19 +55,9 @@ JOB MANAGER
 # =============================================================================
 """
 
-class JobManager:
+class JobManagerParallel(JobManager.JobManager):
 
-    __metaclass__ = abc.ABCMeta
-
-    NEPTUNE_JOB = "Neptune"
-    COUNT_JOB = "Neptune-CountKMers"
-    AGGREGATE_JOB = "Neptune-AggregateKMers"
-    EXTRACT_JOB = "Neptune-ExtractSignatures"
-    DATABASE_JOB = "Neptune-CreateDatabase"
-    FILTER_JOB = "Neptune-FilterSignatures"
-    CONSOLIDATE_JOB = "Neptune-ConsolidateSignatures"
-
-    ID = 0
+    pool = multiprocessing.Pool(processes=8)
 
     """
     # =========================================================================
@@ -75,33 +75,9 @@ class JobManager:
     def __init__(
             self, outputDirectoryLocation, logDirectoryLocation):
 
-        self.outputDirectoryLocation = outputDirectoryLocation
-        self.logDirectoryLocation = logDirectoryLocation
-
-    """
-    # =========================================================================
-
-    GENERATE ID
-
-    PURPOSE:
-        Generates an ID unique to this JobManager.
-
-    INPUT:
-        [NONE]
-
-    RETURN:
-        [INT] [ID] - The generated unique ID.
-
-    POST:
-        [NONE]
-
-    # =========================================================================
-    """
-    def generateID(self):
-
-        self.ID += 1
-
-        return int(self.ID)
+        # JobManager Parent Constructor
+        JobManager.JobManager.__init__(
+            self, outputDirectoryLocation, logDirectoryLocation)
 
     """
     # =========================================================================
@@ -109,8 +85,8 @@ class JobManager:
     RUN JOBS
 
     PURPOSE:
-        Runs the jobs provided to this function. The function returns after
-        all jobs have completed running.
+        Runs all the Neptune jobs provided to the function. The jobs are
+        synchronized and execution problems are reported if possible.
 
     INPUT:
         [JOB] [jobs] - The jobs to run in parallel.
@@ -123,9 +99,38 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def runJobs(self, jobs):
-        return
+
+        print "Submitted " + str(len(jobs)) + " jobs."
+        self.synchronize(jobs)
+
+    """
+    # =========================================================================
+
+    SYNCHRONIZE
+
+    PURPOSE:
+        Synchronizes all the jobs associated with the passed IDs. Will output
+        an error message if a job returned with an error-associated exit
+        status.
+
+    INPUT:
+        [STRING ITERATOR] [jobIDs] - The unique IDs associated with every job.
+
+    RETURN:
+        [NONE]
+
+    POST:
+        The function will return when all jobs have completed. Any error
+        messages will be written if there was an error-associated exit-status
+        with a job.
+
+    # =========================================================================
+    """
+    def synchronize(self, jobs):
+
+        for job in jobs:
+            job.wait()
 
     """
     # =========================================================================
@@ -146,10 +151,21 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createCountJob(
             self, inputLocation, outputLocation, k, parallelization):
-        return
+
+        parameters = {}
+
+        parameters[CountKMers.INPUT] = inputLocation
+        parameters[CountKMers.OUTPUT] = outputLocation
+        parameters[CountKMers.KMER] = k
+        parameters[CountKMers.PARALLEL] = parallelization
+
+        job = self.pool.apply_async(
+            CountKMers.parse,
+            args=(parameters,))
+
+        return job
 
     """
     # =========================================================================
@@ -173,11 +189,42 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createAggregateJob(
             self, inclusionLocations, exclusionLocations,
             outputLocation, tag):
-        return
+
+        parameters = {}
+
+        inclusion = []
+        exclusion = []
+
+        # INCLUSION
+        if tag:
+            inclusion += (item + "." + tag for item in inclusionLocations)
+        else:
+            inclusion += inclusionLocations
+
+        parameters[AggregateKMers.INCLUSION] = inclusion
+
+        # EXCLUSION
+        if tag:
+            exclusion += (item + "." + tag for item in exclusionLocations)
+        else:
+            exclusion += exclusionLocations
+
+        parameters[AggregateKMers.EXCLUSION] = exclusion
+
+        # OUTPUT
+        parameters[AggregateKMers.OUTPUT] = outputLocation
+
+        # DELETE
+        parameters[AggregateKMers.DELETE] = True
+
+        job = self.pool.apply_async(
+            AggregateKMers.parse,
+            args=(parameters,))
+
+        return job
 
     """
     # =========================================================================
@@ -214,12 +261,67 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createExtractJob(
             self, referenceLocation, referenceSize, rate, inclusion, inhits,
             exclusion, exhits, gap, size, GC, confidence, aggregateLocation,
             outputLocation):
-        return
+
+        parameters = {}
+
+        # REFERENCE
+        parameters[ExtractSignatures.REFERENCE] = referenceLocation
+
+        # REFERENCE SIZE
+        parameters[ExtractSignatures.REFERENCE_SIZE] = referenceSize \
+            if referenceSize else None
+
+        # RATE
+        parameters[ExtractSignatures.RATE] = rate \
+            if rate else None
+
+        # INCLUSION
+        parameters[ExtractSignatures.INCLUSION] = inclusion \
+            if inclusion else None
+
+        # INHITS
+        parameters[ExtractSignatures.INHITS] = inhits \
+            if inhits else None
+
+        # EXCLUSION
+        parameters[ExtractSignatures.EXCLUSION] = exclusion \
+            if exclusion else None
+
+        # EXHITS
+        parameters[ExtractSignatures.EXHITS] = exhits \
+            if exhits else None
+
+        # GAP
+        parameters[ExtractSignatures.GAP] = gap \
+            if gap else None
+
+        # SIZE
+        parameters[ExtractSignatures.SIZE] = size \
+            if size else None
+
+        # GC
+        parameters[ExtractSignatures.GC_CONTENT] = GC \
+            if GC else None
+
+        # CONFIDENCE
+        parameters[ExtractSignatures.CONFIDENCE] = confidence \
+            if confidence else None
+
+        # AGGREGATED KMERS
+        parameters[ExtractSignatures.KMERS] = aggregateLocation
+
+        # OUTPUT
+        parameters[ExtractSignatures.OUTPUT] = outputLocation
+
+        job = self.pool.apply_async(
+            ExtractSignatures.parse,
+            args=(parameters,))
+
+        return job
 
     """
     # =========================================================================
@@ -232,8 +334,6 @@ class JobManager:
     INPUT:
         [(FILE LOCATION) ITERATOR] [inputLocations] - The input locations of
             the entries (FASTA) in the database.
-        [FILE LOCATION] [aggregatedLocation] - The location to write a single
-            database file corresponding to information from the input files.
         [FILE LOCATION] [outputLocation] - The output location of the database.
 
     RETURN:
@@ -241,10 +341,35 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createDatabaseJob(
             self, inputLocations, aggregatedLocation, outputLocation):
-        return
+
+        aggregatedFile = open(aggregatedLocation, 'w')
+
+        ID = 0
+
+        for inputLocation in inputLocations:
+
+            inputFile = open(inputLocation, 'r')
+
+            for line in inputFile:
+
+                if line[0] is ">":
+                    aggregatedFile.write(">" + str(ID) + "\n")
+
+                else:
+                    aggregatedFile.write(line)
+
+            inputFile.close()
+            ID += 1
+
+        aggregatedFile.close()
+
+        job = self.pool.apply_async(
+            Database.createDatabaseJob,
+            args=(aggregatedLocation, outputLocation,))
+
+        return job
 
     """
     # =========================================================================
@@ -277,12 +402,55 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createFilterJob(
             self, inclusionDatabaseLocation, exclusionDatabaseLocation,
             inclusion, exclusion, inputLocation, filteredOutputLocation,
             sortedOutputLocation, filterLength, filterPercent, seedSize):
-        return
+
+        parameters = {}
+
+        # INCLUSION DATABASE
+        parameters[FilterSignatures.INCLUSION_DATABASE] = \
+            inclusionDatabaseLocation
+
+        # EXCLUSION DATABASE
+        parameters[FilterSignatures.EXCLUSION_DATABASE] = \
+            exclusionDatabaseLocation
+
+        # INCLUSION
+        parameters[FilterSignatures.INCLUSION] = inclusion \
+            if inclusion else None
+
+        # EXCLUSION
+        parameters[FilterSignatures.EXCLUSION] = exclusion \
+            if exclusion else None
+
+        # INPUT
+        parameters[FilterSignatures.INPUT] = inputLocation
+
+        # FILTERED OUTPUT
+        parameters[FilterSignatures.FILTERED_OUTPUT] = filteredOutputLocation
+
+        # SORTED OUTPUT
+        parameters[FilterSignatures.SORTED_OUTPUT] = sortedOutputLocation
+
+        # FILTER LENGTH
+        parameters[FilterSignatures.FILTER_LENGTH] = filterLength \
+            if filterLength else None
+
+        # FILTER PERCENT
+        parameters[FilterSignatures.FILTER_PERCENT] = filterPercent \
+            if filterPercent else None
+
+        # SEED SIZE
+        parameters[FilterSignatures.SEED_SIZE] = seedSize \
+            if seedSize else None
+
+        job = self.pool.apply_async(
+            FilterSignatures.parse,
+            args=(parameters,))
+
+        return job
 
     """
     # =========================================================================
@@ -296,7 +464,7 @@ class JobManager:
         [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune
             signature file locations corresponding to files to consolidate.
         [4 <= INT] [seedSize] - The seed size used in alignments.
-        [FILE DIRECTORY LOCATION] [outputDirectoryLocation] - The directory
+        [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory
             to write the output files.
 
     RETURN:
@@ -305,7 +473,25 @@ class JobManager:
 
     # =========================================================================
     """
-    @abc.abstractmethod
     def createConsolidateJob(
             self, signatureLocations, seedSize, outputDirectoryLocation):
-        return
+
+        parameters = {}
+
+        # SIGNATURE LOCATIONS
+        parameters[ConsolidateSignatures.SIGNATURES] = signatureLocations \
+            if signatureLocations else None
+
+        # SEED SIZE
+        parameters[ConsolidateSignatures.SEED_SIZE] = seedSize \
+            if seedSize else None
+
+        # OUTPUT DIRECTORY LOCATION
+        parameters[ConsolidateSignatures.OUTPUT] = outputDirectoryLocation \
+            if outputDirectoryLocation else None
+
+        job = self.pool.apply_async(
+            ConsolidateSignatures.parse,
+            args=(parameters,))
+
+        return job

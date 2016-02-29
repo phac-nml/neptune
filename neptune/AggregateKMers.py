@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,9 +28,6 @@ specific language governing permissions and limitations under the License.
 
 """
 # =============================================================================
-
-Author: Eric Marinier
-Date: 17 April 2015
 
 This script aggregates the k-mers from one or more inclusion files with one or
 more exclusion files. The output provides a count of the number of distinct
@@ -64,7 +61,7 @@ AAAAT 3 0
 USAGE:
 
 script.py -h
-script.py -i INCLUSION [...] -e EXCLUSION [...] -o OUTPUT [--delete]
+script.py -i [INCLUSION] [...] -e [EXCLUSION] [...] -o [OUTPUT] [--delete]
 
 EXAMPLE:
 
@@ -105,6 +102,10 @@ INCLUSION_SHORT = SHORT + "i"
 EXCLUSION_SHORT = SHORT + "e"
 OUTPUT_SHORT = SHORT + "o"
 
+# DEFAULTS
+
+DELETE_DEFAULT = False
+
 """
 # =============================================================================
 
@@ -123,8 +124,8 @@ INPUT:
         larger than all [strings].
 
 RETURN:
-    [STRING] [smallest] - The lexicographically next value of all the strings
-        or SENTINEL if all strings are empty.
+    [STRING] [smallest] - The lexicographically smallest value of all the
+        strings or SENTINEL if all strings are empty.
 
 # =============================================================================
 """
@@ -147,28 +148,28 @@ PURPOSE:
     Computes the counts of the k-mer, determined by the number of observations
     across all files.
 
-    This function assumes: len(kmers) == len(files)
+    This function assumes: len([kmers]) == len([files])
 
-    The function considers all the k-mers and compares them with the k-mer
+    The function observes all the k-mers and compares them with the k-mer
     parameter. When there is a match, the function increases the count and
     advances the file associated with the k-mer.
 
-    The kmers parameter corresponds to the heads of all the k-mer files. The
-    files must necessarily be read and advanced when there is a k-mer match
-    found in a corresponding kmers array. This is because each k-mer in each
+    The [kmers] parameter corresponds to the heads of all the k-mer files. The
+    files MUST necessarily be read and advanced when there is a k-mer match
+    found in a corresponding [kmers] array. This is because each k-mer in each
     file is only ever observed once.
 
 INPUT:
-    [STRING] [kmer] - The k-mer to compare against all other k-mers and score
+    [STRING] [kmer] - The k-mer to compare against all other k-mers and count
         when observed.
-    [STRING LIST] [kmers] - A list of strings, understood as the head k-mer of
-        files.
-    [FILE LIST] [files] - A list of open files associated with kmers list.
-        It is assumed: len(kmers) == len(files)
+    [STRING LIST] [kmers] - A list of strings, which should understood as the
+        head k-mer of files.
+    [FILE LIST] [files] - A list of open files associated with the [kmers]
+        list. It is assumed: len([kmers]) == len([files])
 
 RETURN:
-    [INT >= 0] [count] - The number of exact k-mer matches found in the list of
-        k-mers.
+    [INT >= 0] [count] - The number of exact [kmer] matches found in the list
+        of [kmers].
 
 # =============================================================================
 """
@@ -198,15 +199,19 @@ def aggregateKMer(kmer, kmers, files):
 AGGREGATE
 
 PURPOSE:
-    This function aggregates the k-mers in the inclusion and exclusion
-    files and produces a file with the k-mers and their inclusion and
-    exclusion counts. These files must contain only distinct and
+    Aggregates the k-mers in the inclusion and exclusion files and produces a
+    file containing the k-mers and their inclusion and exclusion counts. The
+    input inclusion and exclusion files must contain only distinct and
     lexicographically sorted k-mers.
 
 INPUT:
-    [FILE LIST] [inclusionFiles] - The list of open inclusion k-mer files.
-    [FILE LIST] [exclusionFiles] - The list of open exclusion k-mer files.
-    [FILE] [outputFile] - The file to write the aggregated k-mers.
+    [FILE LIST] [inclusionLocations] - The list of openable inclusion k-mer
+        files locations.
+    [FILE LIST] [exclusionLocations] - The list of openable exclusion k-mer
+        files locations.
+    [FILE] [outputLocation] - The file location to write the aggregated k-mers.
+    [BOOL] [delete] - Whether or not to delete the [inclusionLocations] and
+        [exclusionLocations] after aggregation is complete.
 
     NOTE: The input files must contain only distinct and lexicographically
     sorted k-mers. These k-mers must appear first on every line and be
@@ -214,17 +219,43 @@ INPUT:
     the k-mers, including k-mer counts, will be ignored.
 
 POST:
-    The k-mers and their aggregate counts value will be written to the
-    [outputFile].
+    The k-mers and their aggregate counts value will be written to a file at
+    the [outputLocation].
 
 # =============================================================================
 """
-def aggregate(inclusionFiles, exclusionFiles, outputFile):
+def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
 
     SENTINEL = "~"              # sentinel value
 
     inclusionKMers = []         # current k-mer of inclusion files
     exclusionKMers = []         # current k-mer of exclusion files
+
+    # open files
+    inclusionFiles = []
+    exclusionFiles = []
+
+    # open inclusion files
+    for location in inclusionLocations:
+
+        if not os.path.isfile(location):
+            raise RuntimeError(
+                "ERROR: Could not open inclusion file: " +
+                str(location) + "\n")
+
+        inclusionFiles.append(open(location, 'r'))
+
+    # open exclusion files
+    for location in exclusionLocations:
+
+        if not os.path.isfile(location):
+            raise RuntimeError(
+                "ERROR: Could not open exclusion file: " +
+                str(location) + "\n")
+
+        exclusionFiles.append(open(location, 'r'))
+
+    outputFile = open(outputLocation, 'w')
 
     # initialize k-mers:
     for inclusionFile in inclusionFiles:
@@ -261,6 +292,44 @@ def aggregate(inclusionFiles, exclusionFiles, outputFile):
         # write aggregated k-mer to output
         outputString = str(kmer) + " " + str(incounts) + " " + str(excounts)
         outputFile.write(outputString + "\n")
+
+    # close files
+    for inclusion in inclusionFiles:
+
+        inclusion.close()
+
+    for exclusion in exclusionFiles:
+
+        exclusion.close()
+
+    outputFile.close()
+
+    # delete input files
+    if delete:
+
+        for filename in inclusionLocations + exclusionLocations:
+
+            if os.path.exists(filename):
+                    os.remove(filename)
+
+"""
+# =============================================================================
+
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    inclusionLocations = parameters[INCLUSION]
+    exclusionLocations = parameters[EXCLUSION]
+    outputLocation = parameters[OUTPUT]
+
+    delete = parameters[DELETE] \
+        if parameters[DELETE] else DELETE_DEFAULT
+
+    # aggregate
+    aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
 
 """
 # =============================================================================
@@ -307,70 +376,16 @@ def main():
         DELETE_LONG,
         dest=DELETE,
         help="delete input flag",
-        action='store_true', default=False)
+        action='store_true')
 
     args = parser.parse_args()
-
-    inclusionLocations = args.inclusion
-    exclusionLocations = args.exclusion
-    outputLocation = args.output
-    delete = args.delete
-
-    # open files
-    inclusionFiles = []
-    exclusionFiles = []
-
-    # open inclusion files
-    for location in inclusionLocations:
-
-        if not os.path.isfile(location):
-            raise RuntimeError(
-                "ERROR: Could not open inclusion file: " +
-                str(location) + "\n")
-
-        inclusionFiles.append(open(location, 'r'))
-
-    # open exclusion files
-    for location in exclusionLocations:
-
-        if not os.path.isfile(location):
-            raise RuntimeError(
-                "ERROR: Could not open exclusion file: " +
-                str(location) + "\n")
-
-        exclusionFiles.append(open(location, 'r'))
-
-    outputFile = open(outputLocation, 'w')
-
-    # aggregate
-    aggregate(inclusionFiles, exclusionFiles, outputFile)
-
-    # close files
-    for inclusion in inclusionFiles:
-
-        inclusion.close()
-
-    for exclusion in exclusionFiles:
-
-        exclusion.close()
-
-    outputFile.close()
-
-    # delete input files
-    if delete:
-
-        for filename in inclusionLocations + exclusionLocations:
-
-            if os.path.exists(filename):
-                    os.remove(filename)
+    parameters = vars(args)
+    parse(parameters)
 
 """
 # =============================================================================
-
-PARSING
-
 # =============================================================================
 """
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     main()

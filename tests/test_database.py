@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -53,12 +53,11 @@ class TestQueryDatabase(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple query.
+        Tests a simple database query.
 
     INPUT:
-        0:
 
-        database constructed from:
+        (database constructed from:)
         ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGG\
         AAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
 
@@ -66,7 +65,7 @@ class TestQueryDatabase(unittest.TestCase):
         AAACCCTTTGGGAAAACCCCTTTTGGGGAAAAA
 
     EXPECTED:
-        0: "long.query\t33\tlong\t33\t100.00\t33\n" in result
+        "long.query\t33\tlong\t33\t100.00\t33\n" in result
 
     # =============================================================================
     """
@@ -82,11 +81,10 @@ class TestQueryDatabase(unittest.TestCase):
             filterPercent, seedSize)
 
         with open (queryOutputLocation, "r") as myfile:
+
             result = myfile.read()
-
-        expected = "long.query\t33\tlong\t33\t100.00\t33\n"
-
-        self.assertTrue(expected in result)
+            expected = "long.query\t33\tlong\t33\t100.00\t33\n"
+            self.assertTrue(expected in result)
 
         os.remove(queryOutputLocation)
 
@@ -96,19 +94,18 @@ class TestQueryDatabase(unittest.TestCase):
     test_missing
 
     PURPOSE:
-        Tests a query that does not exist.
+        Tests a database query when the query does not exist in the target.
 
     INPUT:
-        0:
 
-        database constructed from:
+        (database constructed from:)
         ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG
 
         missing.query:
         ATATATATATATATATATATATATATAT
 
     EXPECTED:
-        0: ""
+        ""
 
     # =============================================================================
     """
@@ -124,11 +121,10 @@ class TestQueryDatabase(unittest.TestCase):
             filterPercent, seedSize)
 
         with open (queryOutputLocation, "r") as myfile:
+
             result = myfile.read()
-
-        expected = ""
-
-        self.assertEquals(result, expected)
+            expected = ""
+            self.assertEquals(result, expected)
 
         os.remove(queryOutputLocation)
 

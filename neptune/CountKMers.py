@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -30,14 +30,14 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 
 This script counts k-mers in a FASTA or multi FASTA file and writes them to
-either one or multiple files. Only the lexicographically smaller of a k-mer
-and it's reverse complement is reported. The k-mers are reported in sorted
-order.
+either one or multiple k-mer files. Only the lexicographically smaller of a
+k-mer and it's reverse complement is reported. The k-mers are reported in
+sorted order.
 
 Multiple output files are written only when the degree of parallelization is
 specified. The number of output files is: (4^[parallelization]). Increasing the
 degree of parallelization will not speed up k-mer counting. However, it may
-improve the speed of tools which use these k-mers.
+improve the speed of tools which use these k-mers, such as AggregateKMers.
 
 INPUT:
 
@@ -102,6 +102,10 @@ OUTPUT_SHORT = SHORT + "o"
 KMER_SHORT = SHORT + "k"
 PARALLEL_SHORT = SHORT + "p"
 
+# DEFAULTS
+
+PARALLELIZATION_DEFAULT = 0
+
 """
 # =============================================================================
 
@@ -115,7 +119,7 @@ PURPOSE:
     provided base name and the degree of organization.
 
 INPUT:
-    [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to files.
+    [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to several files.
     [STRING] [outputLocation] - The base file path to write the output files.
     [INT >= 0] [organization] - The degree of organization.
         This will produce 4^[organization] output files.
@@ -220,6 +224,11 @@ POST:
 """
 def count(inputLocation, outputLocation, k, organization):
 
+    # check input file
+    if not os.path.isfile(inputLocation):
+        raise RuntimeError(
+            "ERROR: Could not open input file: " + inputLocation + "\n")
+
     inputFile = open(inputLocation, 'r')
 
     references = Utility.buildReferences(inputFile)
@@ -261,6 +270,24 @@ def count(inputLocation, outputLocation, k, organization):
 
     # close input file
     inputFile.close()
+
+"""
+# =============================================================================
+
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    inputLocation = parameters[INPUT]
+    outputLocation = parameters[OUTPUT]
+    k = parameters[KMER]
+
+    parallelization = parameters[PARALLEL] \
+        if parameters[PARALLEL] else PARALLELIZATION_DEFAULT
+
+    count(inputLocation, outputLocation, k, parallelization)
 
 """
 # =============================================================================
@@ -308,21 +335,16 @@ def main():
         PARALLEL_LONG,
         dest=PARALLEL,
         help="degree of parallelization; produces 4^[parallelization] files",
-        type=int, default=0)
+        type=int)
 
     args = parser.parse_args()
+    parameters = vars(args)
+    parse(parameters)
 
-    inputLocation = args.input
-    outputLocation = args.output
-    k = args.kmer
-    parallelization = args.parallelization
-
-    # open input file
-    if not os.path.isfile(inputLocation):
-        raise RuntimeError(
-            "ERROR: Could not open input file: " + inputLocation + "\n")
-
-    count(inputLocation, outputLocation, k, parallelization)
-
+"""
+# =============================================================================
+# =============================================================================
+"""
 if __name__ == '__main__':
+
     main()

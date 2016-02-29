@@ -1,7 +1,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -61,7 +61,8 @@ class Hit():
 CREATE DATABASE JOB
 
 PURPOSE:
-    Creates a build database job that will execute a Python subprocess.
+    Creates a build database job that will execute a Python subprocess and
+    construct the database using BLAST.
 
 INPUT:
     [FILE LOCATION] [inputLocation] - The location of a single FASTA file
@@ -120,8 +121,8 @@ PURPOSE:
 
 INPUT:
     [FILE LOCATION] [databaseLocation] - The file location of the database.
-    [FILE LOCATION] [queryLocation] - The file location of the query.
-    [FILE LOCATION] [outputLocation] - The file location of the output.
+    [FILE LOCATION] [queryLocation] - The file location of the query (FASTA).
+    [FILE LOCATION] [outputLocation] - The file location to write the output.
     [0 <= FLOAT <= 1] [percentIdentity] - The minimum percent identity of an
         alignment for it to be reported.
     [4 <= INT] [seedSize] - The seed size used in query alignments.
