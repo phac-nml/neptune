@@ -690,7 +690,7 @@ def parse(parameters):
     print "\n==== Building References ====\n"
 
     if not os.path.isfile(parameters[REFERENCE]):
-            raise RuntimeError("ERROR: Could not open the reference file.\n")
+        raise RuntimeError("ERROR: Could not open the reference file.\n")
 
     referenceLocation = parameters[REFERENCE]
     referenceFile = open(referenceLocation, 'r')
