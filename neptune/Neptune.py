@@ -723,7 +723,7 @@ def main():
     parser.add_argument(
         DRMAA_LONG,
         dest=DRMAA,
-        help="runs Neptune on a single machine, without using DRMAA",
+        help="runs Neptune using DRMAA",
         action='store_true')
 
     parser.add_argument(
