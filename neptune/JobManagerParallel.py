@@ -47,6 +47,10 @@ import FilterSignatures
 import ConsolidateSignatures
 import Database
 
+# DEFAULTS
+
+PROCESSES_DEFAULT = 8
+
 """
 # =============================================================================
 
@@ -56,8 +60,6 @@ JOB MANAGER
 """
 
 class JobManagerParallel(JobManager.JobManager):
-
-    pool = multiprocessing.Pool(processes=8)
 
     """
     # =========================================================================
@@ -69,11 +71,15 @@ class JobManagerParallel(JobManager.JobManager):
             write Neptune output.
         [FILE LOCATION] [logDirectoryLocation] - The directory location to
             write output logs and error logs.
+        [INT > 0] [parallel] - The number of worker processes to create.
 
     # =========================================================================
     """
     def __init__(
-            self, outputDirectoryLocation, logDirectoryLocation):
+            self, outputDirectoryLocation, logDirectoryLocation,
+            parallel=PROCESSES_DEFAULT):
+
+        self.pool = multiprocessing.Pool(processes=parallel)
 
         # JobManager Parent Constructor
         JobManager.JobManager.__init__(

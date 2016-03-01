@@ -84,6 +84,7 @@ LONG = "--"
 OUTPUT_LONG = LONG + OUTPUT
 DRMAA_LONG = LONG + DRMAA
 VERSION_LONG = LONG + VERSION
+PARALLELIZATION_LONG = LONG + PARALLELIZATION
 
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
@@ -96,6 +97,7 @@ CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
 SHORT = "-"
 
 OUTPUT_SHORT = SHORT + "o"
+PARALLELIZATION_SHORT = SHORT + "p"
 
 """
 # =============================================================================
@@ -719,6 +721,14 @@ def main():
         dest=CountKMers.ORGANIZATION,
         help="number of base positions used in k-mer organization",
         type=int, default=3)
+
+    parser.add_argument(
+        PARALLELIZATION_SHORT,
+        PARALLELIZATION_LONG,
+        dest=PARALLELIZATION,
+        help="the maximum number of parallel worker processes to create \
+            (non-DRMAA mode)",
+        type=int, default=8)
 
     parser.add_argument(
         DRMAA_LONG,
