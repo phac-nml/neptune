@@ -558,12 +558,13 @@ EXECUTE PARALLEL
 def executeParallel(parameters):
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
-
     logDirectoryLocation = os.path.abspath(
         os.path.join(outputDirectoryLocation, LOG))
 
+    parallel = parameters[PARALLELIZATION]
+
     jobManager = JobManagerParallel.JobManagerParallel(
-        outputDirectoryLocation, logDirectoryLocation)
+        outputDirectoryLocation, logDirectoryLocation, parallel)
 
     execution = Execution.Execution(jobManager, parameters)
     execute(execution)
