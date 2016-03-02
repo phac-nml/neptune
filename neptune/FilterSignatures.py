@@ -75,16 +75,16 @@ GLOBALS
 """
 
 # NAMES
-INCLUSION_DATABASE = "inclusionDatabase"
-EXCLUSION_DATABASE = "exclusionDatabase"
+INCLUSION_DATABASE = "inclusion-database"
+EXCLUSION_DATABASE = "exclusion-database"
 INCLUSION = "inclusion"
 EXCLUSION = "exclusion"
 INPUT = "input"
-FILTERED_OUTPUT = "filteredOutput"
-SORTED_OUTPUT = "sortedOutput"
-FILTER_PERCENT = "filterPercent"
-FILTER_LENGTH = "filterLength"
-SEED_SIZE = "seedSize"
+FILTERED_OUTPUT = "filtered-output"
+SORTED_OUTPUT = "sorted-output"
+FILTER_PERCENT = "filter-percent"
+FILTER_LENGTH = "filter-length"
+SEED_SIZE = "seed-size"
 
 # ARGUMENTS
 LONG = "--"

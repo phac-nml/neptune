@@ -100,7 +100,6 @@ SHORT = "-"
 INPUT_SHORT = SHORT + "i"
 OUTPUT_SHORT = SHORT + "o"
 KMER_SHORT = SHORT + "k"
-ORGANIZATION_SHORT = SHORT + "z"
 
 # DEFAULTS
 
@@ -331,7 +330,6 @@ def main():
 
     # organization
     parser.add_argument(
-        ORGANIZATION_SHORT,
         ORGANIZATION_LONG,
         dest=ORGANIZATION,
         help="degree of organization; produces 4^[organization] output files",
