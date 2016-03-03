@@ -311,7 +311,7 @@ class JobManagerDRMAA(JobManager.JobManager):
         [FILE LOCATION] [inputLocation] - The location of the input file.
         [FILE LOCATION] [outputLocation] - The location of the output file.
         [1 <= INT] [k] - The size of the k-mers.
-        [0 <= INT] [parallelization] - The degree of parallelization.
+        [0 <= INT] [organization] - The degree of organization.
 
     RETURN:
         [JOB] [job] - A CountKMers job that may be passed to RunJobs(...).
@@ -319,7 +319,7 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
     """
     def createCountJob(
-            self, inputLocation, outputLocation, k, parallelization):
+            self, inputLocation, outputLocation, k, organization):
 
         # JOB CREATION
         job = self.createPythonJob()
@@ -336,7 +336,7 @@ class JobManagerDRMAA(JobManager.JobManager):
             CountKMers.INPUT_LONG, str(inputLocation),
             CountKMers.OUTPUT_LONG, str(outputLocation),
             CountKMers.KMER_LONG, str(k),
-            CountKMers.PARALLEL_LONG, str(parallelization)]
+            CountKMers.ORGANIZATION_LONG, str(organization)]
 
         if self.countSpecification:
             job.nativeSpecification = self.countSpecification
@@ -357,7 +357,7 @@ class JobManagerDRMAA(JobManager.JobManager):
         [STRING ITERATOR] [exclusionLocations] - An iterable object of all
             exclusion file locations.
         [FILE LOCATION] [outputLocation] - The output file location.
-        [STRING -- OPTIONAL] [tag] - The parallelization tag; used to generate
+        [STRING -- OPTIONAL] [tag] - The organization tag; used to generate
             appropriate file names from the inclusion and exclusion iterators.
 
     RETURN:

@@ -52,7 +52,7 @@ class DefaultArgs():
             parameters = {}
 
             parameters[CountKMers.KMER] = 5
-            parameters[CountKMers.PARALLEL] = 0
+            parameters[CountKMers.ORGANIZATION] = 0
 
             parameters[ExtractSignatures.RATE] = 0.01
             parameters[ExtractSignatures.INHITS] = 1
@@ -116,7 +116,7 @@ def setCommandLineArguments(parameters):
             ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
             FilterSignatures.FILTER_LENGTH_LONG, str(parameters[FilterSignatures.FILTER_LENGTH]),
             FilterSignatures.FILTER_PERCENT_LONG, str(parameters[FilterSignatures.FILTER_PERCENT]),
-            CountKMers.PARALLEL_LONG, str(parameters[CountKMers.PARALLEL]),
+            CountKMers.ORGANIZATION_LONG, str(parameters[CountKMers.ORGANIZATION]),
             ExtractSignatures.INCLUSION_LONG, str(parameters[ExtractSignatures.INCLUSION]),
             ExtractSignatures.EXCLUSION_LONG, str(parameters[ExtractSignatures.EXCLUSION]),
             ExtractSignatures.REFERENCE_SIZE_LONG, str(parameters[ExtractSignatures.REFERENCE_SIZE]),
@@ -205,24 +205,25 @@ class TestMain(unittest.TestCase):
     """
     # =========================================================================
 
-    test_parallel
+    test_organization
 
     PURPOSE:
-        Tests a CountKMers parallel execution when running Neptune.
+        Tests a CountKMers multiple file organization execution when running
+        Neptune.
 
     INPUT:
         [DefaultArgs()]
-        parameters[CountKMers.PARALLEL] = 1
+        parameters[CountKMers.ORGANIZATION] = 1
 
     EXPECTED:
         Signature: "ACGTACGTACGTACGTACGTACGTACGT\n"
 
     # =========================================================================
     """
-    def test_parallel(self):
+    def test_organization(self):
 
         parameters = DefaultArgs().parameters
-        parameters[CountKMers.PARALLEL] = 1
+        parameters[CountKMers.ORGANIZATION] = 1
 
         setCommandLineArguments(parameters)
         main()
@@ -570,25 +571,25 @@ class TestMain(unittest.TestCase):
     """
     # =========================================================================
 
-    test_invalid_parallelization
+    test_invalid_organization
 
     PURPOSE:
-        Tests a Neptune execution when the CountKMers paralleization value is
+        Tests a Neptune execution when the CountKMers organization value is
         invalid.
 
     INPUT:
         [DefaultArgs()]
-        parameters[CountKMers.PARALLEL] = -1
+        parameters[CountKMers.ORGANIZATION] = -1
 
     EXPECTED:
         [RuntimeError]
 
     # =========================================================================
     """
-    def test_invalid_parallelization(self):
+    def test_invalid_organization(self):
 
         parameters = DefaultArgs().parameters
-        parameters[CountKMers.PARALLEL] = -1
+        parameters[CountKMers.ORGANIZATION] = -1
 
         setCommandLineArguments(parameters)
 
@@ -617,7 +618,6 @@ class TestMain(unittest.TestCase):
 
     # =========================================================================
     """
-    # designed to catch possible parallel race-condition failure with many files
     def test_multiple_files(self):
 
         inclusion = getPath("tests/data/neptune/large_inclusion")

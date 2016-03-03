@@ -196,9 +196,9 @@ class TestRunJobs(unittest.TestCase):
         inputLocation = getPath("tests/data/manager/simple.fasta")
         outputLocation = getPath("tests/output/manager/temp.out")
         k = 7
-        parallelization = 0
+        organization = 0
 
-        job = jobManager.createCountJob(inputLocation, outputLocation, k, parallelization)
+        job = jobManager.createCountJob(inputLocation, outputLocation, k, organization)
 
         jobManager.runJobs([job])
 
@@ -242,15 +242,15 @@ class TestCreateCountJob(unittest.TestCase):
             inputLocation = "tests/data/manager/simple.fasta"
             outputLocation = getPath("tests/output/manager/temp.out")
             k = 7
-            parallelization = 0
+            organization = 0
 
-            job = jobManager.createCountJob(inputLocation, outputLocation, k, parallelization)
+            job = jobManager.createCountJob(inputLocation, outputLocation, k, organization)
 
             args = [
 			    CountKMers.INPUT_LONG, str(inputLocation), 
 			    CountKMers.OUTPUT_LONG, str(outputLocation), 
 			    CountKMers.KMER_LONG, str(k), 
-			    CountKMers.PARALLEL_LONG, str(parallelization)]
+			    CountKMers.ORGANIZATION_LONG, str(organization)]
 
             self.assertEquals(job.outputPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CountKMers1.o"))
             self.assertEquals(job.errorPath, ":" + os.path.join(logDirectoryLocation, "Neptune-CountKMers1.e"))

@@ -310,7 +310,7 @@ class TestMain(unittest.TestCase):
 
         outputLocation = getPath("tests/output/count/count1.kmers")
 
-        sys.argv[1:] = ["-i", "tests/data/count/count1.fasta", "-o", outputLocation, "-k", "7", "-p", "0"]
+        sys.argv[1:] = ["-i", "tests/data/count/count1.fasta", "-o", outputLocation, KMER_LONG, "7", ORGANIZATION_LONG, "0"]
         main()
 
         with open (outputLocation, "r") as myfile:
@@ -342,7 +342,7 @@ class TestMain(unittest.TestCase):
     def test_missing_input(self):
 
         sys.argv[1:] = ["-i", "tests/data/this_file_does_not_exist.fake", "-o",
-            getPath("tests/output/kmers.out"), "-k", "7", "-p", "0"]
+            getPath("tests/output/kmers.out"), KMER_LONG, "7", ORGANIZATION_LONG, "0"]
         
         with self.assertRaises(RuntimeError):
             main()

@@ -56,7 +56,7 @@ class DefaultArgs():
             parameters = {}
 
             parameters[CountKMers.KMER] = 5
-            parameters[CountKMers.PARALLEL] = 0
+            parameters[CountKMers.ORGANIZATION] = 0
 
             parameters[ExtractSignatures.RATE] = 0.01
             parameters[ExtractSignatures.INHITS] = 1

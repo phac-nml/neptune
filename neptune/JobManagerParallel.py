@@ -47,6 +47,10 @@ import FilterSignatures
 import ConsolidateSignatures
 import Database
 
+# DEFAULTS
+
+PROCESSES_DEFAULT = 8
+
 """
 # =============================================================================
 
@@ -56,8 +60,6 @@ JOB MANAGER
 """
 
 class JobManagerParallel(JobManager.JobManager):
-
-    pool = multiprocessing.Pool(processes=8)
 
     """
     # =========================================================================
@@ -69,11 +71,15 @@ class JobManagerParallel(JobManager.JobManager):
             write Neptune output.
         [FILE LOCATION] [logDirectoryLocation] - The directory location to
             write output logs and error logs.
+        [INT > 0] [parallel] - The number of worker processes to create.
 
     # =========================================================================
     """
     def __init__(
-            self, outputDirectoryLocation, logDirectoryLocation):
+            self, outputDirectoryLocation, logDirectoryLocation,
+            parallel=PROCESSES_DEFAULT):
+
+        self.pool = multiprocessing.Pool(processes=parallel)
 
         # JobManager Parent Constructor
         JobManager.JobManager.__init__(
@@ -144,7 +150,7 @@ class JobManagerParallel(JobManager.JobManager):
         [FILE LOCATION] [inputLocation] - The location of the input file.
         [FILE LOCATION] [outputLocation] - The location of the output file.
         [1 <= INT] [k] - The size of the k-mers.
-        [0 <= INT] [parallelization] - The degree of parallelization.
+        [0 <= INT] [organization] - The degree of k-mer organization.
 
     RETURN:
         [JOB] [job] - A CountKMers job that may be passed to RunJobs(...).
@@ -152,14 +158,14 @@ class JobManagerParallel(JobManager.JobManager):
     # =========================================================================
     """
     def createCountJob(
-            self, inputLocation, outputLocation, k, parallelization):
+            self, inputLocation, outputLocation, k, organization):
 
         parameters = {}
 
         parameters[CountKMers.INPUT] = inputLocation
         parameters[CountKMers.OUTPUT] = outputLocation
         parameters[CountKMers.KMER] = k
-        parameters[CountKMers.PARALLEL] = parallelization
+        parameters[CountKMers.ORGANIZATION] = organization
 
         job = self.pool.apply_async(
             CountKMers.parse,
@@ -181,7 +187,7 @@ class JobManagerParallel(JobManager.JobManager):
         [STRING ITERATOR] [exclusionLocations] - An iterable object of all
             exclusion file locations.
         [FILE LOCATION] [outputLocation] - The output file location.
-        [STRING -- OPTIONAL] [tag] - The parallelization tag; used to generate
+        [STRING -- OPTIONAL] [tag] - The organization tag; used to generate
             appropriate file names from the inclusion and exclusion iterators.
 
     RETURN:

@@ -84,6 +84,7 @@ LONG = "--"
 OUTPUT_LONG = LONG + OUTPUT
 DRMAA_LONG = LONG + DRMAA
 VERSION_LONG = LONG + VERSION
+PARALLELIZATION_LONG = LONG + PARALLELIZATION
 
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
@@ -96,6 +97,7 @@ CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
 SHORT = "-"
 
 OUTPUT_SHORT = SHORT + "o"
+PARALLELIZATION_SHORT = SHORT + "p"
 
 """
 # =============================================================================
@@ -149,7 +151,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             inclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     # EXCLUSION
@@ -165,7 +167,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             exclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     execution.jobManager.runJobs(jobs)
@@ -205,7 +207,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
     print("AggregateKMers starting ...")
 
-    if execution.parallelization:
+    if execution.organization:
 
         aggregateMultipleFiles(
             execution,
@@ -250,7 +252,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
     jobs = []
     outputLocations = []
 
-    for tag in Utility.getAggregationTags(execution.parallelization):
+    for tag in Utility.getAggregationTags(execution.organization):
 
         outputLocation = execution.aggregateLocation + "." + tag
         outputLocations.append(outputLocation)
@@ -556,12 +558,13 @@ EXECUTE PARALLEL
 def executeParallel(parameters):
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
-
     logDirectoryLocation = os.path.abspath(
         os.path.join(outputDirectoryLocation, LOG))
 
+    parallel = parameters[PARALLELIZATION]
+
     jobManager = JobManagerParallel.JobManagerParallel(
-        outputDirectoryLocation, logDirectoryLocation)
+        outputDirectoryLocation, logDirectoryLocation, parallel)
 
     execution = Execution.Execution(jobManager, parameters)
     execute(execution)
@@ -714,11 +717,19 @@ def main():
         type=str, required=True)
 
     parser.add_argument(
-        CountKMers.PARALLEL_SHORT,
-        CountKMers.PARALLEL_LONG,
-        dest=CountKMers.PARALLEL,
-        help="number of base positions used in parallelization",
+        CountKMers.ORGANIZATION_SHORT,
+        CountKMers.ORGANIZATION_LONG,
+        dest=CountKMers.ORGANIZATION,
+        help="number of base positions used in k-mer organization",
         type=int, default=3)
+
+    parser.add_argument(
+        PARALLELIZATION_SHORT,
+        PARALLELIZATION_LONG,
+        dest=PARALLELIZATION,
+        help="the maximum number of parallel worker processes to create \
+            (non-DRMAA mode)",
+        type=int, default=8)
 
     parser.add_argument(
         DRMAA_LONG,
