@@ -635,7 +635,7 @@ class TestMain(unittest.TestCase):
         with open (os.path.join(sortedDirectoryLocation, "in0.fasta"), "r") as myfile:
 
             result = myfile.readline()
-            expected = ">0 score=0.8889 in=1.0000 ex=-0.1111 len=99 ref=inclusion0 pos=999\n"
+            expected = ">0 score=0.8889 in=1.0000 ex=0.1111 len=99 ref=inclusion0 pos=999\n"
             self.assertEquals(result, expected)
 
             result = myfile.readline()
