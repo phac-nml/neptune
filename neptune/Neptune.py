@@ -70,13 +70,13 @@ DRMAA = "drmaa"
 VERSION = "version"
 
 PARALLELIZATION = "parallelization"
-DEFAULT_SPECIFICATION = "defaultSpecification"
-COUNT_SPECIFICATION = "countSpecification"
-AGGREGATE_SPECIFICATION = "aggregateSpecification"
-EXTRACT_SPECIFICATION = "extractSpecification"
-DATABASE_SPECIFICATION = "databaseSpecification"
-FILTER_SPECIFICATION = "filterSpecification"
-CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
+DEFAULT_SPECIFICATION = "default-specification"
+COUNT_SPECIFICATION = "count-specification"
+AGGREGATE_SPECIFICATION = "aggregate-specification"
+EXTRACT_SPECIFICATION = "extract-specification"
+DATABASE_SPECIFICATION = "database-specification"
+FILTER_SPECIFICATION = "filter-specification"
+CONSOLIDATE_SPECIFICATION = "consolidate-specification"
 
 # ARGUMENTS
 LONG = "--"
@@ -98,6 +98,7 @@ SHORT = "-"
 
 OUTPUT_SHORT = SHORT + "o"
 PARALLELIZATION_SHORT = SHORT + "p"
+VERSION_SHORT = SHORT + "V"
 
 """
 # =============================================================================
@@ -593,137 +594,154 @@ MAIN
 """
 def main():
 
-    # --- Parser ---
+    # --- PARSER ---
     parser = argparse.ArgumentParser(
-        description='Neptune locates DNA signatures using an exact k-mer \
+        description='Neptune identifies signatures using an exact k-mer \
         matching strategy. Neptune locates sequence that is sufficiently \
-        represented in many inclusion targets and sufficiently absent from \
-        exclusion targets.')
+        present in many inclusion targets and sufficiently absent from \
+        exclusion targets.',
 
-    parser.add_argument(
-        ExtractSignatures.REFERENCE_SHORT,
-        ExtractSignatures.REFERENCE_LONG,
-        dest=ExtractSignatures.REFERENCE,
-        help="FASTA reference(s) from which to extract signatures",
-        type=str, required=False, nargs='+')
+        usage="%(prog)s -i INCLUSION [INCLUSION ...] -e EXCLUSION \n\t" +
+        "[EXCLUSION ...] -o OUTPUT")
 
+    # --- VERSION ---
     parser.add_argument(
-        ExtractSignatures.REFERENCE_SIZE_SHORT,
-        ExtractSignatures.REFERENCE_SIZE_LONG,
-        dest=ExtractSignatures.REFERENCE_SIZE,
-        help="estimated total reference size",
-        type=int, required=False)
+        VERSION_SHORT,
+        VERSION_LONG,
+        action='version',
+        version='%(prog)s ' + str(__version__))
 
-    parser.add_argument(
-        CountKMers.KMER_SHORT,
-        CountKMers.KMER_LONG,
-        dest=CountKMers.KMER,
-        help="k-mer size",
-        type=int, required=False)
+    # --- REQUIRED ---
+    required = parser.add_argument_group("REQUIRED")
 
-    parser.add_argument(
-        ExtractSignatures.RATE_SHORT,
-        ExtractSignatures.RATE_LONG,
-        dest=ExtractSignatures.RATE,
-        help="probability of homologous bases not matching",
-        type=float, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         ExtractSignatures.INCLUSION_SHORT,
         ExtractSignatures.INCLUSION_LONG,
         dest=ExtractSignatures.INCLUSION,
-        help="inclusion genomes",
+        help="FASTA inclusion genome(s) to investigate for signatures",
         type=str, required=True, nargs='+')
 
-    parser.add_argument(
-        ExtractSignatures.INHITS_SHORT,
-        ExtractSignatures.INHITS_LONG,
-        dest=ExtractSignatures.INHITS,
-        help="minimum inclusion hits to build candidate",
-        type=int, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         ExtractSignatures.EXCLUSION_SHORT,
         ExtractSignatures.EXCLUSION_LONG,
         dest=ExtractSignatures.EXCLUSION,
-        help="exclusion genome(s)",
+        help="FASTA exclusion genome(s) that will be a background for the \
+        inclusion genome(s)",
         type=str, required=True, nargs='+')
 
-    parser.add_argument(
-        ExtractSignatures.EXHITS_SHORT,
-        ExtractSignatures.EXHITS_LONG,
-        dest=ExtractSignatures.EXHITS,
-        help="minimum exclusion hits to remove candidate",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.GAP_SHORT,
-        ExtractSignatures.GAP_LONG,
-        dest=ExtractSignatures.GAP,
-        help="maximum number of consecutive k-mers in a candidate \
-            without an inclusion hit",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.SIZE_SHORT,
-        ExtractSignatures.SIZE_LONG,
-        dest=ExtractSignatures.SIZE,
-        help="minimum candidate size",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.GC_SHORT,
-        ExtractSignatures.GC_LONG,
-        dest=ExtractSignatures.GC_CONTENT,
-        help="the GC-content of the environment",
-        type=float, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.CONFIDENCE_SHORT,
-        ExtractSignatures.CONFIDENCE_LONG,
-        dest=ExtractSignatures.CONFIDENCE,
-        help="statistical confidence level",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.FILTER_PERCENT_SHORT,
-        FilterSignatures.FILTER_PERCENT_LONG,
-        dest=FilterSignatures.FILTER_PERCENT,
-        help="the maximum percent identity of an exclusion hit; removes \
-        candidates that have exclusion hit matches higher than this",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.FILTER_LENGTH_SHORT,
-        FilterSignatures.FILTER_LENGTH_LONG,
-        dest=FilterSignatures.FILTER_LENGTH,
-        help="the maximum shared fractional length of an exclusion hit \
-            with a candidate; remove candidates that have exclusion hit \
-            matches longer than this",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.SEED_SIZE_SHORT,
-        FilterSignatures.SEED_SIZE_LONG,
-        dest=FilterSignatures.SEED_SIZE,
-        help="the seed size used during alignment",
-        type=int, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
         help="output directory",
         type=str, required=True)
 
-    parser.add_argument(
-        CountKMers.ORGANIZATION_SHORT,
+    # --- KMERS ---
+    kmers = parser.add_argument_group("KMERS")
+
+    kmers.add_argument(
+        CountKMers.KMER_SHORT,
+        CountKMers.KMER_LONG,
+        dest=CountKMers.KMER,
+        help="k-mer size",
+        type=int, required=False)
+
+    kmers.add_argument(
         CountKMers.ORGANIZATION_LONG,
         dest=CountKMers.ORGANIZATION,
-        help="number of base positions used in k-mer organization",
+        help="number of base positions used in k-mer organization; \
+        affects the the speed of k-mer aggregation",
         type=int, default=3)
 
-    parser.add_argument(
+    # --- FILTERING ---
+    filtering = parser.add_argument_group("FILTERING")
+
+    filtering.add_argument(
+        FilterSignatures.FILTER_PERCENT_LONG,
+        dest=FilterSignatures.FILTER_PERCENT,
+        help="the maximum percent identity of an exclusion hit; removes \
+        candidates that have exclusion hit matches higher than this value",
+        type=float, required=False)
+
+    filtering.add_argument(
+        FilterSignatures.FILTER_LENGTH_LONG,
+        dest=FilterSignatures.FILTER_LENGTH,
+        help="the maximum shared fractional length of an exclusion hit \
+            with a candidate; remove candidates that have exclusion hit \
+            matches longer than this value",
+        type=float, required=False)
+
+    filtering.add_argument(
+        FilterSignatures.SEED_SIZE_LONG,
+        dest=FilterSignatures.SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False)
+
+    # --- EXTRACTION ---
+    extraction = parser.add_argument_group("EXTRACTION")
+
+    extraction.add_argument(
+        ExtractSignatures.REFERENCE_SHORT,
+        ExtractSignatures.REFERENCE_LONG,
+        dest=ExtractSignatures.REFERENCE,
+        help="FASTA reference(s) from which to extract signatures",
+        type=str, required=False, nargs='+')
+
+    extraction.add_argument(
+        ExtractSignatures.REFERENCE_SIZE_LONG,
+        dest=ExtractSignatures.REFERENCE_SIZE,
+        help="estimated reference size",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.RATE_LONG,
+        dest=ExtractSignatures.RATE,
+        help="probability of homologous bases not matching",
+        type=float, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.INHITS_LONG,
+        dest=ExtractSignatures.INHITS,
+        help="minimum inclusion hits to start or continue building candidate \
+        a signature",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.EXHITS_LONG,
+        dest=ExtractSignatures.EXHITS,
+        help="minimum exclusion hits to terminate a candidate signature",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.GAP_LONG,
+        dest=ExtractSignatures.GAP,
+        help="maximum number of consecutive k-mers in a candidate \
+            without an inclusion hit before terminating the candidate",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.SIZE_LONG,
+        dest=ExtractSignatures.SIZE,
+        help="minimum candidate signature size",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.GC_LONG,
+        dest=ExtractSignatures.GC_CONTENT,
+        help="the GC-content of the environment",
+        type=float, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.CONFIDENCE_LONG,
+        dest=ExtractSignatures.CONFIDENCE,
+        help="statistical confidence level used when extending k-mer gaps, \
+        determining minimum inclusion hit observations",
+        type=float, required=False)
+
+    # --- PARALLELIZATION ---
+    parallelization = parser.add_argument_group("PARALLELIZATION")
+
+    parallelization.add_argument(
         PARALLELIZATION_SHORT,
         PARALLELIZATION_LONG,
         dest=PARALLELIZATION,
@@ -731,58 +749,56 @@ def main():
             (non-DRMAA mode)",
         type=int, default=8)
 
-    parser.add_argument(
+    # --- DRMAA ---
+    drmaa = parser.add_argument_group("DRMAA")
+
+    drmaa.add_argument(
         DRMAA_LONG,
         dest=DRMAA,
-        help="runs Neptune using DRMAA",
+        help="runs Neptune in DRMAA mode",
         action='store_true')
 
-    parser.add_argument(
+    drmaa.add_argument(
         DEFAULT_SPECIFICATION_LONG,
         dest=DEFAULT_SPECIFICATION,
         help="DRM-specific parameters for all jobs",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         COUNT_SPECIFICATION_LONG,
         dest=COUNT_SPECIFICATION,
         help="DRM-specific parameters for k-mer counting",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         AGGREGATE_SPECIFICATION_LONG,
         dest=AGGREGATE_SPECIFICATION,
         help="DRM-specific parameters for k-mer aggregation",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         EXTRACT_SPECIFICATION_LONG,
         dest=EXTRACT_SPECIFICATION,
         help="DRM-specific parameters for signature extraction",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         DATABASE_SPECIFICATION_LONG,
         dest=DATABASE_SPECIFICATION,
         help="DRM-specific parameters for database construction",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         FILTER_SPECIFICATION_LONG,
         dest=FILTER_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         CONSOLIDATE_SPECIFICATION_LONG,
         dest=CONSOLIDATE_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
-
-    parser.add_argument(
-        VERSION_LONG,
-        action='version',
-        version='%(prog)s ' + str(__version__))
 
     # --- ArgParse Work-Around ---
     for i in range(len(sys.argv)):

@@ -55,7 +55,7 @@ GLOBALS
 SIGNATURES = "signatures"
 OUTPUT = "output"
 CONSOLIDATED_DATABASE = "database"
-SEED_SIZE = "seedSize"
+SEED_SIZE = "seed-size"
 
 # ARGUMENTS
 LONG = "--"

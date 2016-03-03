@@ -79,7 +79,7 @@ GLOBALS
 
 # NAMES
 REFERENCE = "reference"
-REFERENCE_SIZE = "referenceSize"
+REFERENCE_SIZE = "reference-size"
 RATE = "rate"
 INCLUSION = "inclusion"
 INHITS = "inhits"
@@ -87,7 +87,7 @@ EXCLUSION = "exclusion"
 EXHITS = "exhits"
 GAP = "gap"
 SIZE = "size"
-GC_CONTENT = "gcContent"
+GC_CONTENT = "gc-content"
 CONFIDENCE = "confidence"
 KMERS = "kmers"
 OUTPUT = "output"
