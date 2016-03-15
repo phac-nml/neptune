@@ -6,7 +6,7 @@
 
 Neptune
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -38,12 +38,12 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.1.1**
+**Neptune 1.2.0**
 
-2016 February 24
+2016 March 18
 
-This release of Neptune updates the installation instructions to be more
-informative.
+This release of Neptune allows for execution on a single machine without
+requiring DRMAA.
 
 ## Requirements ##
 ------------------
@@ -54,8 +54,6 @@ the following dependencies must be installed by the user:
 - Python 2.7
 - NumPy
 - SciPy
-- DRMAA-compliant scheduler
-- Python DRMAA
 - BLAST+
 - pipsi
 
@@ -64,11 +62,8 @@ the following dependencies must be installed by the user:
 
 It is strongly recommended you refer to the manual for full installation
 instructions. The following description is an abridged version of the
-installation process. The user will need to install and configure a
-DRMAA-compliant scheduler and Python DRMAA bindings. This process may require
-considerable time. Please refer to the instructions available at:
-
-	https://github.com/pygridtools/drmaa-python
+installation process. This assumes all dependencies, save for pipsi, are
+already installed.
 
 The pipsi tool may be installed using the following command:
 

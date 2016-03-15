@@ -1,5 +1,5 @@
 % ==============================================================================
-% Copyright Government of Canada 2015
+% Copyright Government of Canada 2015-2016
 %
 % Written by: Eric Marinier, Public Health Agency of Canada,
 %     National Microbiology Laboratory
@@ -77,30 +77,30 @@
 \newpage
 \section{Introduction}
 
-Neptune locates genomic signatures using an exact \textit{k}-mer matching strategy while accommodating \textit{k}-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. These general-purpose signatures are agnostic of application-specific requirements, such as physical and chemical properties, and may require further investigation to determine their appropriateness.
+Neptune locates genomic signatures using an exact \textit{k}-mer matching strategy while accommodating \textit{k}-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is guided by probabilistic models instead of heuristic strategies. Neptune identifies general-purpose signatures are agnostic of application-specific requirements, such as physical and chemical properties, and may require further investigation to determine their appropriateness for application.
 
 \newpage
 \section{Installation}
 
-This installation guide assumes the user is using the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager and the \href{https://en.wikipedia.org/wiki/Bash_(Unix_shell)}{BASH} Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on other environments is beyond the scope of this manual. Neptune achieves maximum parallelization by submitting jobs through a Python DRMAA binding to a DRMAA-compliant scheduler. This installation will require a substantial understanding of Unix if such a DRMAA-compliant scheduler additionally needs to be installed and configured. Neptune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
+This installation guide assumes the user is using the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager and the \href{https://en.wikipedia.org/wiki/Bash_(Unix_shell)}{BASH} Unix shell. These are common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} Linux operating system. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on other environments is beyond the scope of this manual.
 
-\subsection{Requirements}
+Neptune may either be run on a single machine or on a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a substantial understanding of Unix. However, it is possible to run Neptune on a single machine without DRMAA. Neptune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
 
-Neptune should be installed and run on a standard 64-bit Unix environment. The installation process will attempt to automatically install many dependencies. However, the following dependencies must be manually installed by the user:
+\subsection{Neptune Requirements}
+
+Neptune should be installed and run on a standard 64-bit Unix environment. The installation process will attempt to automatically install many dependencies. However, the following dependencies must be manually installed, if necessary, by the user:
 
 \begin{enumerate}
   \item Python 2.7
   \item NumPy
   \item SciPy
-  \item DRMAA-compliant scheduler
-  \item Python DRMAA
   \item BLAST+
   \item pipsi
 \end{enumerate}
 
 \subsubsection{Python 2.7}
 
-Python 2.7 is provided with many major distributions of Linux. However, if this is not the case with your distribution, then the following should install Python 2.7:
+Please note that Python 2.7 is provided with many major distributions of Linux. However, if this is not the case with your distribution, then the following should install Python 2.7:
 
 \begin{lstlisting}
 # Install requirements:
@@ -125,7 +125,7 @@ $ python2.7 -V
 
 \subsubsection{NumPy and SciPy}
 
-NumPy and SciPy are provided with many major distributions of Linux. However, if this is not the case your distribution, then either refer to the \href{http://docs.scipy.org/doc/numpy-1.10.1/user/install.html}{official NumPy installation instructions} and \href{http://www.scipy.org/scipylib/building/linux.html}{official SciPy installation instructions}, or the following should install NumPy and SciPy:
+Please note that NumPy and SciPy are provided with many major distributions of Linux. However, if this is not the case your distribution, then either refer to the \href{http://docs.scipy.org/doc/numpy-1.10.1/user/install.html}{official NumPy installation instructions} and \href{http://www.scipy.org/scipylib/building/linux.html}{official SciPy installation instructions}, or the following should install NumPy and SciPy:
 
 \begin{lstlisting}
 # Install NumPy requirements:
@@ -138,16 +138,6 @@ $ sudo apt-get install python-matplotlib ipython ipython-notebook python-pandas 
 $ sudo apt-get install python-numpy python-scipy
 \end{lstlisting}
 
-\subsubsection{DRMAA}
-
-Neptune uses a Python DRMAA binding to schedule parallel jobs. The user will first need to install and configure a DRMAA-compliant scheduler and further install the Python DRMAA bindings in order to use Neptune. Neptune has been tested using SGE installed on a single machine with the following instructions:
-\newline\newline
-\url{https://scidom.wordpress.com/2012/01/18/sge-on-single-pc/}
-\newline\newline
-However, any DRMAA-compliant scheduler is expected to work. The instructions for installing and configuring such scheduling environments are beyond the scope of this resource. The information necessary for installing and configuring the Python DRMAA bindings is available at:
-\newline\newline
-\url{https://github.com/pygridtools/drmaa-python}
-
 \subsubsection{BLAST}
 
 BLAST may be installed using APT:
@@ -159,14 +149,14 @@ $ sudo apt-get install ncbi-blast+
 
 \subsubsection{pipsi}
 
-The \href{https://github.com/mitsuhiko/pipsi}{pipsi} tool is a tool used to install Python packages using pip into shielded virtual environments. This reduces the problem of software installation creating conflicts with other installations using differing dependencies. The pipsi tool may be installed using curl and Python:
+The \href{https://github.com/mitsuhiko/pipsi}{pipsi} tool is used to install Python packages using pip into shielded virtual environments. The software attempts to avoid the problem of software installations conflicting with other installations using differing dependencies. The pipsi tool may be installed using curl and Python:
 
 \begin{lstlisting}
 # Install pipsi:
 $ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
 \end{lstlisting}
 
-You may need to add the pipsi install location to your PATH variable.
+Furthermore, you may need to add the default pipsi install location to your PATH variable.
 
 \begin{lstlisting}
 # Add the following line to your ~/.bashrc file:
@@ -179,22 +169,79 @@ $ source ~/.bashrc
 $ echo $PATH | grep local/bin
 \end{lstlisting}
 
-\subsection{Neptune}
+\subsection{Neptune Installation}
 
-Neptune executes in a Python environment and therefore does not need to be explicitly compiled. Neptune is best installed using pipsi, as it will install several Python dependencies automatically. The installation is performed by running the following:
+Neptune executes in a Python environment and therefore does not need to be explicitly compiled. Neptune is best installed using pipsi, as it will further install several Python dependencies required by Neptune automatically. The installation is performed by running the following:
 
 \begin{lstlisting}
 # Install Neptune:
 $ pipsi install /path/to/neptune/download/location/
 
 # Ensure installation was successful:
-$ neptune --help
+$ neptune --version
+> neptune 1.2.0
+\end{lstlisting}
+
+\newpage
+\subsection{DRMAA Requirements}
+
+The following is only necessary for execution of Neptune in DRMAA mode on a cluster computing environment. These instructions require a strong understanding of Unix and cluster computing configuration. The user will need to manually install and configure a DRMAA-compliant scheduler, such as \href{http://gridscheduler.sourceforge.net/}{SGE} or \href{http://slurm.schedmd.com/}{Slurm}, on either a single machine or on a computing cluster. The user will additionally need to install and configure Python DRMAA bindings with considerations for the DRMAA-compliant scheduler. The following are required to operate Neptune in DRMAA mode:
+
+\begin{enumerate}
+  \item DRMAA-compliant scheduler
+  \item Python DRMAA bindings
+\end{enumerate}
+
+\subsubsection{DRMAA-Compliant Scheduler}
+
+Neptune has been tested using SGE installed on a single machine with the following instructions:
+\newline\newline
+\url{https://scidom.wordpress.com/2012/01/18/sge-on-single-pc/}
+\newline\newline
+However, any DRMAA-compliant scheduler is expected to work. The instructions for installing and configuring such scheduling environments are beyond the scope of this resource.
+
+\subsubsection{Python DRMAA Bindings}
+
+Neptune uses a Python DRMAA binding to schedule parallel jobs and communicate with the scheduler. The information necessary for installing and configuring the Python DRMAA bindings is available the following location:
+\newline\newline
+\url{https://github.com/pygridtools/drmaa-python}
+
+\subsection{DRMAA Installation}
+
+It may be helpful to create a submission wrapper script for Neptune to avoid entering the same DRMAA native specification parameters for every submission. The following SGE and Slurm submission wrapper scripts automatically include native specification parameters, appropriate for the scheduling environment, which may be overwritten by the submitting user as necessary.
+
+\subsubsection{Slurm Wrapper}
+
+\begin{lstlisting}[title={neptune-slurm}]
+#!/usr/bin/env bash
+
+DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
+
+/home/user/.local/bin/neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
+\end{lstlisting}
+
+\begin{lstlisting}[title={Slurm Example}]
+$ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
+\end{lstlisting}
+
+\subsubsection{SGE Wrapper}
+
+\begin{lstlisting}[title={neptune-sge}]
+#!/usr/bin/env bash
+
+DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
+
+/share/apps/neptune/neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
+\end{lstlisting}
+
+\begin{lstlisting}[title={SGE Example}]
+$ neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
 \end{lstlisting}
 
 \newpage
 \section{Parameters}
 
-A short help message may be viewed by running:
+A help message may be viewed by running:
 
 \begin{lstlisting}
 $ neptune --help
@@ -208,119 +255,148 @@ Neptune requires the location of the inclusion, exclusion, and output directorie
 $ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
 \end{lstlisting}
 
-The following is a description of the required command line parameters:
+The following parameters are required by Neptune:
 
 \begin{description}
 
   \item[inclusion] \hfill \\
-  \textbf{-{}-inclusion -i [file]} \hfill \\
+  \textbf{-i [LOCATION] [LOCATION ...] // -{}-inclusion [LOCATION] [LOCATION ...]} \hfill \\
   A list of inclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-inclusion} parameter. Neptune will automatically include all root-level files within directories.  
   
   \item[exclusion] \hfill \\
-  \textbf{-{}-exclusion -e [file]} \hfill \\
+  \textbf{-e [LOCATION] [LOCATION ...] // -{}-exclusion [LOCATION] [LOCATION ...]} \hfill \\
   A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-exclusion} parameter. Neptune will automatically include all root-level files within directories.
   
   \item[output] \hfill \\
-  \textbf{-{}-output -o [directory]} \hfill \\
+  \textbf{-o [LOCATION] // -{}-output [LOCATION]} \hfill \\
   The location of the output directory. If this directory exists, any files produced with existing names will be overwritten. If this directory does not exist, then it will be created.
   
 \end{description}
 
-\subsection{Optional Parameters}
+\subsection{\textit{k}-mer Parameters}
 
-The following is a description of optional command line parameters:
+The following parameters relate to \textit{k}-mer generation and aggregation:
 
 \begin{description}
 
-  \item[help] \hfill \\
-  \textbf{-{}-help -h} \hfill \\
-  Displays a help message to standard output.
-  
   \item[\textit{k}-mer] \hfill \\
-  \textbf{-{}-kmer -k [int]} \hfill \\
-  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random intra-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be smaller than the smallest sequence record.
+  \textbf{-k [INT] // -{}-kmer [INT]} \hfill \\
+  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random \textit{intra}-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be larger than the smallest sequence record.
   
-  \item[parallelization] \hfill \\
-  \textbf{-{}-parallelization -p [int]} \hfill \\
-  The degree of organization of \textit{k}-mer aggregation. \textbf{This is not the number of parallel process run simultaneously.} This parameter determines the number of files to which the \textit{k}-mers from each target are written and the number of parallel instances of \textit{k}-mer aggregation. The number of parallel instances is determined by \(4^{p}\), where \(p\) is the specified parallelization argument (\mbox{-{}-parallelization}). This value must be a non-negative integer smaller than \textit{k}. If the parameter is not specified, then \(p = 0\) and there will be no parallel \textit{k}-mer aggregation. This will likely require a much longer computation time.
+  \item[organization] \hfill \\
+  \textbf{-{}-organization [INT]} \hfill \\
+  The degree of organization of \textit{k}-mer counting and aggregation. This parameter determines the number nucleotide bases used in parallelized \textit{k}-mer counting and, in turn, the number of parallel instances of \textit{k}-mer aggregation. The number of parallel instances is determined by \(4^{o}\), where \(o\) is the specified organization argument (\textbf{\mbox{-{}-organization}}). This value must be a non-negative integer smaller than \textit{k}. If the parameter is not specified, then \(o = 0\) and there will be no parallel \textit{k}-mer aggregation. This will likely require a much longer computation time to complete \textit{k}-mer aggregation.
   
-  \item[reference] \hfill \\
-  \textbf{-{}-reference -r [file]} \hfill \\
-  A list of references from which to extract signatures. If this parameter is not specified, signatures will be extracted from \textbf{all} inclusion targets. You may list multiple file locations following the \textbf{-{}-reference} parameter.
-  
-  \item[rate] \hfill \\
-  \textbf{-{}-rate -q [float]} \hfill \\
-  This is the probability (0.0, 1.0) that any two homologous bases are different from each other. This should incorporate mutation rates, sequencing error rates, and assembly error rates. The rate is used to calculate the maximum allowable gap size in a signature and the minimum expected number of exact \textit{k}-mer matches in a signature. If this value is not specified, the rate is assumed to be 0.01.
-  
-  \item[GC-content] \hfill \\
-  \textbf{-{}-gcContent -gc [float]} \hfill \\
-  The expected GC-content of the environment. The GC-content is used to calculate the maximum allowable gap size in a signature and the minimum expected number of exact \textit{k}-mer matches in a signature. If this value is not specified, it is calculated by observing the GC-content of each target during signature extraction. The value must be between (0.0, 1.0).
-  
-  \item[confidence] \hfill \\
-  \textbf{-{}-confidence -c [float]} \hfill \\
-  The statistical confidence of decision making in the software. The confidence affects the automatic calculation of both the maximum gap size and minimum number of inclusion hits. If this value is not specified, a default of 0.95 is used. The value must be between (0.0, 1.0).
-  
-  \item[minimum inclusion hits] \hfill \\
-  \textbf{-{}-inhits -ih [int]} \hfill \\
-  The minimum number of inclusion hits required to start and continue signature extraction. If this value is not specified, it will be automatically calculated using the number of inclusion targets, the GC-content, the rate, and the \textit{k}-mer size. The calculation can be found in the \textit{Mathematics} documentation. This value must be a positive integer.
-  
-  \item[minimum exclusion hits] \hfill \\
-  \textbf{-{}-exhits -eh [int]} \hfill \\
-  The minimum number of exclusion hits necessary to stop extraction of a signature. If this value is not specified, it is assumed to be 1. This value must be a positive integer.
-  
-  \item[maximum gap size] \hfill \\
-  \textbf{-{}-gap -g [int]} \hfill \\
-  The maximum allowable number of base positions shifted before seeing an exact \textit{k}-mer match. If this value is not specified, it will be automatically calculated using the rate, GC-content, and the k-mer size. The calculation can be found in the \textit{Mathematics} documentation. This value must be a positive integer.
-  
-  \item[minimum signature size] \hfill \\
-  \textbf{-{}-size -s [int]} \hfill \\
-  The minimum size for a signature. Signatures which are shorter than this length will not be reported. If this value is not specified, the minimum signature size will be four times the length of the \textit{k}-mer size (\(4k\)). It is not recommended to locate signatures smaller than this size, unless application-specific. This value must be a positive integer.
-  
+\end{description}
+
+\subsection{Filtering Parameters}
+
+The following command-line parameters relate to signature filtering:
+
+\begin{description}
+
   \item[filter length] \hfill \\
-  \textbf{-{}-filterLength -fl [float]} \hfill \\
-  The minimum percent length of a exclusion hit against a signature candidate required to filter out the candidate. This value is a percentage expressed as a floating point number (0.0, 1.0). If the any exclusion hit exceeds the percent length \textbf{and} percent identity of any candidate, the candidate is removed. If this value is not specified, it is assumed to be 0.5.
+  \textbf{-{}-filter-length [FLOAT]} \hfill \\
+  The minimum percent length of a signature candidate against a exclusion target required to filter out the candidate. This value is a percentage expressed as a floating point number [0.0, 1.0]. If the any exclusion hit exceeds the percent length \textbf{and} percent identity of any candidate, the candidate is removed. The default value is 0.5.
   
   \item[filter percent] \hfill \\
-  \textbf{-{}-filterPercent -fp [float]} \hfill \\
-  The minimum percent identity of an exclusion hit against a signature candidate required to filter out the candidate. The percent identity is calculated as identities divided by the alignment length. This value is a percentage expressed as a floating point number (0.0, 1.0). If the any exclusion hit exceeds the percent length \textbf{and} percent identity of any candidate, the candidate is removed. If this value is not specified, it is assumed to be 0.5. 
+  \textbf{-{}-filter-percent [FLOAT]} \hfill \\
+  The minimum percent identity of a signature candidate against a exclusion target required to filter out the candidate. The percent identity is calculated as identities divided by the alignment length. This value is a percentage expressed as a floating point number [0.0, 1.0]. If the any exclusion hit exceeds the percent length \textbf{and} percent identity of any candidate, the candidate is removed. The default value is 0.5.
   
-  \item[FILTERING NOTE] \hfill \\
-  In order for a candidate to be filtered, any exclusion hit needs to exceed \textbf{both} the percent length (\mbox{-{}-filterLength}) and percent identity (\mbox{-{}-filterPercent}) thresholds.
+  \item[seed size] \hfill \\
+  \textbf{-{}-seed-size [INT]} \hfill \\
+  The seed size used for alignments. This value must be no smaller than 4. The default value is 11.
   
 \end{description}
   
-\subsection{DRMAA-Specific Arguments}
+\subsection{Extraction Parameters}
 
-It may be necessary to specify job submission parameters that are required by your parallel computing environment. If you require DRMAA-specific command line arguments, they may be provided to Neptune using one of several arguments. The \mbox{\textbf{-{}-defaultSpecification}} parameter will provide the DRM-specific arguments to all jobs which are created. The remaining command line arguments allow specific arguments to each type of job.
+The following command-line parameters relate to signature extraction:
 
 \begin{description}
 
+  \item[reference] \hfill \\
+  \textbf{-r [FILE] [FILE ...] // -{}-reference [FILE] [FILE ...]} \hfill \\
+  A list of references from which to extract signatures. If this parameter is not specified, signatures will be extracted from \textbf{all} inclusion targets. You may list multiple file locations following the \textbf{-{}-reference} parameter.
+  
+  \item[rate] \hfill \\
+  \textbf{-{}-rate [FLOAT]} \hfill \\
+  This is the probability (0.0, 1.0) that any two homologous bases are different from each other. This should incorporate mutation rates, sequencing error rates, and assembly error rates. The rate is used to calculate the maximum allowable gap size in a signature and the minimum expected number of exact \textit{k}-mer matches in a signature. If this value is not specified, the rate is assumed to be 0.01.
+  
+  \item[gc-content] \hfill \\
+  \textbf{-{}-gc-content [FLOAT]} \hfill \\
+  The expected GC-content of the environment. The GC-content is used to calculate the maximum allowable gap size in a signature and the minimum expected number of exact \textit{k}-mer matches in a signature. If this value is not specified, it is calculated by observing the GC-content of each target during signature extraction. The value must be between (0.0, 1.0).
+  
+  \item[confidence] \hfill \\
+  \textbf{-{}-confidence [FLOAT]} \hfill \\
+  The statistical confidence of decision making in the software. The confidence affects the automatic calculation of both the maximum gap size and minimum number of inclusion hits. If this value is not specified, a default of 0.95 is used. The value must be between (0.0, 1.0).
+  
+  \item[minimum inclusion hits] \hfill \\
+  \textbf{-{}-inhits [INT]} \hfill \\
+  The minimum number of inclusion hits required to start and continue signature extraction. If this value is not specified, it will be automatically calculated using the number of inclusion targets, the GC-content, the rate, and the \textit{k}-mer size. The calculation can be found in the \textit{Mathematics} documentation. This value must be a positive integer.
+  
+  \item[minimum exclusion hits] \hfill \\
+  \textbf{-{}-exhits [INT]} \hfill \\
+  The minimum number of exclusion hits necessary to stop extraction of a signature. If this value is not specified, it is assumed to be 1. This value must be a positive integer.
+  
+  \item[maximum gap size] \hfill \\
+  \textbf{-{}-gap [INT]} \hfill \\
+  The maximum allowable number of base positions shifted before seeing an exact \textit{k}-mer match. If this value is not specified, it will be automatically calculated using the rate, GC-content, and the k-mer size. The calculation can be found in the \textit{Mathematics} documentation. This value must be a positive integer.
+  
+  \item[minimum signature size] \hfill \\
+  \textbf{-{}-size [INT]} \hfill \\
+  The minimum size for a signature. Signatures which are shorter than this length will not be reported. If this value is not specified, the minimum signature size will be four times the length of the \textit{k}-mer size (\(4k\)). It is not recommended to locate signatures smaller than this size, unless application-specific. This value must be a positive integer.
+
+\end{description}
+  
+\subsection{Parallelization Parameters}
+
+The following parameters relate to the parallelization of Neptune:
+
+\begin{description}
+
+  \item[parallelization] \hfill \\
+  \textbf{-p [INT] // -{}-parallelization [INT]} \hfill \\
+  The number of parallel working processes to create when Neptune is operating in a non-DRMAA mode (default). This parameter will directly increase the speed of many stages of the software, provided there are sufficient resources available to run the worker process simultaneously. This value must be a positive integer. The default value is 8.
+
+\end{description}
+  
+\subsection{DRMAA Parameters}
+
+It may be necessary to specify job submission parameters that are required by your cluster-computing environment. If you require DRM-specific command line arguments, they may be provided to Neptune using one of several arguments. The \mbox{\textbf{-{}-default-specification}} parameter will provide the DRM-specific arguments to all jobs which are created. Additional command line arguments allow precise specifications for each type of job.
+
+\begin{description}
+
+  \item[drmaa] \hfill \\
+  \textbf{-{}-drmaa} \hfill \\
+  This flag enables DRMAA-based Neptune execution. This will require a DRMAA-compatible cluster computing environment to be installed and configured. However, Neptune will likely operate significantly faster in this environment.
+
   \item[default specification] \hfill \\
-  \textbf{-{}-defaultSpecification [string]} \hfill \\
+  \textbf{-{}-default-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for all jobs. These arguments must be provided as a quoted string. The default specification will be applied to all job types and overwritten when specified.
   
   \item[count specification] \hfill \\
-  \textbf{-{}-countSpecification [string]} \hfill \\
+  \textbf{-{}-count-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for \textit{k}-mer counting. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
   \item[aggregate specification] \hfill \\
-  \textbf{-{}-aggregateSpecification [string]} \hfill \\
+  \textbf{-{}-aggregate-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for \textit{k}-mer aggregation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
   \item[extract specification] \hfill \\
-  \textbf{-{}-extractSpecification [string]} \hfill \\
+  \textbf{-{}-extract-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for signature extraction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
   \item[database specification] \hfill \\
-  \textbf{-{}-databaseSpecification [string]} \hfill \\
+  \textbf{-{}-database-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for database construction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
   \item[filter specification] \hfill \\
-  \textbf{-{}-filterSpecification [string]} \hfill \\
+  \textbf{-{}-filter-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for candidate signature filtering. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
   \item[consolidate specification] \hfill \\
-  \textbf{-{}-consolidateSpecification [string]} \hfill \\
+  \textbf{-{}-consolidate-specification [STRING]} \hfill \\
   DRMAA-specific command line arguments for signature consolidation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.
   
 \end{description}
@@ -339,20 +415,6 @@ $ neptune
     --output output/ 
 \end{lstlisting}
 
-\subsection{Parallel Aggregation}
-
-The execution time of Neptune can be greatly improved by enabling parallel \textit{k}-mer aggregation. The following example will run Neptune with this parallelization enabled.
-
-\begin{lstlisting}
-$ neptune
-    --inclusion inclusion/
-    --exclusion exclusion/
-    --output output/
-    --parallelization 3
-\end{lstlisting}
-
-This example will create \(4^3 = 64\) parallel \textit{k}-mer aggregation instances. It is not recommended to create many more instances than there are processing nodes which may be employed by Neptune at one time.
-
 \subsection{File Locations}
 
 You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction.
@@ -367,25 +429,15 @@ $ neptune
 
 \subsection{DRMAA Parameters}
 
-It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-defaultSpecification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregateSpecification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
+It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-default-specification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregate-specification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
 
 \begin{lstlisting}
 $ neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/
-    --defaultSpecification "-l h_vmem=6G -pe smp 4"
-    --aggregateSpecification "-l h_vmem=10G -pe smp 4"
-\end{lstlisting}
-
-Furthermore, it may be beneficial to use a submission wrapper script for Neptune to avoid entering the same native specification parameters for every submission. The following example automatically includes parallelization and native specification parameters, appropriate for the scheduling environment, which may be overwritten by the submitting user:
-
-\begin{lstlisting}
-#!/usr/bin/env bash
-
-DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
-
-/share/apps/neptune/neptune --defaultSpecification "-n 1 --mem=10240" --parallelization 3 $@
+    --default-specification "-l h_vmem=6G -pe smp 4"
+    --aggregate-specification "-l h_vmem=10G -pe smp 4"
 \end{lstlisting}
 
 \newpage
