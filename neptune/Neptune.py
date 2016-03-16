@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -26,6 +26,8 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
+__version__ = '1.2.0'
+
 import drmaa
 import os
 import argparse
@@ -37,6 +39,8 @@ import Utility
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
+import JobManagerDRMAA
+import JobManagerParallel
 
 """
 # =============================================================================
@@ -62,19 +66,26 @@ LOG = "log"
 
 # ARGUMENT NAMES
 OUTPUT = "output"
+DRMAA = "drmaa"
+VERSION = "version"
+
 PARALLELIZATION = "parallelization"
-DEFAULT_SPECIFICATION = "defaultSpecification"
-COUNT_SPECIFICATION = "countSpecification"
-AGGREGATE_SPECIFICATION = "aggregateSpecification"
-EXTRACT_SPECIFICATION = "extractSpecification"
-DATABASE_SPECIFICATION = "databaseSpecification"
-FILTER_SPECIFICATION = "filterSpecification"
-CONSOLIDATE_SPECIFICATION = "consolidateSpecification"
+DEFAULT_SPECIFICATION = "default-specification"
+COUNT_SPECIFICATION = "count-specification"
+AGGREGATE_SPECIFICATION = "aggregate-specification"
+EXTRACT_SPECIFICATION = "extract-specification"
+DATABASE_SPECIFICATION = "database-specification"
+FILTER_SPECIFICATION = "filter-specification"
+CONSOLIDATE_SPECIFICATION = "consolidate-specification"
 
 # ARGUMENTS
 LONG = "--"
 
 OUTPUT_LONG = LONG + OUTPUT
+DRMAA_LONG = LONG + DRMAA
+VERSION_LONG = LONG + VERSION
+PARALLELIZATION_LONG = LONG + PARALLELIZATION
+
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
 AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
@@ -86,6 +97,8 @@ CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
 SHORT = "-"
 
 OUTPUT_SHORT = SHORT + "o"
+PARALLELIZATION_SHORT = SHORT + "p"
+VERSION_SHORT = SHORT + "V"
 
 """
 # =============================================================================
@@ -139,7 +152,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             inclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     # EXCLUSION
@@ -155,7 +168,7 @@ def countKMers(execution):
 
         job = execution.jobManager.createCountJob(
             exclusionLocation, outputLocation,
-            execution.k, execution.parallelization)
+            execution.k, execution.organization)
         jobs.append(job)
 
     execution.jobManager.runJobs(jobs)
@@ -195,7 +208,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
     print("AggregateKMers starting ...")
 
-    if execution.parallelization:
+    if execution.organization:
 
         aggregateMultipleFiles(
             execution,
@@ -240,7 +253,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
     jobs = []
     outputLocations = []
 
-    for tag in Utility.getAggregationTags(execution.parallelization):
+    for tag in Utility.getAggregationTags(execution.organization):
 
         outputLocation = execution.aggregateLocation + "." + tag
         outputLocations.append(outputLocation)
@@ -483,179 +496,305 @@ def consolidateSignatures(execution, sortedLocations):
 """
 # =============================================================================
 
+EXECUTE
+
+# =============================================================================
+"""
+def execute(execution):
+
+    # --- K-MER COUNTING ---
+    inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+
+    # --- K-MER AGGREGATION ---
+    aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
+
+    # --- SIGNATURE EXTRACTION ---
+    candidateLocations = extractSignatures(execution)
+
+    # --- SIGNATURE FILTERING ---
+    sortedLocations = filterSignatures(execution, candidateLocations)
+
+    # Are all the signature files empty?
+    if(all((os.stat(location).st_size == 0)
+            for location in sortedLocations)):
+
+        print "NOTICE: No signatures were identified."
+        return
+
+    # --- CONSOLIDATE SIGNATURES ---
+    consolidateSignatures(execution, sortedLocations)
+
+    execution.produceReceipt()
+
+"""
+# =============================================================================
+
+EXECUTE DRMAA
+
+# =============================================================================
+"""
+def executeDRMAA(parameters):
+
+    with drmaa.Session() as session:
+
+        outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
+
+        logDirectoryLocation = os.path.abspath(
+            os.path.join(outputDirectoryLocation, LOG))
+
+        jobManager = JobManagerDRMAA.JobManagerDRMAA(
+            outputDirectoryLocation, logDirectoryLocation,
+            session, parameters[DEFAULT_SPECIFICATION])
+
+        execution = Execution.Execution(jobManager, parameters)
+        execute(execution)
+
+"""
+# =============================================================================
+
+EXECUTE PARALLEL
+
+# =============================================================================
+"""
+def executeParallel(parameters):
+
+    outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
+    logDirectoryLocation = os.path.abspath(
+        os.path.join(outputDirectoryLocation, LOG))
+
+    parallel = parameters[PARALLELIZATION]
+
+    jobManager = JobManagerParallel.JobManagerParallel(
+        outputDirectoryLocation, logDirectoryLocation, parallel)
+
+    execution = Execution.Execution(jobManager, parameters)
+    execute(execution)
+
+"""
+# =============================================================================
+
+PARSE
+
+# =============================================================================
+"""
+def parse(parameters):
+
+    if parameters.get(DRMAA):
+        executeDRMAA(parameters)
+
+    else:
+        executeParallel(parameters)
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
 """
 def main():
 
-    # --- Parser ---
+    # --- PARSER ---
     parser = argparse.ArgumentParser(
-        description='Neptune locates DNA signatures using an exact k-mer \
+        description='Neptune identifies signatures using an exact k-mer \
         matching strategy. Neptune locates sequence that is sufficiently \
-        represented in many inclusion targets and sufficiently absent from \
-        exclusion targets.')
+        present in many inclusion targets and sufficiently absent from \
+        exclusion targets.',
 
-    parser.add_argument(
-        ExtractSignatures.REFERENCE_SHORT,
-        ExtractSignatures.REFERENCE_LONG,
-        dest=ExtractSignatures.REFERENCE,
-        help="FASTA reference(s) from which to extract signatures",
-        type=str, required=False, nargs='+')
+        usage="%(prog)s -i INCLUSION [INCLUSION ...] -e EXCLUSION \n\t" +
+        "[EXCLUSION ...] -o OUTPUT")
 
+    # --- VERSION ---
     parser.add_argument(
-        ExtractSignatures.REFERENCE_SIZE_SHORT,
-        ExtractSignatures.REFERENCE_SIZE_LONG,
-        dest=ExtractSignatures.REFERENCE_SIZE,
-        help="estimated total reference size",
-        type=int, required=False)
+        VERSION_SHORT,
+        VERSION_LONG,
+        action='version',
+        version='%(prog)s ' + str(__version__))
 
-    parser.add_argument(
-        CountKMers.KMER_SHORT,
-        CountKMers.KMER_LONG,
-        dest=CountKMers.KMER,
-        help="k-mer size",
-        type=int, required=False)
+    # --- REQUIRED ---
+    required = parser.add_argument_group("REQUIRED")
 
-    parser.add_argument(
-        ExtractSignatures.RATE_SHORT,
-        ExtractSignatures.RATE_LONG,
-        dest=ExtractSignatures.RATE,
-        help="probability of homologous bases not matching",
-        type=float, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         ExtractSignatures.INCLUSION_SHORT,
         ExtractSignatures.INCLUSION_LONG,
         dest=ExtractSignatures.INCLUSION,
-        help="inclusion genomes",
+        help="FASTA inclusion genome(s) to investigate for signatures",
         type=str, required=True, nargs='+')
 
-    parser.add_argument(
-        ExtractSignatures.INHITS_SHORT,
-        ExtractSignatures.INHITS_LONG,
-        dest=ExtractSignatures.INHITS,
-        help="minimum inclusion hits to build candidate",
-        type=int, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         ExtractSignatures.EXCLUSION_SHORT,
         ExtractSignatures.EXCLUSION_LONG,
         dest=ExtractSignatures.EXCLUSION,
-        help="exclusion genome(s)",
+        help="FASTA exclusion genome(s) that will be a background for the \
+        inclusion genome(s)",
         type=str, required=True, nargs='+')
 
-    parser.add_argument(
-        ExtractSignatures.EXHITS_SHORT,
-        ExtractSignatures.EXHITS_LONG,
-        dest=ExtractSignatures.EXHITS,
-        help="minimum exclusion hits to remove candidate",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.GAP_SHORT,
-        ExtractSignatures.GAP_LONG,
-        dest=ExtractSignatures.GAP,
-        help="maximum number of consecutive k-mers in a candidate \
-            without an inclusion hit",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.SIZE_SHORT,
-        ExtractSignatures.SIZE_LONG,
-        dest=ExtractSignatures.SIZE,
-        help="minimum candidate size",
-        type=int, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.GC_SHORT,
-        ExtractSignatures.GC_LONG,
-        dest=ExtractSignatures.GC_CONTENT,
-        help="the GC-content of the environment",
-        type=float, required=False)
-
-    parser.add_argument(
-        ExtractSignatures.CONFIDENCE_SHORT,
-        ExtractSignatures.CONFIDENCE_LONG,
-        dest=ExtractSignatures.CONFIDENCE,
-        help="statistical confidence level",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.FILTER_PERCENT_SHORT,
-        FilterSignatures.FILTER_PERCENT_LONG,
-        dest=FilterSignatures.FILTER_PERCENT,
-        help="the maximum percent identity of an exclusion hit; removes \
-        candidates that have exclusion hit matches higher than this",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.FILTER_LENGTH_SHORT,
-        FilterSignatures.FILTER_LENGTH_LONG,
-        dest=FilterSignatures.FILTER_LENGTH,
-        help="the maximum shared fractional length of an exclusion hit \
-            with a candidate; remove candidates that have exclusion hit \
-            matches longer than this",
-        type=float, required=False)
-
-    parser.add_argument(
-        FilterSignatures.SEED_SIZE_SHORT,
-        FilterSignatures.SEED_SIZE_LONG,
-        dest=FilterSignatures.SEED_SIZE,
-        help="the seed size used during alignment",
-        type=int, required=False)
-
-    parser.add_argument(
+    required.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
         help="output directory",
         type=str, required=True)
 
-    parser.add_argument(
-        CountKMers.PARALLEL_SHORT,
-        CountKMers.PARALLEL_LONG,
-        dest=CountKMers.PARALLEL,
-        help="number of base positions used in parallelization",
-        type=int, default=0)
+    # --- KMERS ---
+    kmers = parser.add_argument_group("KMERS")
 
-    parser.add_argument(
+    kmers.add_argument(
+        CountKMers.KMER_SHORT,
+        CountKMers.KMER_LONG,
+        dest=CountKMers.KMER,
+        help="k-mer size",
+        type=int, required=False)
+
+    kmers.add_argument(
+        CountKMers.ORGANIZATION_LONG,
+        dest=CountKMers.ORGANIZATION,
+        help="number of base positions used in k-mer organization; \
+        affects the the speed of k-mer aggregation",
+        type=int, default=3)
+
+    # --- FILTERING ---
+    filtering = parser.add_argument_group("FILTERING")
+
+    filtering.add_argument(
+        FilterSignatures.FILTER_PERCENT_LONG,
+        dest=FilterSignatures.FILTER_PERCENT,
+        help="the maximum percent identity of an exclusion hit; removes \
+        candidates that have exclusion hit matches higher than this value",
+        type=float, required=False)
+
+    filtering.add_argument(
+        FilterSignatures.FILTER_LENGTH_LONG,
+        dest=FilterSignatures.FILTER_LENGTH,
+        help="the maximum shared fractional length of an exclusion hit \
+            with a candidate; remove candidates that have exclusion hit \
+            matches longer than this value",
+        type=float, required=False)
+
+    filtering.add_argument(
+        FilterSignatures.SEED_SIZE_LONG,
+        dest=FilterSignatures.SEED_SIZE,
+        help="the seed size used during alignment",
+        type=int, required=False)
+
+    # --- EXTRACTION ---
+    extraction = parser.add_argument_group("EXTRACTION")
+
+    extraction.add_argument(
+        ExtractSignatures.REFERENCE_SHORT,
+        ExtractSignatures.REFERENCE_LONG,
+        dest=ExtractSignatures.REFERENCE,
+        help="FASTA reference(s) from which to extract signatures",
+        type=str, required=False, nargs='+')
+
+    extraction.add_argument(
+        ExtractSignatures.REFERENCE_SIZE_LONG,
+        dest=ExtractSignatures.REFERENCE_SIZE,
+        help="estimated reference size",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.RATE_LONG,
+        dest=ExtractSignatures.RATE,
+        help="probability of homologous bases not matching",
+        type=float, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.INHITS_LONG,
+        dest=ExtractSignatures.INHITS,
+        help="minimum inclusion hits to start or continue building candidate \
+        a signature",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.EXHITS_LONG,
+        dest=ExtractSignatures.EXHITS,
+        help="minimum exclusion hits to terminate a candidate signature",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.GAP_LONG,
+        dest=ExtractSignatures.GAP,
+        help="maximum number of consecutive k-mers in a candidate \
+            without an inclusion hit before terminating the candidate",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.SIZE_LONG,
+        dest=ExtractSignatures.SIZE,
+        help="minimum candidate signature size",
+        type=int, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.GC_LONG,
+        dest=ExtractSignatures.GC_CONTENT,
+        help="the GC-content of the environment",
+        type=float, required=False)
+
+    extraction.add_argument(
+        ExtractSignatures.CONFIDENCE_LONG,
+        dest=ExtractSignatures.CONFIDENCE,
+        help="statistical confidence level used when extending k-mer gaps, \
+        determining minimum inclusion hit observations",
+        type=float, required=False)
+
+    # --- PARALLELIZATION ---
+    parallelization = parser.add_argument_group("PARALLELIZATION")
+
+    parallelization.add_argument(
+        PARALLELIZATION_SHORT,
+        PARALLELIZATION_LONG,
+        dest=PARALLELIZATION,
+        help="the maximum number of parallel worker processes to create \
+            (non-DRMAA mode)",
+        type=int, default=8)
+
+    # --- DRMAA ---
+    drmaa = parser.add_argument_group("DRMAA")
+
+    drmaa.add_argument(
+        DRMAA_LONG,
+        dest=DRMAA,
+        help="runs Neptune in DRMAA mode",
+        action='store_true')
+
+    drmaa.add_argument(
         DEFAULT_SPECIFICATION_LONG,
         dest=DEFAULT_SPECIFICATION,
         help="DRM-specific parameters for all jobs",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         COUNT_SPECIFICATION_LONG,
         dest=COUNT_SPECIFICATION,
         help="DRM-specific parameters for k-mer counting",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         AGGREGATE_SPECIFICATION_LONG,
         dest=AGGREGATE_SPECIFICATION,
         help="DRM-specific parameters for k-mer aggregation",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         EXTRACT_SPECIFICATION_LONG,
         dest=EXTRACT_SPECIFICATION,
         help="DRM-specific parameters for signature extraction",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         DATABASE_SPECIFICATION_LONG,
         dest=DATABASE_SPECIFICATION,
         help="DRM-specific parameters for database construction",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         FILTER_SPECIFICATION_LONG,
         dest=FILTER_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
         type=str, required=False)
 
-    parser.add_argument(
+    drmaa.add_argument(
         CONSOLIDATE_SPECIFICATION_LONG,
         dest=CONSOLIDATE_SPECIFICATION,
         help="DRM-specific parameters for signature filtering",
@@ -675,37 +814,13 @@ def main():
                 str(sys.argv[i + 1])[0:])
 
     args = parser.parse_args()
+    parameters = vars(args)
+    parse(parameters)
 
-    # --- Job Control ---
-    with drmaa.Session() as session:
-
-        execution = Execution.Execution(session, args)
-
-        # --- K-MER COUNTING ---
-        inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
-
-        # --- K-MER AGGREGATION ---
-        aggregateKMers(
-            execution, inclusionKMerLocations, exclusionKMerLocations)
-
-        # --- SIGNATURE EXTRACTION ---
-        candidateLocations = extractSignatures(execution)
-
-        # --- SIGNATURE FILTERING ---
-        sortedLocations = filterSignatures(execution, candidateLocations)
-
-        # Are all the signature files empty?
-        if(all((os.stat(location).st_size == 0)
-                for location in sortedLocations)):
-
-            print "NOTICE: No signatures were identified."
-            return
-
-        # --- CONSOLIDATE SIGNATURES ---
-        consolidateSignatures(execution, sortedLocations)
-
-        execution.produceReceipt()
-
+"""
+# =============================================================================
+# =============================================================================
+"""
 if __name__ == '__main__':
 
     main()

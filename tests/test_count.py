@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -53,29 +53,29 @@ class TestWriteSingleFile(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case.
+        Tests a simple use case of writing a single k-mer file.
 
     INPUT:
-        0: kmers = [["AAA", 1], ["CAA", 2], ["GAA", 1], ["TAA", 3]]
+        kmers = [["AAA", 1], ["CAA", 2], ["GAA", 1], ["TAA", 3]]
 
     EXPECTED:
-        0:
-            AAA
-            CAA
-            GAA
-            TAA
+
+        OUTPUT:
+        AAA
+        CAA
+        GAA
+        TAA
 
     # =============================================================================
     """
     def test_simple(self):
 
-        # 0: kmers = [["AAA", 1], ["CAA", 2], ["GAA", 1], ["TAA", 3]]
         kmers = [["AAA", 1], ["CAA", 2], ["GAA", 1], ["TAA", 3]]
 
         buff = StringIO.StringIO()
         writeSingleFile(kmers, buff)
-        result = buff.getvalue()
 
+        result = buff.getvalue()
         expected = "AAA 1\nCAA 2\nGAA 1\nTAA 3\n"
 
         self.assertEquals(result, expected)
@@ -95,23 +95,21 @@ class TestCount(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests a simple use case, writing to one file.
+        Tests a simple use case of counting k-mers, while writing to one file.
 
     INPUT:
-        0:
 
-        count1.fasta:
-            >0
-            ACGTACGTACGT
+        ount1.fasta:
+        >0
+        ACGTACGTACGT
         
          k = 7
 
     EXPECTED:
-        0:
 
         count1.kmers:
-            ACGTACG 4
-            GTACGTA 2
+        ACGTACG 4
+        GTACGTA 2
 
     # =============================================================================
     """
@@ -125,11 +123,10 @@ class TestCount(unittest.TestCase):
         count(inputLocation, outputLocation, k, parallelization)
 
         with open (outputLocation, "r") as myfile:
+
             result = myfile.read()
-
-        expected = "ACGTACG 4\nGTACGTA 2\n"
-
-        self.assertEquals(result, expected)
+            expected = "ACGTACG 4\nGTACGTA 2\n"
+            self.assertEquals(result, expected)
 
         os.remove(outputLocation)
 
@@ -139,25 +136,23 @@ class TestCount(unittest.TestCase):
     test_simple_multiple
 
     PURPOSE:
-        Tests a simple use case, writing to multiple file.
+        Tests a simple use case of counting k-mers, while writing to multuple files.
 
     INPUT:
-        0:
 
         count1.fasta:
-            >0
-            ACGTACGTACGT
+        >0
+        ACGTACGTACGT
         
          k = 7
 
     EXPECTED:
-        0:
 
         count1.kmers.A:
-            ACGTACG 4
+        ACGTACG 4
 
         count1.kmers.G
-            GTACGTA 2
+        GTACGTA 2
 
     # =============================================================================
     """
@@ -204,13 +199,12 @@ class TestWriteMultiple(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        Tests writing to multiple files.
+        Tests a simple use case of writing to multiple files.
 
     INPUT:
-        0: kmers = [["AAA", 1], ["CAA", 2], ["ACA", 1], ["CCA", 3], ["RCA", 3]]
+        kmers = [["AAA", 1], ["CAA", 2], ["ACA", 1], ["CCA", 3], ["RCA", 3]]
 
     EXPECTED:
-        0:
 
         kmers.out.A:
         AAA 1
@@ -231,7 +225,6 @@ class TestWriteMultiple(unittest.TestCase):
     """
     def test_simple(self):
 
-        # 0: kmers = [["AAA", 1], ["CAA", 2], ["ACA", 1], ["CCA", 3], ["RCA", 3]]
         kmers = [["AAA", 1], ["CAA", 2], ["ACA", 1], ["CCA", 3], ["RCA", 3]]
 
         outputLocation = getPath("tests/output/count/kmers.out")
@@ -245,11 +238,12 @@ class TestWriteMultiple(unittest.TestCase):
         tags = Utility.getAggregationTags(parallelization)
 
         for tag in tags:
-        
+
             outputName = outputLocation + "." + tag
             outputFiles[tag] = open(outputName, 'r')
             self.assertTrue(outputFiles[tag])
-            
+
+        # check output
         result = outputFiles["A"].read()
         expected = "AAA 1\nACA 1\n"
         self.assertEquals(result, expected)
@@ -290,12 +284,11 @@ class TestMain(unittest.TestCase):
     test_simple
 
     PURPOSE:
-        A simple test of the main function.
+        A simple test of the main function and entire execution of CountKMers.
 
     INPUT:
-        0:
 
-        input:
+        count1.kmers:
         >0
         ACGTACGTACGT
 
@@ -306,7 +299,6 @@ class TestMain(unittest.TestCase):
         p = 0
 
     EXPECTED:
-        0:
 
         count1.kmers:
         ACGTACG 4
@@ -318,7 +310,7 @@ class TestMain(unittest.TestCase):
 
         outputLocation = getPath("tests/output/count/count1.kmers")
 
-        sys.argv[1:] = ["-i", "tests/data/count/count1.fasta", "-o", outputLocation, "-k", "7", "-p", "0"]
+        sys.argv[1:] = ["-i", "tests/data/count/count1.fasta", "-o", outputLocation, KMER_LONG, "7", ORGANIZATION_LONG, "0"]
         main()
 
         with open (outputLocation, "r") as myfile:
@@ -338,20 +330,19 @@ class TestMain(unittest.TestCase):
         Tests behaviour when the input is missing.
 
     INPUT:
-        0:
 
         input: tests/data/count/this_file_does_not_exist.fake
         
 
     EXPECTED:
-        0: RuntimeError
+        [RuntimeError]
 
     # =============================================================================
     """
     def test_missing_input(self):
 
-        # 0: input: tests/data/count/this_file_does_not_exist.fake
-        sys.argv[1:] = ["-i", "tests/data/this_file_does_not_exist.fake", "-o", getPath("tests/output/kmers.out"), "-k", "7", "-p", "0"]
+        sys.argv[1:] = ["-i", "tests/data/this_file_does_not_exist.fake", "-o",
+            getPath("tests/output/kmers.out"), KMER_LONG, "7", ORGANIZATION_LONG, "0"]
         
         with self.assertRaises(RuntimeError):
             main()

@@ -2,6 +2,30 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.2.0] - 2016-03-18
+
+This release of Neptune allows for execution on a single machine without
+requiring DRMAA. Furthermore, several command line parameters have been
+modified.
+
+### Added
+- Neptune may be run in parallel on a single machine without DRMAA.
+- "--version" command line option.
+
+### Changed
+- Several command-line parameters have been changed.
+- The "--parallelization" / "-p" parameter effects all parallelization.
+- The exclusion score is now displayed as a positive number.
+
+## [1.1.1] - 2016-02-24
+
+This release of Neptune updates the installation instructions to be more
+informative.
+
+### Changed
+- Updated README and manual installation instructions.
+- Modified the style of code examples in the manual.
+
 ## [1.1.0] - 2016-01-19
 
 This release of Neptune introduces a simple signature consolidation step, which

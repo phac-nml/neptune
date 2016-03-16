@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -32,8 +32,10 @@ import math
 from scipy.misc import comb
 
 import Neptune
+import CountKMers
+import ExtractSignatures
+import FilterSignatures
 import Utility
-import JobManager
 
 """
 # =============================================================================
@@ -54,147 +56,152 @@ EXECUTION
 """
 class Execution():
 
-    def __init__(self, session, args):
+    def __init__(self, jobManager, parameters):
 
         # -- rate --
         # 0.0 <= q <= 1.0
-        if (args.rate is not None and
-                (float(args.rate) < 0.0 or
-                    float(args.rate) > 1.0)):
+        if (parameters.get(ExtractSignatures.RATE) is not None and
+                (float(parameters.get(ExtractSignatures.RATE)) < 0.0 or
+                    float(parameters.get(ExtractSignatures.RATE)) > 1.0)):
             raise RuntimeError("The rate is out of range.")
 
-        self.rate = args.rate
+        self.rate = parameters.get(ExtractSignatures.RATE)
 
         # -- minimum inclusion hits --
         # 1 <= inhits
-        if (args.inhits is not None and
-                (int(args.inhits) < 1)):
+        if (parameters.get(ExtractSignatures.INHITS) is not None and
+                (int(parameters.get(ExtractSignatures.INHITS)) < 1)):
             raise RuntimeError("The inclusion hits is out of range.")
 
-        self.inhits = args.inhits
+        self.inhits = parameters.get(ExtractSignatures.INHITS)
 
         # -- minimum exclusion hits --
         # 1 <= exhits
-        if (args.exhits is not None and
-                (int(args.exhits) < 1)):
+        if (parameters.get(ExtractSignatures.EXHITS) is not None and
+                (int(parameters.get(ExtractSignatures.EXHITS)) < 1)):
             raise RuntimeError("The exclusion hits is out of range.")
 
-        self.exhits = args.exhits
+        self.exhits = parameters.get(ExtractSignatures.EXHITS)
 
         # -- maximum gap size --
         # 1 <= gap
-        if (args.gap is not None and
-                (int(args.gap) < 1)):
+        if (parameters.get(ExtractSignatures.GAP) is not None and
+                (int(parameters.get(ExtractSignatures.GAP)) < 1)):
             raise RuntimeError("The gap size is out of range.")
 
-        self.gap = args.gap
+        self.gap = parameters.get(ExtractSignatures.GAP)
 
         # -- minimum signature size --
         # 1 <= size
-        if (args.size is not None and
-                (int(args.size) < 1)):
+        if (parameters.get(ExtractSignatures.SIZE) is not None and
+                (int(parameters.get(ExtractSignatures.SIZE)) < 1)):
             raise RuntimeError("The signature size is out of range.")
 
-        self.size = args.size
+        self.size = parameters.get(ExtractSignatures.SIZE)
 
         # -- GC-content --
         # 0.0 <= gc <= 1.0
-        if (args.gcContent is not None and
-                (float(args.gcContent) < 0.0 or
-                    float(args.gcContent) > 1.0)):
+        if (parameters.get(ExtractSignatures.GC_CONTENT) is not None and
+            (float(parameters.get(ExtractSignatures.GC_CONTENT)) < 0.0 or
+                float(parameters.get(ExtractSignatures.GC_CONTENT)) > 1.0)):
             raise RuntimeError("The GC-content is out of range.")
 
-        self.gcContent = args.gcContent
+        self.gcContent = parameters.get(ExtractSignatures.GC_CONTENT)
 
         # -- statistical confidence --
         # 0.0 < confidence < 1.0
-        if (args.confidence is not None and
-                (float(args.confidence) <= 0.0 or
-                    float(args.confidence) >= 1.0)):
+        if (parameters.get(ExtractSignatures.CONFIDENCE) is not None and
+            (float(parameters.get(ExtractSignatures.CONFIDENCE)) <= 0.0 or
+                float(parameters.get(ExtractSignatures.CONFIDENCE)) >= 1.0)):
             raise RuntimeError("The statistical confidence is out of range.")
 
-        self.confidence = args.confidence
+        self.confidence = parameters.get(ExtractSignatures.CONFIDENCE)
 
         # -- filter length --
         # 0.0 <= filterLength <= 1.0
-        if (args.filterLength is not None and
-                (float(args.filterLength) < 0.0 or
-                    float(args.filterLength) > 1.0)):
+        if (parameters.get(FilterSignatures.FILTER_LENGTH) is not None and
+            (float(parameters.get(FilterSignatures.FILTER_LENGTH)) < 0.0 or
+                float(parameters.get(FilterSignatures.FILTER_LENGTH)) > 1.0)):
             raise RuntimeError("The filter length is out of range.")
 
-        self.filterLength = args.filterLength
+        self.filterLength = parameters.get(FilterSignatures.FILTER_LENGTH)
 
         # -- filter percent --
         # 0.0 <= filterPercent <= 1.0
-        if (args.filterPercent is not None and
-                (float(args.filterPercent) < 0.0 or
-                    float(args.filterPercent) > 1.0)):
+        if (parameters.get(FilterSignatures.FILTER_PERCENT) is not None and
+            (float(parameters.get(FilterSignatures.FILTER_PERCENT)) < 0.0 or
+                float(parameters.get(FilterSignatures.FILTER_PERCENT)) > 1.0)):
             raise RuntimeError("The filter percent is out of range.")
 
-        self.filterPercent = args.filterPercent
+        self.filterPercent = parameters.get(FilterSignatures.FILTER_PERCENT)
 
         # -- seed size --
         # 4 <= seedSize
-        if (args.seedSize is not None and
-                (int(args.seedSize) < 4)):
+        if (parameters.get(FilterSignatures.SEED_SIZE) is not None and
+                (int(parameters.get(FilterSignatures.SEED_SIZE)) < 4)):
             raise RuntimeError("The seed size is out of range.")
 
-        self.seedSize = args.seedSize
+        self.seedSize = parameters.get(FilterSignatures.SEED_SIZE)
 
-        # -- parallelization --
-        # 1 <= parallelization
-        if (args.parallelization is not None and
-                (int(args.parallelization) < 0)):
-            raise RuntimeError("The parallelization is out of range.")
+        # -- k-mer organization --
+        # 1 <= organization
+        if (parameters.get(CountKMers.ORGANIZATION) is not None and
+                (int(parameters.get(CountKMers.ORGANIZATION)) < 0)):
+            raise RuntimeError("The organization is out of range.")
 
-        self.parallelization = args.parallelization
+        self.organization = parameters.get(CountKMers.ORGANIZATION)
 
         # -- inclusion locations --
         # inclusion exists
-        if args.inclusion is None:
+        if parameters.get(ExtractSignatures.INCLUSION) is None:
             raise RuntimeError("Inclusion sequence(s) are missing.")
 
         self.inclusionLocations = []
-        Utility.expandInput(args.inclusion, self.inclusionLocations)
+        Utility.expandInput(
+            parameters.get(ExtractSignatures.INCLUSION),
+            self.inclusionLocations)
 
-        if len(args.inclusion) is 0:
+        if len(parameters.get(ExtractSignatures.INCLUSION)) is 0:
             raise RuntimeError("Inclusion sequence(s) are missing.")
 
         # -- exclusion locations --
         # exclusion exists
-        if args.exclusion is None:
+        if parameters.get(ExtractSignatures.EXCLUSION) is None:
             raise RuntimeError("Exclusion sequence(s) are missing.")
 
         self.exclusionLocations = []
-        Utility.expandInput(args.exclusion, self.exclusionLocations)
+        Utility.expandInput(
+            parameters.get(ExtractSignatures.EXCLUSION),
+            self.exclusionLocations)
 
-        if len(args.exclusion) is 0:
+        if len(parameters.get(ExtractSignatures.EXCLUSION)) is 0:
             raise RuntimeError("exclusion sequence(s) are missing.")
 
         # -- reference locations --
-        self.reference = args.reference
+        self.reference = parameters.get(ExtractSignatures.REFERENCE)
 
         # -- reference size --
-        self.referenceSize = args.referenceSize
+        self.referenceSize = parameters.get(ExtractSignatures.REFERENCE_SIZE)
 
         # -- output locations --
         # output exists
-        if args.output is None:
+        if parameters.get(Neptune.OUTPUT) is None:
             raise RuntimeError("The output directory is missing.")
 
         # -- k-mer --
         # 1 <= k
-        if (args.kmer is not None and
-                (int(args.kmer) < 1)):
+        if (parameters.get(CountKMers.KMER) is not None and
+                (int(parameters.get(CountKMers.KMER)) < 1)):
             raise RuntimeError("The k-mer size is out of range.")
 
-        elif args.kmer is not None:
-            self.k = int(args.kmer)
+        elif parameters.get(CountKMers.KMER) is not None:
+            self.k = int(parameters.get(CountKMers.KMER))
 
         else:
             self.estimateKMerSize()
 
-        self.outputDirectoryLocation = os.path.abspath(args.output)
+        self.outputDirectoryLocation = os.path.abspath(
+            parameters.get(Neptune.OUTPUT))
 
         if not os.path.exists(self.outputDirectoryLocation):
             os.makedirs(self.outputDirectoryLocation)
@@ -240,34 +247,32 @@ class Execution():
             os.makedirs(self.logDirectoryLocation)
 
         # -- job manager --
-        self.jobManager = JobManager.JobManager(
-            session, self.outputDirectoryLocation,
-            self.logDirectoryLocation, args.defaultSpecification)
+        self.jobManager = jobManager
 
         # -- job specifications --
-        if args.countSpecification:
+        if parameters.get(Neptune.COUNT_SPECIFICATION):
             self.jobManager.setCountSpecification(
-                args.countSpecification)
+                parameters.get(Neptune.COUNT_SPECIFICATION))
 
-        if args.aggregateSpecification:
+        if parameters.get(Neptune.AGGREGATE_SPECIFICATION):
             self.jobManager.setAggregateSpecification(
-                args.aggregateSpecification)
+                parameters.get(Neptune.AGGREGATE_SPECIFICATION))
 
-        if args.extractSpecification:
+        if parameters.get(Neptune.EXTRACT_SPECIFICATION):
             self.jobManager.setExtractSpecification(
-                args.extractSpecification)
+                parameters.get(Neptune.EXTRACT_SPECIFICATION))
 
-        if args.databaseSpecification:
+        if parameters.get(Neptune.DATABASE_SPECIFICATION):
             self.jobManager.setDatabaseSpecification(
-                args.databaseSpecification)
+                parameters.get(Neptune.DATABASE_SPECIFICATION))
 
-        if args.filterSpecification:
+        if parameters.get(Neptune.FILTER_SPECIFICATION):
             self.jobManager.setFilterSpecification(
-                args.filterSpecification)
+                parameters.get(Neptune.FILTER_SPECIFICATION))
 
-        if args.consolidateSpecification:
+        if parameters.get(Neptune.CONSOLIDATE_SPECIFICATION):
             self.jobManager.setConsolidateSpecification(
-                args.consolidateSpecification)
+                parameters.get(Neptune.CONSOLIDATE_SPECIFICATION))
 
     """
     # =========================================================================
@@ -386,7 +391,7 @@ class Execution():
                 return
 
         # No suitable k estimated.
-        raise RuntimeError("ERROR: No suitable value for k determined. \n")
+        raise RuntimeError("ERROR: No suitable value for k determined.\n")
 
     """
     # =========================================================================
@@ -425,7 +430,7 @@ class Execution():
         self.reportCommandLine(receiptFile)
         self.reportFiles(receiptFile)
         self.reportGeneralParameters(receiptFile)
-        self.reportDRMAAParameters(receiptFile)
+        # self.reportDRMAAParameters(receiptFile) # TODO REPLACE?
 
         receiptFile.close()
 
@@ -521,8 +526,8 @@ class Execution():
             str(self.filterPercent) + "\n")
 
         receiptFile.write(
-            "Parallelization = " +
-            str(self.parallelization) + "\n")
+            "k-mer Organization = " +
+            str(self.organization) + "\n")
 
         receiptFile.write(
             "Reference Size = " +

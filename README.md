@@ -6,7 +6,7 @@
 
 Neptune
 
-Copyright Government of Canada 2015
+Copyright Government of Canada 2015-2016
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -38,14 +38,13 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.1.0**
+**Neptune 1.2.0**
 
-2016 January 19
+2016 March 18
 
-This release of Neptune introduces a simple signature consolidation step, which
-consolidates signatures produced from multiple files into a single file.
-Furthermore, the software has been updated to be compatible with the Slurm
-scheduler.
+This release of Neptune allows for execution on a single machine without
+requiring DRMAA. Furthermore, several command line parameters have been
+modified.
 
 ## Requirements ##
 ------------------
@@ -56,35 +55,46 @@ the following dependencies must be installed by the user:
 - Python 2.7
 - NumPy
 - SciPy
-- DRMAA-compliant scheduler
-- Python DRMAA
 - BLAST+
 - pipsi
 
 ## Installation ##
 ------------------
 
-Please refer to the manual for full installation instructions.
+It is strongly recommended you refer to the manual for full installation
+instructions. The following description is an abridged version of the
+installation process. This assumes all dependencies, save for pipsi, are
+already installed.
 
-The user will need to install and configure a DRMAA-compliant scheduler and
-Python DRMAA bindings. Please refer to the instructions available at:
+The pipsi tool may be installed using the following command:
 
-	https://github.com/pygridtools/drmaa-python
+	$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
 
-Neptune may be installed using pipsi:
+You may need to add the pipsi install location to your PATH variable. For BASH
+shells, this can be done by adding the following line to your bashrc file
+(usually ~/.bashrc):
 
-	pipsi install /path/to/neptune/
+	export PATH=$PATH:~/.local/bin
+
+You will then likely need to source your bashrc file:
+
+	$ source ~/.bashrc
+
+Finally, install Neptune using pipsi:
+
+	$ pipsi install /path/to/neptune/download/location/
+
 
 ## Running Neptune ##
 ---------------------
 
 Neptune's command line arguments can be found by running:
 
-	neptune --help
+	$ neptune --help
 
 A simple example of running Neptune:
 
-	neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
+	$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
 		--output /path/to/output/ --parallelization 3
 
 Please refer to the documentation for more details.
