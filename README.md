@@ -43,7 +43,8 @@ probabilistic models instead of heuristic strategies.
 2016 March 18
 
 This release of Neptune allows for execution on a single machine without
-requiring DRMAA.
+requiring DRMAA. Furthermore, several command line parameters have been
+modified.
 
 ## Requirements ##
 ------------------
