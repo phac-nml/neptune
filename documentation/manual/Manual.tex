@@ -159,7 +159,7 @@ $ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | p
 Furthermore, you may need to add the default pipsi install location to your PATH variable.
 
 \begin{lstlisting}
-# Add the following line to your ~/.bashrc file:
+# The following adds a line to your bashrc file:
 $ echo "export PATH=$PATH:~/.local/bin" | cat >> ~/.bashrc
 
 # Source the updated bashrc file:
@@ -231,7 +231,7 @@ $ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
 
 DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
 
-/share/apps/neptune/neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
+/home/user/.local/bin/neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
 \end{lstlisting}
 
 \begin{lstlisting}[title={SGE Example}]
