@@ -1,0 +1,78 @@
+<tool id="neptune" name="Neptune: Signature Discovery" version="1.2">
+  <description>Neptune identifies genomic signatures using an exact k-mer matching strategy while accommodating k-mer mismatches.</description>
+
+  <requirements>
+    <requirement type="package" version="1.2">neptune</requirement>
+    <requirement type="package" version="1.64">biopython</requirement>
+    <requirement type="package" version="2.2.28">blast+</requirement>
+    <requirement type="package" version="1.9">numpy</requirement>
+    <requirement type="package" version="0.14">scipy</requirement>
+  </requirements>
+
+  <command>
+    Neptune.py
+
+      --inclusion
+      #for $i in $inclusion
+        "$i"
+      #end for
+
+      --exclusion
+      #for $i in $exclusion
+        "$i"
+      #end for
+
+      #if $kmer:
+        --kmer "$kmer"
+      #end if
+
+      #if $rate:
+        --rate "$rate"
+      #end if
+
+      #if $exhits:
+        --exhits "$exhits"
+      #end if
+
+      #if $size:
+        --size "$size"
+      #end if
+
+      --output results
+
+      --parallelization \${GALAXY_SLOTS:-8}
+
+      --organization 3
+
+  </command>
+
+  <inputs>
+    <param name="inclusion" type="data_collection" collection_type="list" label="Inclusion" help="The inclusion targets." format="fasta"/>
+    <param name="exclusion" type="data_collection" collection_type="list" label="Exclusion" help="The exclusion targets." format="fasta"/>
+
+    <conditional name="options">
+      <param name="select" type="select" label="Options Type">
+        <option value="basic">Basic</option>
+        <option value="advanced">Advanced</option>
+      </param>
+      <when value="advanced">
+        <param name="kmer" type="integer" label="k" help="The k-mer size. This value is automatically calculated if left blank." optional="true"/>
+        <param name="size" type="integer" label="Size" help="The minimum size of the signatures. The default size is 4k." optional="true"/>
+        <param name="rate" type="float" label="Rate" help="The rate of SNVs." optional="true" value="0.01"/>
+        <param name="exhits" type="integer" label="Minimum Exclusion" help="The minimum number of exact k-mer matches with exclusion targets before abandoning a signature." optional="true"  value="1"/>
+      </when>
+    </conditional>
+  </inputs>
+
+  <outputs>
+    <data name="results/consolidated/consolidated.fasta" label="${tool.name} on ${on_string}: The output file." format="fasta"></data>  
+    <data name="results/receipt.txt" label="${tool.name} on ${on_string}: The execution receipt." format="txt"></data>  
+  </outputs>
+
+  <help>
+  </help>
+
+  <citation>
+  </citation>
+
+</tool>

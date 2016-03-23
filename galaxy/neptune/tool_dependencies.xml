@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<tool_dependency>
+  <package name="neptune" version="1.2">
+      <repository changeset_revision="b90a37831274" name="package_neptune" owner="eric-marinier" prior_installation_required="True" toolshed="http://localhost:9009" />
+    </package>
+    <package name="biopython" version="1.64">
+      <repository changeset_revision="2392761d39f5" name="package_biopython_1_64" owner="biopython" prior_installation_required="True" toolshed="http://localhost:9009" />
+    </package>
+    <package name="numpy" version="1.9">
+      <repository changeset_revision="7f051855dbfd" name="package_python_2_7_numpy_1_9" owner="iuc" prior_installation_required="True" toolshed="http://localhost:9009" />
+    </package>
+    <package name="scipy" version="0.14">
+      <repository changeset_revision="08a6c767018e" name="package_scipy_0_14" owner="iuc" prior_installation_required="True" toolshed="http://localhost:9009" />
+    </package>
+    <package name="blast+" version="2.2.28">
+      <repository changeset_revision="8a0821427937" name="package_blast_plus_2_2_28" owner="iuc" prior_installation_required="True" toolshed="http://localhost:9009" />
+    </package>
+</tool_dependency>

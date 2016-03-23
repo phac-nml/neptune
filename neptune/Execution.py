@@ -35,6 +35,7 @@ import Neptune
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
+import ConsolidateSignatures
 import Utility
 
 """
@@ -225,6 +226,12 @@ class Execution():
             os.path.join(self.outputDirectoryLocation, Neptune.CONSOLIDATED))
         if not os.path.exists(self.consolidatedDirectoryLocation):
             os.makedirs(self.consolidatedDirectoryLocation)
+
+        consolidatedLocation = os.path.join(
+            self.consolidatedDirectoryLocation,
+            ConsolidateSignatures.CONSOLIDATED_SIGNATURES)
+        if not os.path.exists(consolidatedLocation):
+            open(consolidatedLocation, 'a').close()
 
         self.databaseDirectoryLocation = os.path.abspath(
             os.path.join(self.outputDirectoryLocation, Neptune.DATABASE))

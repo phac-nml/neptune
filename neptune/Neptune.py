@@ -28,7 +28,6 @@ specific language governing permissions and limitations under the License.
 
 __version__ = '1.2.0'
 
-import drmaa
 import os
 import argparse
 import sys
@@ -39,8 +38,6 @@ import Utility
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
-import JobManagerDRMAA
-import JobManagerParallel
 
 """
 # =============================================================================
@@ -535,6 +532,9 @@ EXECUTE DRMAA
 """
 def executeDRMAA(parameters):
 
+    import drmaa
+    import JobManagerDRMAA
+
     with drmaa.Session() as session:
 
         outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
@@ -557,6 +557,8 @@ EXECUTE PARALLEL
 # =============================================================================
 """
 def executeParallel(parameters):
+
+    import JobManagerParallel
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
     logDirectoryLocation = os.path.abspath(
