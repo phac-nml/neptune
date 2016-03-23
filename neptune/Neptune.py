@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 import os
 import argparse
@@ -512,14 +512,16 @@ def execute(execution):
     sortedLocations = filterSignatures(execution, candidateLocations)
 
     # Are all the signature files empty?
-    if(all((os.stat(location).st_size == 0)
+    if (all((os.stat(location).st_size == 0)
             for location in sortedLocations)):
 
+        # Yes -- they are all empty.
         print "NOTICE: No signatures were identified."
-        return
 
-    # --- CONSOLIDATE SIGNATURES ---
-    consolidateSignatures(execution, sortedLocations)
+    else:
+
+        # --- CONSOLIDATE SIGNATURES ---
+        consolidateSignatures(execution, sortedLocations)
 
     execution.produceReceipt()
 

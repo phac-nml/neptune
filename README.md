@@ -38,13 +38,11 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.2.0**
+**Neptune 1.2.1**
 
-2016 March 18
+2016 March 23
 
-This release of Neptune allows for execution on a single machine without
-requiring DRMAA. Furthermore, several command line parameters have been
-modified.
+This release of Neptune adds support for Galaxy.
 
 ## Requirements ##
 ------------------

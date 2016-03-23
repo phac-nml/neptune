@@ -2,6 +2,16 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.2.1] - 2016-03-23
+
+This release of Neptune adds support for Galaxy.
+
+### Added
+- Galaxy-related files: capsules, XML files.
+
+### Changed
+- Neptune.py and Execution.py are now compatible with Galaxy.
+
 ## [1.2.0] - 2016-03-18
 
 This release of Neptune allows for execution on a single machine without
