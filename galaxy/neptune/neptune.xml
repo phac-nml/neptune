@@ -71,8 +71,8 @@
   </inputs>
 
   <outputs>
-    <data name="consolidated" from_work_dir="results/consolidated/consolidated.fasta" format="fasta" label="Neptune Signatures"></data>
-    <data name="receipt" from_work_dir="results/receipt.txt" format="txt" label="Neptune Parameters"></data>
+    <data name="consolidated" from_work_dir="results/consolidated/consolidated.fasta" format="fasta" label="Neptune Signatures: $inclusion.name and $exclusion.name"></data>
+    <data name="receipt" from_work_dir="results/receipt.txt" format="txt" label="Neptune Parameters: $inclusion.name and $exclusion.name"></data>
   </outputs>
 
   <help>
