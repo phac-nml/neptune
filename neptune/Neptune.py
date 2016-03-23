@@ -26,9 +26,8 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
-import drmaa
 import os
 import argparse
 import sys
@@ -39,8 +38,6 @@ import Utility
 import CountKMers
 import ExtractSignatures
 import FilterSignatures
-import JobManagerDRMAA
-import JobManagerParallel
 
 """
 # =============================================================================
@@ -515,14 +512,16 @@ def execute(execution):
     sortedLocations = filterSignatures(execution, candidateLocations)
 
     # Are all the signature files empty?
-    if(all((os.stat(location).st_size == 0)
+    if (all((os.stat(location).st_size == 0)
             for location in sortedLocations)):
 
+        # Yes -- they are all empty.
         print "NOTICE: No signatures were identified."
-        return
 
-    # --- CONSOLIDATE SIGNATURES ---
-    consolidateSignatures(execution, sortedLocations)
+    else:
+
+        # --- CONSOLIDATE SIGNATURES ---
+        consolidateSignatures(execution, sortedLocations)
 
     execution.produceReceipt()
 
@@ -534,6 +533,9 @@ EXECUTE DRMAA
 # =============================================================================
 """
 def executeDRMAA(parameters):
+
+    import drmaa
+    import JobManagerDRMAA
 
     with drmaa.Session() as session:
 
@@ -557,6 +559,8 @@ EXECUTE PARALLEL
 # =============================================================================
 """
 def executeParallel(parameters):
+
+    import JobManagerParallel
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
     logDirectoryLocation = os.path.abspath(

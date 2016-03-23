@@ -1,3 +1,25 @@
+<?xml version="1.0"?>
+
+<tool_dependency>
+    <package name="neptune" version="1.2.1">
+        <install version="1.0">
+
+            <actions>
+                <action type="shell_command">git clone https://github.com/phac-nml/neptune.git</action>
+				<action type="shell_command">git checkout release/1.2</action>
+
+				<action type="move_directory_files">
+					<source_directory>neptune</source_directory>
+					<destination_directory>$INSTALL_DIR/neptune</destination_directory>
+				</action>
+
+                <action type="set_environment">
+                    <environment_variable name="PATH" action="prepend_to">$INSTALL_DIR/neptune</environment_variable>
+                </action>
+            </actions>
+        </install>
+        <readme>
+
 # Neptune #
 -----------
 
@@ -44,45 +66,6 @@ probabilistic models instead of heuristic strategies.
 
 This release of Neptune adds support for Galaxy.
 
-## Requirements ##
-------------------
-
-Neptune will attempt to automatically install several dependencies. However,
-the following dependencies must be installed by the user:
-
-- Python 2.7
-- NumPy
-- SciPy
-- BLAST+
-- pipsi
-
-## Installation ##
-------------------
-
-It is strongly recommended you refer to the manual for full installation
-instructions. The following description is an abridged version of the
-installation process. This assumes all dependencies, save for pipsi, are
-already installed.
-
-The pipsi tool may be installed using the following command:
-
-	$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
-
-You may need to add the pipsi install location to your PATH variable. For BASH
-shells, this can be done by adding the following line to your bashrc file
-(usually ~/.bashrc):
-
-	export PATH=$PATH:~/.local/bin
-
-You will then likely need to source your bashrc file:
-
-	$ source ~/.bashrc
-
-Finally, install Neptune using pipsi:
-
-	$ pipsi install /path/to/neptune/download/location/
-
-
 ## Running Neptune ##
 ---------------------
 
@@ -102,3 +85,7 @@ Please refer to the documentation for more details.
 
 **Eric Marinier**: eric.marinier@phac-aspc.gc.ca
 
+
+        </readme>
+    </package>
+</tool_dependency>
