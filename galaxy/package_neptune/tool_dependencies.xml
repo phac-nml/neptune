@@ -66,17 +66,6 @@ probabilistic models instead of heuristic strategies.
 
 This release of Neptune adds support for Galaxy.
 
-## Requirements ##
-------------------
-
-Neptune will attempt to automatically install several dependencies. However,
-the following dependencies must be installed by the user:
-
-- Python 2.7
-- NumPy
-- SciPy
-- BLAST+
-
 ## Running Neptune ##
 ---------------------
 
