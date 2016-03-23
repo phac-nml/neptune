@@ -93,7 +93,7 @@ Neptune's command line arguments can be found by running:
 A simple example of running Neptune:
 
 	$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
-		--output /path/to/output/ --parallelization 3
+		--output /path/to/output/
 
 Please refer to the documentation for more details.
 
