@@ -22,20 +22,24 @@
         "$i"
       #end for
 
-      #if $kmer:
-        --kmer "$kmer"
-      #end if
+      #if $options.select == "advanced"
 
-      #if $rate:
-        --rate "$rate"
-      #end if
+        #if $options.kmer:
+          --kmer "$options.kmer"
+        #end if
 
-      #if $exhits:
-        --exhits "$exhits"
-      #end if
+        #if $options.rate:
+          --rate "$options.rate"
+        #end if
 
-      #if $size:
-        --size "$size"
+        #if $options.exhits:
+          --exhits "$options.exhits"
+        #end if
+
+        #if $options.size:
+          --size "$options.size"
+        #end if
+
       #end if
 
       --output results
@@ -55,6 +59,8 @@
         <option value="basic">Basic</option>
         <option value="advanced">Advanced</option>
       </param>
+      <when value="basic">
+      </when>
       <when value="advanced">
         <param name="kmer" type="integer" label="k" help="The k-mer size. This value is automatically calculated if left blank." optional="true"/>
         <param name="size" type="integer" label="Size" help="The minimum size of the signatures. The default size is 4k." optional="true"/>
