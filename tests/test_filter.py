@@ -61,7 +61,7 @@ UPDATE HIT OVERALL DICTIONARY
 
 # =============================================================================
 """
-class TestUpdateHitOverallDictionary(unittest.TestCase):
+class TestUpdateExclusionOverallDictionary(unittest.TestCase):
 
     """ 
     # =============================================================================
@@ -119,38 +119,38 @@ class TestUpdateHitOverallDictionary(unittest.TestCase):
         query2 = "query2"
 
         # empty
-        self.assertDictEqual(filterSignatures.hitOverallDictionary, {})
+        self.assertDictEqual(filterSignatures.exclusionOverallDictionary, {})
 
         #0:
         hit1 = Hit(str(query1) + " 10 subject 20 0.50 1")
-        filterSignatures.updateHitOverallDictionary(hit1)
+        filterSignatures.updateExclusionOverallDictionary(hit1)
         expected = {}
         expected[query1] = hit1
-        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
+        self.assertDictEqual(filterSignatures.exclusionOverallDictionary, expected)
 
         #1:
         hit2 = Hit(str(query2) + " 10 subject 20 0.50 1")
-        filterSignatures.updateHitOverallDictionary(hit2)
+        filterSignatures.updateExclusionOverallDictionary(hit2)
         expected = {}
         expected[query1] = hit1
         expected[query2] = hit2
-        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
+        self.assertDictEqual(filterSignatures.exclusionOverallDictionary, expected)
 
         #2:
         hit3 = Hit(str(query1) + " 13 subject 20 0.60 3")
-        filterSignatures.updateHitOverallDictionary(hit3)
+        filterSignatures.updateExclusionOverallDictionary(hit3)
         expected = {}
         expected[query1] = hit3
         expected[query2] = hit2
-        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
+        self.assertDictEqual(filterSignatures.exclusionOverallDictionary, expected)
 
         #3:
         hit4 = Hit(str(query2) + " 13 subject 20 0.60 3")
-        filterSignatures.updateHitOverallDictionary(hit4)
+        filterSignatures.updateExclusionOverallDictionary(hit4)
         expected = {}
         expected[query1] = hit3
         expected[query2] = hit4
-        self.assertDictEqual(filterSignatures.hitOverallDictionary, expected)
+        self.assertDictEqual(filterSignatures.exclusionOverallDictionary, expected)
 
 """
 # =============================================================================
@@ -159,7 +159,7 @@ UPDATE BEST PAIRS
 
 # =============================================================================
 """
-class TestUpdateHitPairDictionary(unittest.TestCase):
+class TestUpdatePairDictionary(unittest.TestCase):
 
     """ 
     # =============================================================================
@@ -214,73 +214,73 @@ class TestUpdateHitPairDictionary(unittest.TestCase):
         hit8 = Hit("query2 13 subject2 20 0.60 3")
 
         # empty
-        self.assertDictEqual(filterSignatures.hitPairDictionary, {})
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, {})
 
         #0:
-        filterSignatures.updateHitPairDictionary(hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit1)
         expected = {}
         expected[pair1] = hit1
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #1:
-        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit2)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #2:
-        filterSignatures.updateHitPairDictionary(hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit3)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
         expected[pair3] = hit3
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #3:
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit4)
         expected = {}
         expected[pair1] = hit1
         expected[pair2] = hit2
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #4:
-        filterSignatures.updateHitPairDictionary(hit5)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit5)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit2
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #5:
-        filterSignatures.updateHitPairDictionary(hit6)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit6)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit3
         expected[pair4] = hit4
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #6:
-        filterSignatures.updateHitPairDictionary(hit7)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit7)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit7
         expected[pair4] = hit4
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
         #7:
-        filterSignatures.updateHitPairDictionary(hit8)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit8)
         expected = {}
         expected[pair1] = hit5
         expected[pair2] = hit6
         expected[pair3] = hit7
         expected[pair4] = hit8
-        self.assertDictEqual(filterSignatures.hitPairDictionary, expected)
+        self.assertDictEqual(filterSignatures.inclusionPairDictionary, expected)
 
 """
 # =============================================================================
@@ -325,10 +325,10 @@ class TestUpdateExclusionScores(unittest.TestCase):
         hit3 = Hit("query2 20 subject1 10 60 1")
         hit4 = Hit("query2 20 subject2 10 80 1")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
-        filterSignatures.updateHitPairDictionary(hit3)
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit4)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
@@ -376,10 +376,10 @@ class TestUpdateExclusionScores(unittest.TestCase):
         hit3 = Hit("query2 10 subject1 20 30 1")
         hit4 = Hit("query2 10 subject2 20 40 1")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
-        filterSignatures.updateHitPairDictionary(hit3)
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.exclusionPairDictionary, hit4)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
@@ -436,10 +436,10 @@ class TestUpdateInclusionScores(unittest.TestCase):
         hit3 = Hit("query2 20 subject1 10 60 1")
         hit4 = Hit("query2 20 subject2 10 80 1")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
-        filterSignatures.updateHitPairDictionary(hit3)
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit4)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
@@ -487,10 +487,10 @@ class TestUpdateInclusionScores(unittest.TestCase):
         hit3 = Hit("query2 10 subject1 20 30 1")
         hit4 = Hit("query2 10 subject2 20 40 1")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
-        filterSignatures.updateHitPairDictionary(hit3)
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit4)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
@@ -539,7 +539,7 @@ class TestReportCandidates(unittest.TestCase):
         filterSignatures.filterLength = 0.5
 
         hit1 = Hit("long 84 subject 40 100 10")
-        filterSignatures.updateHitOverallDictionary(hit1)
+        filterSignatures.updateExclusionOverallDictionary(hit1)
 
         filterSignatures.reportFilteredCandidates()
 
@@ -576,7 +576,7 @@ class TestReportCandidates(unittest.TestCase):
         filterSignatures.filterLength = 0.5
 
         hit1 = Hit("long 84 subject 50 100 10")
-        filterSignatures.updateHitOverallDictionary(hit1)
+        filterSignatures.updateExclusionOverallDictionary(hit1)
 
         filterSignatures.reportFilteredCandidates()
 
@@ -625,8 +625,8 @@ class TestReportSorted(unittest.TestCase):
         hit1 = Hit("long 84 subject1 42 20 1")
         hit2 = Hit("long 84 subject2 42 40 1")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit2)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
@@ -688,10 +688,10 @@ class TestReportSorted(unittest.TestCase):
         hit3 = Hit("long2 84 reference3 84 60 40")
         hit4 = Hit("long2 84 reference4 84 80 60")
 
-        filterSignatures.updateHitPairDictionary(hit1)
-        filterSignatures.updateHitPairDictionary(hit2)
-        filterSignatures.updateHitPairDictionary(hit3)
-        filterSignatures.updateHitPairDictionary(hit4)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit1)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit2)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit3)
+        filterSignatures.updatePairDictionary(filterSignatures.inclusionPairDictionary, hit4)
 
         # empty
         self.assertDictEqual(filterSignatures.overallScore, {})
