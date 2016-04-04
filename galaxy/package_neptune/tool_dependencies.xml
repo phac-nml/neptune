@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <tool_dependency>
-    <package name="neptune" version="1.2.1">
+    <package name="neptune" version="1.2.2">
         <install version="1.0">
 
             <actions>
