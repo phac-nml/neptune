@@ -160,8 +160,9 @@ class FilterSignatures():
 
         self.filterLength = filterLength            # The min filtering size.
 
-        self.hitOverallDictionary = {}  # The best (hit.ID, X).
-        self.hitPairDictionary = {}     # The best (hit.ID, hit.reference).
+        self.exclusionOverallDictionary = {}        # The best (hit.ID, X).
+        self.inclusionPairDictionary = {}  # The best (hit.ID, hit.reference).
+        self.exclusionPairDictionary = {}  # The best (hit.ID, hit.reference).
 
         self.overallScore = {}          # The overall score of a signature.
         self.inclusionScore = {}        # The inclusion score of a signature.
@@ -184,14 +185,14 @@ class FilterSignatures():
         [NONE]
 
     POST:
-        The [self.overallScore] dictionary will be updated.
+        The [self.exclusionOverallDictionary] dictionary will be updated.
 
     # =========================================================================
     """
-    def updateHitOverallDictionary(self, hit):
+    def updateExclusionOverallDictionary(self, hit):
 
-        key = hit.ID                                # The key: ID of the hit.
-        dictionary = self.hitOverallDictionary      # The dictionary to update.
+        key = hit.ID
+        dictionary = self.exclusionOverallDictionary
 
         if key not in dictionary:
 
@@ -204,11 +205,11 @@ class FilterSignatures():
     """
     # =========================================================================
 
-    UPDATE HIT PAIR DICTIONARY
+    UPDATE PAIR DICTIONARY
 
     PURPOSE:
-        The pair score dictionary will be updated with the passed hit. This
-        function is looking for the best hit for a (hit, reference) pair.
+        The passed pair score dictionary will be updated with the passed hit.
+        This function is looking for the best hit for a (hit, reference) pair.
 
     INPUT:
         [HIT] [hit] - The hit object associated with the hit.
@@ -217,14 +218,13 @@ class FilterSignatures():
         [NONE]
 
     POST:
-        The [self.hitPairDictionary] object will be updated.
+        The passed dictionary object will be updated.
 
     # =========================================================================
     """
-    def updateHitPairDictionary(self, hit):
+    def updatePairDictionary(self, dictionary, hit):
 
         key = (hit.ID, hit.reference)           # The key: ID and reference.
-        dictionary = self.hitPairDictionary     # The dictionary to update.
 
         if key not in dictionary:
 
@@ -257,13 +257,13 @@ class FilterSignatures():
     POST:
         The exclusion scores and negative component of the overall scores of
         [self.overallScore] and [self.exclusionScore] will be updated using the
-        [self.hitPairDictionary].
+        [self.exclusionPairDictionary].
 
     # =========================================================================
     """
     def updateExclusionScores(self):
 
-        dictionary = self.hitPairDictionary     # The pair dictionary.
+        dictionary = self.exclusionPairDictionary     # The pair dictionary.
 
         for key in dictionary:
 
@@ -302,13 +302,13 @@ class FilterSignatures():
     POST:
         The exclusion scores and negative component of the overall scores of
         [self.overallScore] and [self.inclusionScore] will be updated using the
-        [self.hitPairDictionary].
+        [self.inclusionPairDictionary].
 
     # =========================================================================
     """
     def updateInclusionScores(self):
 
-        dictionary = self.hitPairDictionary     # The pair dictionary.
+        dictionary = self.inclusionPairDictionary     # The pair dictionary.
 
         for key in dictionary:
 
@@ -355,7 +355,7 @@ class FilterSignatures():
         outputFile = open(self.filteredLocation, 'w')   # The output.
         candidateSignatures = Signature.readSignatures(
             self.candidatesLocation)                    # The input.
-        dictionary = self.hitOverallDictionary          # Overall dictionary.
+        dictionary = self.exclusionOverallDictionary    # Overall dictionary.
 
         for ID in candidateSignatures:
 
@@ -460,8 +460,8 @@ class FilterSignatures():
         for line in exclusionQueryFile:
 
             hit = Database.Hit(line)
-            self.updateHitOverallDictionary(hit)
-            self.updateHitPairDictionary(hit)
+            self.updateExclusionOverallDictionary(hit)
+            self.updatePairDictionary(self.exclusionPairDictionary, hit)
 
         exclusionQueryFile.close()
 
@@ -498,7 +498,7 @@ class FilterSignatures():
         for line in inclusionQueryFile:
 
             hit = Database.Hit(line)
-            self.updateHitPairDictionary(hit)
+            self.updatePairDictionary(self.inclusionPairDictionary, hit)
 
         inclusionQueryFile.close()
 
