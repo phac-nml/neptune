@@ -38,11 +38,12 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.2.1**
+**Neptune 1.2.2**
 
-2016 March 23
+2016 April 6
 
-This release of Neptune adds support for Galaxy.
+This release includes some Galaxy improvements and fixes a signature scoring
+problem.
 
 ## Requirements ##
 ------------------
