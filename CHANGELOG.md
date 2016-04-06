@@ -2,6 +2,17 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.2.2] - 2016-04-06
+
+This release includes some Galaxy improvements and fixes a signature scoring
+problem.
+
+### Changed
+- Galaxy XML files have been updated to use different packages of Python.
+
+### Fixed
+- A bug confusing inclusion and exclusion has been fixed.
+
 ## [1.2.1] - 2016-03-23
 
 This release of Neptune adds support for Galaxy.
