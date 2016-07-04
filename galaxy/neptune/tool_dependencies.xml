@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<tool_dependency>
+  <package name="neptune" version="1.2.2">
+      <repository name="package_neptune" owner="nml" prior_installation_required="True"/>
+    </package>
+    <package name="biopython" version="1.66">
+      <repository name="package_python_2_7_biopython_1_66" owner="ulfschaefer" prior_installation_required="True"/>
+    </package>
+    <package name="numpy" version="1.9">
+      <repository name="package_python_2_7_numpy_1_9" owner="iuc" prior_installation_required="True"/>
+    </package>
+    <package name="scipy" version="0.14">
+      <repository name="package_python_2_7_scipy_0_14" owner="iuc" prior_installation_required="True"/>
+    </package>
+    <package name="blast+" version="2.2.28">
+      <repository name="package_blast_plus_2_2_28" owner="iuc" prior_installation_required="True" />
+    </package>
+</tool_dependency>
