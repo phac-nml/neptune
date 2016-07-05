@@ -8,5 +8,5 @@ python get-pip.py
 pip install virtualenv
 
 # BUILD ESSENTIAL, PYTHON DEV
-apt-get --yes install build-essential
-apt-get --yes install python-dev
+apt-get --yes --force-yes install build-essential
+apt-get --yes --force-yes install python-dev
