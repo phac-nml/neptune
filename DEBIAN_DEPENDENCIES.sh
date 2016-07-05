@@ -1,9 +1,12 @@
 #!/bin/bash 
 
+# PIP
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 
+# VIRTUALENV
 pip install virtualenv
 
-apt-get install build-essential
-apt-get install python-dev
+# BUILD ESSENTIAL, PYTHON DEV
+apt-get --yes install build-essential
+apt-get --yes install python-dev
