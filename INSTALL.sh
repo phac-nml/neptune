@@ -1,8 +1,12 @@
 #!/bin/bash 
 
+# Neptune directory:
+DIR=`dirname $0`
+
 # Create Python virtual environment:
-virtualenv .venv
-. .venv/bin/activate
+VENV=$DIR/.venv
+virtualenv $VENV
+. $VENV/bin/activate
 
 # PIP
 pip install --upgrade pip
@@ -20,5 +24,5 @@ pip install biopython
 pip install drmaa
 
 # NEPTUNE
-pip install .
+pip install $DIR
 
