@@ -24,5 +24,4 @@ pip install biopython
 pip install drmaa
 
 # NEPTUNE
-pip install $DIR
-
+pip install $DIR/
