@@ -1,0 +1,4 @@
+#!/bin/bash 
+
+. ../lib/neptune/bin/activate
+neptune $@
