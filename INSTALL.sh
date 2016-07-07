@@ -51,5 +51,5 @@ pip install drmaa
 pip install $DIR/
 
 # BIN
-cp $DIR/neptune.tmp $BIN/neptune
+cp $DIR/install/neptune $BIN/neptune
 
