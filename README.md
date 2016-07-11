@@ -74,7 +74,7 @@ instructions. Neptune may be installed using the following command:
         $ INSTALL.sh
 
 You may specify an install PREFIX location, and Neptune will install into
-PREFIX/lib and PREFIX/bin. This only requires security privilages if the
+PREFIX/lib and PREFIX/bin. This only requires security privileges if the
 install location requires them.
 
 ## Running Neptune ##
