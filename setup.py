@@ -1,11 +1,10 @@
 from setuptools import find_packages, setup
-#import neptune.Neptune
 
 dependencies = ['drmaa', 'numpy', 'scipy', 'biopython']
 
 setup(
     name='neptune',
-    version='1.2.2',
+    version='1.2.3',
     url='https://github.com/phac-nml/neptune.git',
     license='Apache-2.0',
     author='Eric Marinier',

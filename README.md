@@ -38,51 +38,44 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.2.2**
+**Neptune 1.2.3**
 
-2016 April 6
+2016 July 11
 
-This release includes some Galaxy improvements and fixes a signature scoring
-problem.
+This release simplifies the installation process.
 
 ## Requirements ##
 ------------------
 
-Neptune will attempt to automatically install several dependencies. However,
-the following dependencies must be installed by the user:
+Neptune requires Python 2.7. You may check the installed version with the
+following:
 
-- Python 2.7
-- NumPy
-- SciPy
-- BLAST+
-- pipsi
+	$ python --version
+
+If the running a Debian distribution (ex: Ubuntu), dependencies may be
+installed using the following command:
+
+	$ sudo install/debian_dependencies.sh
+
+Otherwise, the following dependencies must be installed manually:
+
+- python-pip
+- python-virtualenv
+- build-essential
+- python-dev
+- NCBI BLAST+
 
 ## Installation ##
 ------------------
 
 It is strongly recommended you refer to the manual for full installation
-instructions. The following description is an abridged version of the
-installation process. This assumes all dependencies, save for pipsi, are
-already installed.
+instructions. Neptune may be installed using the following command:
 
-The pipsi tool may be installed using the following command:
+        $ INSTALL.sh
 
-	$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
-
-You may need to add the pipsi install location to your PATH variable. For BASH
-shells, this can be done by adding the following line to your bashrc file
-(usually ~/.bashrc):
-
-	export PATH=$PATH:~/.local/bin
-
-You will then likely need to source your bashrc file:
-
-	$ source ~/.bashrc
-
-Finally, install Neptune using pipsi:
-
-	$ pipsi install /path/to/neptune/download/location/
-
+You may specify an install PREFIX location, and Neptune will install into
+PREFIX/lib and PREFIX/bin. This only requires security privilages if the
+install location requires them.
 
 ## Running Neptune ##
 ---------------------

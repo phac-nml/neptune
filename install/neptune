@@ -1,0 +1,6 @@
+#!/bin/bash 
+
+DIR=`dirname $0`
+
+. $DIR/../lib/neptune/bin/activate
+neptune $@
