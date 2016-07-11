@@ -64,7 +64,7 @@
 \setlength{\parskip}{0.5em}
 
 %opening
-\title{Neptune\\ \normalsize Version 1.2.2}
+\title{Neptune\\ \normalsize Version 1.2.3}
 \author{Eric Marinier}
 
 \begin{document}
@@ -82,104 +82,51 @@ Neptune locates genomic signatures using an exact \textit{k}-mer matching strate
 \newpage
 \section{Installation}
 
-This installation guide assumes the user is using the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager and the \href{https://en.wikipedia.org/wiki/Bash_(Unix_shell)}{BASH} Unix shell. These are common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} Linux operating system. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on other environments is beyond the scope of this manual.
+This installation guide assumes the use of the \href{https://en.wikipedia.org/wiki/Bash_(Unix_shell)}{BASH} Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on all environments is beyond the scope of this manual. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
 
-Neptune may either be run on a single machine or on a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a substantial understanding of Unix. However, it is possible to run Neptune on a single machine without DRMAA. Neptune is known to be compatible with the \href{http://gridscheduler.sourceforge.net/}{SGE} and \href{http://slurm.schedmd.com/}{Slurm} schedulers.
+\subsection{Python}
 
-\subsection{Neptune Requirements}
-
-Neptune should be installed and run on a standard 64-bit Unix environment. The installation process will attempt to automatically install many dependencies. However, the following dependencies must be manually installed, if necessary, by the user:
-
-\begin{enumerate}
-  \item Python 2.7
-  \item NumPy
-  \item SciPy
-  \item BLAST+
-  \item pipsi
-\end{enumerate}
-
-\subsubsection{Python 2.7}
-
-Please note that Python 2.7 is provided with many major distributions of Linux. However, if this is not the case with your distribution, then the following should install Python 2.7:
+Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:
 
 \begin{lstlisting}
-# Install requirements:
-$ sudo apt-get install build-essential checkinstall
-$ sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
-
-# Download Python 2.7.10:
-$ cd /usr/src
-$ wget https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
-
-# Extract:
-$ tar xzf Python-2.7.10.tgz
-
-# Compile Python source:
-$ cd Python-2.7.10
-$ sudo ./configure
-$ sudo make altinstall
-
-# Check the Python version:
-$ python2.7 -V
+$ python --version
 \end{lstlisting}
 
-\subsubsection{NumPy and SciPy}
+\subsection{Dependencies}
 
-Please note that NumPy and SciPy are provided with many major distributions of Linux. However, if this is not the case your distribution, then either refer to the \href{http://docs.scipy.org/doc/numpy-1.10.1/user/install.html}{official NumPy installation instructions} and \href{http://www.scipy.org/scipylib/building/linux.html}{official SciPy installation instructions}, or the following should install NumPy and SciPy:
+\subsubsection{Debian-Based Installation}
+
+This section assumes the user has the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager. This is common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
 
 \begin{lstlisting}
-# Install NumPy requirements:
-$ sudo apt-get install gcc gfortran python-dev libblas-dev liblapack-dev cython
-
-# Install SciPy requirements:
-$ sudo apt-get install python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
-
-# Install NumPy and SciPy:
-$ sudo apt-get install python-numpy python-scipy
+$ sudo neptune/install/debian_dependencies.sh
 \end{lstlisting}
 
-\subsubsection{BLAST}
+\subsubsection{Manual Installation}
 
-BLAST may be installed using APT:
+If you cannot install the dependencies using the above script, the following dependencies must be manually installed, if necessary, by the user:
+
+\begin{itemize}
+  \small
+  \item pip
+  \item virtualenv
+  \item build-essential
+  \item python-dev
+  \item NCBI BLAST+
+\end{itemize}
+
+\subsection{Neptune}
+
+Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
 
 \begin{lstlisting}
-# Install BLAST+:
-$ sudo apt-get install ncbi-blast+
+$ neptune/INSTALL.sh
 \end{lstlisting}
 
-\subsubsection{pipsi}
-
-The \href{https://github.com/mitsuhiko/pipsi}{pipsi} tool is used to install Python packages using pip into shielded virtual environments. The software attempts to avoid the problem of software installations conflicting with other installations using differing dependencies. The pipsi tool may be installed using curl and Python:
+Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
 
 \begin{lstlisting}
-# Install pipsi:
-$ curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | python
-\end{lstlisting}
-
-Furthermore, you may need to add the default pipsi install location to your PATH variable.
-
-\begin{lstlisting}
-# The following adds a line to your bashrc file:
-$ echo "export PATH=$PATH:~/.local/bin" | cat >> ~/.bashrc
-
-# Source the updated bashrc file:
-$ source ~/.bashrc
-
-# Ensure the PATH was updated correctly:
-$ echo $PATH | grep local/bin
-\end{lstlisting}
-
-\subsection{Neptune Installation}
-
-Neptune executes in a Python environment and therefore does not need to be explicitly compiled. Neptune is best installed using pipsi, as it will further install several Python dependencies required by Neptune automatically. The installation is performed by running the following:
-
-\begin{lstlisting}
-# Install Neptune:
-$ pipsi install /path/to/neptune/download/location/
-
-# Ensure installation was successful:
-$ neptune --version
-> neptune 1.2.2
+$ neptune/INSTALL.sh PREFIX
 \end{lstlisting}
 
 \newpage
@@ -217,11 +164,11 @@ It may be helpful to create a submission wrapper script for Neptune to avoid ent
 
 DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
 
-/home/user/.local/bin/neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
+neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
 \end{lstlisting}
 
 \begin{lstlisting}[title={Slurm Example}]
-$ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
+$ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
 
 \subsubsection{SGE Wrapper}
@@ -231,11 +178,11 @@ $ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
 
 DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
 
-/home/user/.local/bin/neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
+neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
 \end{lstlisting}
 
 \begin{lstlisting}[title={SGE Example}]
-$ neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output
+$ neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
 
 \newpage

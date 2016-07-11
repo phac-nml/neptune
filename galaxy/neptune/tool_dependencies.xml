@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tool_dependency>
-  <package name="neptune" version="1.2.2">
+  <package name="neptune" version="1.2.3">
       <repository name="package_neptune" owner="nml" prior_installation_required="True"/>
     </package>
     <package name="biopython" version="1.66">
