@@ -2,10 +2,22 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.2.3] - 2016-07-11
+
+This release simplifies the installation process.
+
+### Added
+- A script for automatically installing Debian dependencies.
+
+### Changed
+- The dependencies have changed. Several are now installed as part of Neptune.
+- The Neptune installation no longer requires security privilages.
+- Neptune may be installed multiple times in multiple locations.
+- NumPy and SciPy are now installed using pip.
+
 ## [1.2.2] - 2016-04-06
 
-This release includes some Galaxy improvements and fixes a signature scoring
-problem.
+This release includes some Galaxy improvements and fixes a signature scoring problem.
 
 ### Changed
 - Galaxy XML files have been updated to use different packages of Python.
