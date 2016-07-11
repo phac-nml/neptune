@@ -52,8 +52,8 @@ following:
 
 	$ python --version
 
-If the running a Debian distribution (ex: Ubuntu), dependencies may be
-installed using the following command:
+If running a Debian distribution (ex: Ubuntu), dependencies may be installed
+using the following command:
 
 	$ sudo install/debian_dependencies.sh
 
