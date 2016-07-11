@@ -96,7 +96,7 @@ $ python --version
 
 \subsubsection{Debian-Based Installation}
 
-This section assumes the user has the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager. This is common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privilages (sudo) to install the dependencies:
+This section assumes the user has the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager. This is common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
 
 \begin{lstlisting}
 $ sudo neptune/install/debian_dependencies.sh
@@ -117,13 +117,13 @@ If you cannot install the dependencies using the above script, the following dep
 
 \subsection{Neptune}
 
-Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privilages:
+Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
 
 \begin{lstlisting}
 $ neptune/INSTALL.sh
 \end{lstlisting}
 
-Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privilages:
+Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
 
 \begin{lstlisting}
 $ neptune/INSTALL.sh PREFIX
