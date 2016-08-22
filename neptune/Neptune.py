@@ -28,6 +28,8 @@ specific language governing permissions and limitations under the License.
 
 __version__ = '1.2.3'
 
+import time
+
 import os
 import argparse
 import sys
@@ -499,17 +501,32 @@ EXECUTE
 """
 def execute(execution):
 
+    print("---------- START ----------")
+    print(time.clock())
+
     # --- K-MER COUNTING ---
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+
+    print("---------- KMER COUNTING FINISHED ----------")
+    print(time.clock())
 
     # --- K-MER AGGREGATION ---
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
 
+    print("---------- KMER AGGREGATION FINISHED ----------")
+    print(time.clock())
+
     # --- SIGNATURE EXTRACTION ---
     candidateLocations = extractSignatures(execution)
 
+    print("---------- EXTRACTION FINISHED ----------")
+    print(time.clock())
+
     # --- SIGNATURE FILTERING ---
     sortedLocations = filterSignatures(execution, candidateLocations)
+
+    print("---------- FILTERING FINISHED ----------")
+    print(time.clock())
 
     # Are all the signature files empty?
     if (all((os.stat(location).st_size == 0)
@@ -522,6 +539,9 @@ def execute(execution):
 
         # --- CONSOLIDATE SIGNATURES ---
         consolidateSignatures(execution, sortedLocations)
+
+        print("---------- CONSOLIDATE FINISHED ----------")
+        print(time.clock())
 
     execution.produceReceipt()
 
