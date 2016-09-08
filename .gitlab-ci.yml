@@ -1,4 +1,4 @@
-image: docker.corefacility.ca:5000/marinier/neptune_deps
+image: docker.corefacility.ca:5000/marinier/neptune_deps:latest
 
 tests:
   script: ".ci/run_tests.sh"
