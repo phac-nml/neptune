@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+/root/slurm.sh
+
 printf "setenv = \n    DRMAA_LIBRARY_PATH = /usr/lib/gridengine-drmaa/lib/libdrmaa.so.1.0\n" >> tox.ini
 printf "    SGE_ROOT = /opt/gridengine\n" >> tox.ini
 printf "    SGE_CELL=default\n" >> tox.ini
