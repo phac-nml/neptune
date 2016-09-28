@@ -38,11 +38,9 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.2.3**
+**Neptune 1.3.0**
 
-2016 July 11
-
-This release simplifies the installation process.
+WIP
 
 ## Requirements ##
 ------------------
