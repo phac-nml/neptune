@@ -170,6 +170,7 @@ def countKMers(execution):
 
     return (inclusionKMerLocations, exclusionKMerLocations)
 
+
 """
 # =============================================================================
 
@@ -211,6 +212,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
             execution, inclusionKMerLocations, exclusionKMerLocations)
 
     shutil.rmtree(execution.kmersOutputDirectory)
+
 
 """
 # =============================================================================
@@ -266,6 +268,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
 
     aggregateFile.close()
 
+
 """
 # =============================================================================
 
@@ -299,6 +302,7 @@ def aggregateSingleFiles(
         execution.aggregateLocation, None)
 
     execution.jobManager.runJobs([job])
+
 
 """
 # =============================================================================
@@ -350,6 +354,7 @@ def extractSignatures(execution):
     execution.jobManager.runJobs(jobs)
 
     return outputLocations
+
 
 """
 # =============================================================================
@@ -438,6 +443,7 @@ def filterSignatures(execution, candidateLocations):
 
     return sortedLocations
 
+
 """
 # =============================================================================
 
@@ -469,6 +475,7 @@ def consolidateSignatures(execution, sortedLocations):
         execution.consolidatedDirectoryLocation)
 
     execution.jobManager.runJobs([job])
+
 
 """
 # =============================================================================
@@ -505,6 +512,7 @@ def execute(execution):
 
     execution.produceReceipt()
 
+
 """
 # =============================================================================
 
@@ -531,6 +539,7 @@ def executeDRMAA(parameters):
         execution = Execution.Execution(jobManager, parameters)
         execute(execution)
 
+
 """
 # =============================================================================
 
@@ -554,6 +563,7 @@ def executeParallel(parameters):
     execution = Execution.Execution(jobManager, parameters)
     execute(execution)
 
+
 """
 # =============================================================================
 
@@ -568,6 +578,7 @@ def parse(parameters):
 
     else:
         executeParallel(parameters)
+
 
 """
 # =============================================================================
@@ -800,6 +811,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================

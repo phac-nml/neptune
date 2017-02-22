@@ -56,6 +56,7 @@ class Hit():
 
         self.neptuneScore = float(0.0)
 
+
 """
 # =============================================================================
 
@@ -115,6 +116,7 @@ def createDatabaseJob(inputLocation, outputLocation):
     NULL = open(os.devnull,"w")
     subprocess.check_call(args, stdout=NULL, stderr=NULL)
     NULL.close()
+
 
 """
 # =============================================================================

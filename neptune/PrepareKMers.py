@@ -114,6 +114,7 @@ def convert(kmer):
 
     return kmer
 
+
 """
 # =============================================================================
 
@@ -135,6 +136,7 @@ def main(kmersInputFile, kmersOutputFile):
     for kmer in kmers:
         output = str(kmer) + "\n"
         kmersOutputFile.write(output)
+
 
 """
 # =============================================================================
