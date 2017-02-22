@@ -268,8 +268,6 @@ def consolidateSignatures(
 
     os.remove(os.path.join(outputDirectoryLocation, COMPILED_SIGNATURES))
 
-    print "\n==== Exiting ====\n"
-
 """
 # =============================================================================
 

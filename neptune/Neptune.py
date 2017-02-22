@@ -124,8 +124,6 @@ POST:
 """
 def countKMers(execution):
 
-    print("CountKMers starting ...")
-
     if not os.path.exists(execution.inclusionOutputDirectory):
         os.makedirs(execution.inclusionOutputDirectory)
 
@@ -170,8 +168,6 @@ def countKMers(execution):
 
     execution.jobManager.runJobs(jobs)
 
-    print("CountKMers finished!")
-
     return (inclusionKMerLocations, exclusionKMerLocations)
 
 """
@@ -203,8 +199,6 @@ POST:
 """
 def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
-    print("AggregateKMers starting ...")
-
     if execution.organization:
 
         aggregateMultipleFiles(
@@ -217,8 +211,6 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
             execution, inclusionKMerLocations, exclusionKMerLocations)
 
     shutil.rmtree(execution.kmersOutputDirectory)
-
-    print("AggregateKMers finished!")
 
 """
 # =============================================================================
@@ -330,8 +322,6 @@ POST:
 """
 def extractSignatures(execution):
 
-    print("ExtractSignatures starting ...")
-
     jobs = []
     outputLocations = []
 
@@ -359,8 +349,6 @@ def extractSignatures(execution):
 
     execution.jobManager.runJobs(jobs)
 
-    print("ExtractSignatures finished!")
-
     return outputLocations
 
 """
@@ -386,8 +374,6 @@ POST:
 # =============================================================================
 """
 def filterSignatures(execution, candidateLocations):
-
-    print("Filtering signatures ...")
 
     # MAKE DATABASES
     INCLUSION_NAME = "INCLUSION"
@@ -450,8 +436,6 @@ def filterSignatures(execution, candidateLocations):
 
     shutil.rmtree(execution.databaseDirectoryLocation)
 
-    print("Filtering finished!")
-
     return sortedLocations
 
 """
@@ -480,15 +464,11 @@ POST:
 """
 def consolidateSignatures(execution, sortedLocations):
 
-    print("Consolidating signatures ...")
-
     job = execution.jobManager.createConsolidateJob(
         sortedLocations, execution.seedSize,
         execution.consolidatedDirectoryLocation)
 
     execution.jobManager.runJobs([job])
-
-    print("Consolidating finished!")
 
 """
 # =============================================================================

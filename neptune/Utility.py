@@ -190,8 +190,6 @@ def buildReferences(referenceFile):
 
             references[referenceName] = ""
 
-            print "Building: " + str(referenceName)
-
         # continue building reference:
         else:
             references[referenceName] += line.strip().upper()
