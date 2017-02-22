@@ -25,6 +25,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import subprocess
+import os
 
 """
 # =============================================================================
@@ -72,13 +73,14 @@ INPUT:
 
 POST:
     A Python subprocess is executed for the create database job. Control will
-    return to the calling function after this subprocess is complete.
+    return to the calling function after this subprocess is complete. The
+    output of the subprocess will be written to NULL.
 
 # =============================================================================
 """
 def createDatabaseJob(inputLocation, outputLocation):
 
-    # COMMAND LINE
+    # Command Line
     COMMAND = "makeblastdb"
 
     TYPE = "-dbtype"
@@ -93,6 +95,7 @@ def createDatabaseJob(inputLocation, outputLocation):
     OUTPUT = "-out"
     OUTPUT_LOCATION = outputLocation
 
+    # Arguments
     args = []
 
     args.append(COMMAND)
@@ -109,7 +112,10 @@ def createDatabaseJob(inputLocation, outputLocation):
     args.append(OUTPUT)
     args.append(OUTPUT_LOCATION)
 
-    subprocess.check_call(args)
+    # Output
+    NULL = open(os.devnull,"w")
+    subprocess.check_call(args, stdout=NULL, stderr=NULL)
+    NULL.close()
 
 
 """
@@ -134,7 +140,8 @@ RETURN:
         This is the same location as the passed [outputLocation]
 
 POST:
-    A query file will be created at the [outputLocation].
+    A query file will be created at the [outputLocation]. The output of the
+    subprocess will be written to NULL.
 
 # =============================================================================
 """
@@ -142,7 +149,7 @@ def queryDatabase(
         databaseLocation, queryLocation, outputLocation,
         percentIdentity, seedSize):
 
-    # COMMAND LINE
+    # Command Line
     COMMAND = "blastn"
 
     DATABASE = "-db"
@@ -156,6 +163,7 @@ def queryDatabase(
     DUST = "-dust"
     DUST_VALUE = "no"
 
+    # Arguments
     args = [
         COMMAND,
         DATABASE, databaseLocation,
@@ -166,6 +174,9 @@ def queryDatabase(
         WORD_SIZE, str(WORD_SIZE_VALUE),
         DUST, DUST_VALUE]
 
-    subprocess.check_call(args)
+    # Output
+    NULL = open(os.devnull,"w")
+    subprocess.check_call(args, stdout=NULL, stderr=NULL)
+    NULL.close()
 
     return outputLocation

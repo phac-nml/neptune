@@ -703,8 +703,6 @@ PARSE
 def parse(parameters):
 
     # --- Reference ---
-    print "\n==== Building References ====\n"
-
     if not os.path.isfile(parameters[REFERENCE]):
         raise RuntimeError("ERROR: Could not open the reference file.\n")
 
@@ -712,8 +710,6 @@ def parse(parameters):
     referenceFile = open(referenceLocation, 'r')
     references = buildReferences(referenceFile)
     referenceFile.close()
-
-    print "\nDone!"
 
     # --- Reference Size & GC-Content ---
     if not parameters[REFERENCE_SIZE] or not parameters[GC_CONTENT]:
@@ -761,15 +757,11 @@ def parse(parameters):
         exhits = estimateExclusionHits(totalExclusion, rate, k)
 
     # --- k-mer Tables ---
-    print "\n==== Building k-mer Tables ====\n"
-
     kmerFile = open(parameters[KMERS], 'r')
     inmers = {}
     exmers = {}
     buildKMers(kmerFile, inmers, exmers, inhits, exhits)
     kmerFile.close()
-
-    print "Done!"
 
     # --- Gap Size ---
     if parameters[GAP]:
@@ -795,14 +787,9 @@ def parse(parameters):
     reportFile.close()
 
     # --- Extraction ---
-    print "\n==== Extracing Signatures ====\n"
     outputFile = open(parameters[OUTPUT], 'w')
     extract(references, k, inmers, exmers, size, gap, outputFile)
     outputFile.close()
-
-    print "Done!"
-
-    print "\n==== Exiting ====\n"
 
 
 """
