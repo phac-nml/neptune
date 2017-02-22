@@ -174,6 +174,7 @@ def countKMers(execution):
 
     return (inclusionKMerLocations, exclusionKMerLocations)
 
+
 """
 # =============================================================================
 
@@ -219,6 +220,7 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
     shutil.rmtree(execution.kmersOutputDirectory)
 
     print("AggregateKMers finished!")
+
 
 """
 # =============================================================================
@@ -274,6 +276,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
 
     aggregateFile.close()
 
+
 """
 # =============================================================================
 
@@ -307,6 +310,7 @@ def aggregateSingleFiles(
         execution.aggregateLocation, None)
 
     execution.jobManager.runJobs([job])
+
 
 """
 # =============================================================================
@@ -362,6 +366,7 @@ def extractSignatures(execution):
     print("ExtractSignatures finished!")
 
     return outputLocations
+
 
 """
 # =============================================================================
@@ -454,6 +459,7 @@ def filterSignatures(execution, candidateLocations):
 
     return sortedLocations
 
+
 """
 # =============================================================================
 
@@ -490,6 +496,7 @@ def consolidateSignatures(execution, sortedLocations):
 
     print("Consolidating finished!")
 
+
 """
 # =============================================================================
 
@@ -525,6 +532,7 @@ def execute(execution):
 
     execution.produceReceipt()
 
+
 """
 # =============================================================================
 
@@ -551,6 +559,7 @@ def executeDRMAA(parameters):
         execution = Execution.Execution(jobManager, parameters)
         execute(execution)
 
+
 """
 # =============================================================================
 
@@ -574,6 +583,7 @@ def executeParallel(parameters):
     execution = Execution.Execution(jobManager, parameters)
     execute(execution)
 
+
 """
 # =============================================================================
 
@@ -588,6 +598,7 @@ def parse(parameters):
 
     else:
         executeParallel(parameters)
+
 
 """
 # =============================================================================
@@ -820,6 +831,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================

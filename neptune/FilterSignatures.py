@@ -510,6 +510,7 @@ class FilterSignatures():
 
         self.reportSorted(sortedSignatureIDs)
 
+
 """
 # =============================================================================
 
@@ -573,6 +574,7 @@ def filterSignatures(
     # SORT
     filterSignatures.sortSignatures(inclusionQueryLocation)
 
+
 """
 # =============================================================================
 
@@ -604,6 +606,7 @@ def parse(parameters):
         totalInclusion, totalExclusion, inputLocation,
         filteredOutputLocation, sortedOutputLocation, filterLength,
         filterPercent, seedSize)
+
 
 """
 # =============================================================================
@@ -695,6 +698,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================
