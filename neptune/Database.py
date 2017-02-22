@@ -113,7 +113,7 @@ def createDatabaseJob(inputLocation, outputLocation):
     args.append(OUTPUT_LOCATION)
 
     # Output
-    NULL = open(os.devnull,"w")
+    NULL = open(os.devnull, "w")
     subprocess.check_call(args, stdout=NULL, stderr=NULL)
     NULL.close()
 
@@ -175,7 +175,7 @@ def queryDatabase(
         DUST, DUST_VALUE]
 
     # Output
-    NULL = open(os.devnull,"w")
+    NULL = open(os.devnull, "w")
     subprocess.check_call(args, stdout=NULL, stderr=NULL)
     NULL.close()
 
