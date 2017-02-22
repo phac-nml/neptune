@@ -66,8 +66,9 @@ Otherwise, the following dependencies must be installed manually:
 ## Installation ##
 ------------------
 
-It is strongly recommended you refer to the manual for full installation
-instructions. Neptune may be installed using the following command:
+It is strongly recommended you refer to the
+[manual](documentation/manual/Manual.pdf) for full installation instructions.
+Neptune may be installed using the following command:
 
         $ INSTALL.sh
 
@@ -87,7 +88,7 @@ A simple example of running Neptune:
 	$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
 		--output /path/to/output/
 
-Please refer to the documentation for more details.
+Please refer to the [manual](documentation/manual/Manual.pdf) for more details.
 
 ## Contact ##
 -------------
