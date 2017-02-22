@@ -128,6 +128,7 @@ def compileSignatures(compiledSignatures, signatureLocations):
 
     return compiledSignatures
 
+
 """
 # =============================================================================
 
@@ -192,6 +193,7 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
             # Write the signature to output and update outputed signatures.
             outputSignatures[signature.ID] = signature
             Signature.writeSignature(signature, destination)
+
 
 """
 # =============================================================================
@@ -270,6 +272,7 @@ def consolidateSignatures(
 
     print "\n==== Exiting ====\n"
 
+
 """
 # =============================================================================
 
@@ -289,6 +292,7 @@ def parse(parameters):
 
     consolidateSignatures(
         signatureLocations, seedSize, outputDirectoryLocation)
+
 
 """
 # =============================================================================
@@ -329,6 +333,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================

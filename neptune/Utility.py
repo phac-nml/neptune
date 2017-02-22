@@ -83,6 +83,7 @@ def getAggregationTags(parallelization):
 
     return tags
 
+
 """
 # =============================================================================
 
@@ -139,6 +140,7 @@ def generateSequence(integer, length):
 
     return sequence
 
+
 """
 # =============================================================================
 
@@ -159,6 +161,7 @@ def reverseComplement(sequence):
 
     reverse = str(Seq(sequence, generic_dna).reverse_complement())
     return reverse
+
 
 """
 # =============================================================================
@@ -197,6 +200,7 @@ def buildReferences(referenceFile):
             references[referenceName] += line.strip().upper()
 
     return references
+
 
 """
 # =============================================================================
@@ -238,6 +242,7 @@ def estimateReferenceParameters(references):
     gcContent = float(sumGC) / float(sumGC + sumAT)
 
     return size, gcContent
+
 
 """
 # =========================================================================

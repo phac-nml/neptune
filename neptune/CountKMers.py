@@ -171,6 +171,7 @@ def writeMultipleFiles(kmers, outputLocation, organization):
 
         outputFiles[item].close()
 
+
 """
 # =============================================================================
 
@@ -197,6 +198,7 @@ def writeSingleFile(kmers, outputFile):
     for kmer in kmers:
 
         outputFile.write(str(kmer[0]) + " " + str(kmer[1]) + "\n")
+
 
 """
 # =============================================================================
@@ -270,6 +272,7 @@ def count(inputLocation, outputLocation, k, organization):
     # close input file
     inputFile.close()
 
+
 """
 # =============================================================================
 
@@ -287,6 +290,7 @@ def parse(parameters):
         if parameters[ORGANIZATION] else ORGANIZATION_DEFAULT
 
     count(inputLocation, outputLocation, k, organization)
+
 
 """
 # =============================================================================
@@ -338,6 +342,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================
