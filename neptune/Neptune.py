@@ -502,31 +502,38 @@ EXECUTE
 def execute(execution):
 
     print("---------- START ----------")
-    print(time.clock())
 
     # --- K-MER COUNTING ---
+    start = time.clock()
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+    end = time.clock()
 
     print("---------- KMER COUNTING FINISHED ----------")
-    print(time.clock())
+    print(str(end - start) + " seconds")
 
     # --- K-MER AGGREGATION ---
+    start = time.clock()
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
+    end = time.clock()
 
     print("---------- KMER AGGREGATION FINISHED ----------")
-    print(time.clock())
+    print(str(end - start) + " seconds")
 
     # --- SIGNATURE EXTRACTION ---
+    start = time.clock()
     candidateLocations = extractSignatures(execution)
+    end = time.clock()
 
     print("---------- EXTRACTION FINISHED ----------")
-    print(time.clock())
+    print(str(end - start) + " seconds")
 
     # --- SIGNATURE FILTERING ---
+    start = time.clock()
     sortedLocations = filterSignatures(execution, candidateLocations)
+    end = time.clock()
 
     print("---------- FILTERING FINISHED ----------")
-    print(time.clock())
+    print(str(end - start) + " seconds")
 
     # Are all the signature files empty?
     if (all((os.stat(location).st_size == 0)
@@ -538,10 +545,12 @@ def execute(execution):
     else:
 
         # --- CONSOLIDATE SIGNATURES ---
+        start = time.clock()
         consolidateSignatures(execution, sortedLocations)
+        end = time.clock()
 
         print("---------- CONSOLIDATE FINISHED ----------")
-        print(time.clock())
+        print(str(end - start) + " seconds")
 
     execution.produceReceipt()
 
