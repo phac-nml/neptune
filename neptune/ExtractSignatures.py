@@ -144,6 +144,7 @@ class Region():
         self.reference = reference
         self.position = position
 
+
 """
 # =============================================================================
 
@@ -270,6 +271,7 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
 
         Signature.writeSignature(signature, outputFile)
 
+
 """
 # =============================================================================
 
@@ -306,6 +308,7 @@ def calculateProbHBMM(GC):
             math.pow(GC / (2 - GC), 2)) * (GC)
 
     return probHBMM
+
 
 """
 # =============================================================================
@@ -348,6 +351,7 @@ def calculateProbHBM(mutationRate, GC):
     probHBM = (1 - M) * (1 - M) + (M) * (M) * probHBMM
 
     return probHBM
+
 
 """
 # =============================================================================
@@ -394,6 +398,7 @@ def calculateProbHKM(mutationRate, GC, kmerSize):
 
     return probHKM
 
+
 """
 # =============================================================================
 
@@ -417,6 +422,7 @@ def estimateSignatureSize(kmerSize):
     estimate = FACTOR * kmerSize
 
     return int(estimate)
+
 
 """
 # =============================================================================
@@ -474,6 +480,7 @@ def estimateGapSize(mutationRate, GC, kmerSize, confidence):
 
     return int(estimate)
 
+
 """
 # =============================================================================
 
@@ -500,6 +507,7 @@ def estimateExclusionHits(totalExclusion, rate, kmerSize):
     estimate = 1.0
 
     return estimate
+
 
 """
 # =============================================================================
@@ -559,6 +567,7 @@ def estimateInclusionHits(
 
     return estimate
 
+
 """
 # =============================================================================
 
@@ -583,6 +592,7 @@ def estimateK(kmerFile):
     estimate = len(kmer)
 
     return estimate
+
 
 """
 # =============================================================================
@@ -626,6 +636,7 @@ def buildKMers(kmerFile, inmers, exmers, inhits, exhits):
 
         if excount >= exhits:
             exmers[kmer] = excount
+
 
 """
 # =============================================================================
@@ -680,6 +691,7 @@ def reportParameters(
     reportFile.write("\n")
     reportFile.write("Maximum k-mer Gap Size = " + str(gap) + "\n")
     reportFile.write("Minimum Signature Size = " + str(size) + "\n")
+
 
 """
 # =============================================================================
@@ -792,6 +804,7 @@ def parse(parameters):
 
     print "\n==== Exiting ====\n"
 
+
 """
 # =============================================================================
 
@@ -901,6 +914,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================
