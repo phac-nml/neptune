@@ -24,11 +24,11 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb,amsmath}
-\usepackage{listings}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{courier}
 \usepackage[margin=1in]{geometry}
+\usepackage[procnames]{listings} % Code Blocks
 
 \lstset{
   frame=tb,
@@ -67,7 +67,27 @@
 \title{Neptune\\ \normalsize Version 1.2.4}
 \author{Eric Marinier}
 
+
 \begin{document}
+
+%Code Block Style Definitions
+\definecolor{keywords}{RGB}{76,154,98}
+\definecolor{comments}{RGB}{87,134,146}
+\definecolor{functions}{RGB}{19,52,131}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
+\definecolor{background}{RGB}{248, 249, 250}
+\definecolor{border}{RGB}{224, 226, 230}
+
+\lstdefinestyle{bash}{language=bash, 
+        keywordstyle=\color{black},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        showstringspaces=false,
+        identifierstyle=\color{black},
+        rulecolor=\color{border},
+        backgroundcolor=\color{background}}
+
 
 \maketitle
 
@@ -88,9 +108,11 @@ This installation guide assumes the use of the \href{https://en.wikipedia.org/wi
 
 Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ python --version
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Dependencies}
 
@@ -98,9 +120,11 @@ $ python --version
 
 This section assumes the user has the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager. This is common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ sudo neptune/install/debian_dependencies.sh
 \end{lstlisting}
+\end{minipage}
 
 \subsubsection{Manual Installation}
 
@@ -119,15 +143,19 @@ If you cannot install the dependencies using the above script, the following dep
 
 Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune/INSTALL.sh
 \end{lstlisting}
+\end{minipage}
 
 Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune/INSTALL.sh PREFIX
 \end{lstlisting}
+\end{minipage}
 
 \newpage
 \subsection{DRMAA Requirements}
@@ -159,48 +187,60 @@ It may be helpful to create a submission wrapper script for Neptune to avoid ent
 
 \subsubsection{Slurm Wrapper}
 
-\begin{lstlisting}[title={neptune-slurm}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={neptune-slurm}]
 #!/usr/bin/env bash
 
 DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
 
 neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
 \end{lstlisting}
+\end{minipage}
 
-\begin{lstlisting}[title={Slurm Example}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={Slurm Example}]
 $ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 \subsubsection{SGE Wrapper}
 
-\begin{lstlisting}[title={neptune-sge}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={neptune-sge}]
 #!/usr/bin/env bash
 
 DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
 
 neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
 \end{lstlisting}
+\end{minipage}
 
-\begin{lstlisting}[title={SGE Example}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={SGE Example}]
 $ neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 \newpage
 \section{Parameters}
 
 A help message may be viewed by running:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune --help
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Required Parameters}
 
 Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 The following parameters are required by Neptune:
 
@@ -355,30 +395,35 @@ It may be necessary to specify job submission parameters that are required by yo
 
 The following example will allow Neptune to automatically calculate many of the parameters used in execution. However, Neptune will make assumptions about the probability two homologous bases are different and use fixed thresholds for signature filtering.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/ 
 \end{lstlisting}
+\end{minipage}
 
 \subsection{File Locations}
 
 You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
     --inclusion inclusion_dir/ in1.fasta in2.fasta
     --exclusion exclusion_dir/ ex1.fasta ex2.fasta
     --reference in1.fasta in2.fasta    
     --output output/
 \end{lstlisting}
+\end{minipage}
 
 \subsection{DRMAA Parameters}
 
 It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-default-specification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregate-specification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
     --inclusion inclusion/
     --exclusion exclusion/
@@ -386,6 +431,7 @@ $ neptune
     --default-specification "-l h_vmem=6G -pe smp 4"
     --aggregate-specification "-l h_vmem=10G -pe smp 4"
 \end{lstlisting}
+\end{minipage}
 
 \newpage
 \section{Output}
