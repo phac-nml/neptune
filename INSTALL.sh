@@ -15,17 +15,7 @@ BIN=$PREFIX/bin
 LIB=$PREFIX/lib
 
 # Create directories if needed:
-if [ ! -d "$PREFIX" ]; then
-    mkdir $PREFIX
-fi
-
-if [ ! -d "$BIN" ]; then
-    mkdir $BIN
-fi
-
-if [ ! -d "$LIB" ]; then
-    mkdir $LIB
-fi
+mkdir -p "$PREFIX"/{bin,lib}
 
 # Create Python virtual environment:
 VENV=$LIB/neptune

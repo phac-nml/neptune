@@ -28,6 +28,8 @@ specific language governing permissions and limitations under the License.
 
 __version__ = '1.2.4'
 
+import time
+
 import os
 import argparse
 import sys
@@ -486,31 +488,55 @@ EXECUTE
 """
 def execute(execution):
 
+    print("Neptune v" + str(__version__) + "\n")
+
     # --- K-MER COUNTING ---
+    print("k-mer Counting...")
+    start = time.clock()
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- K-MER AGGREGATION ---
+    print("k-mer Aggregation...")
+    start = time.clock()
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE EXTRACTION ---
+    print("Signature Extraction...")
+    start = time.clock()
     candidateLocations = extractSignatures(execution)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE FILTERING ---
+    print("Signature Filtering...")
+    start = time.clock()
     sortedLocations = filterSignatures(execution, candidateLocations)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # Are all the signature files empty?
     if (all((os.stat(location).st_size == 0)
             for location in sortedLocations)):
 
         # Yes -- they are all empty.
-        print "NOTICE: No signatures were identified."
+        print("NOTICE: No signatures were identified.\n")
 
     else:
 
         # --- CONSOLIDATE SIGNATURES ---
+        print("Consolidate Signatures...")
+        start = time.clock()
         consolidateSignatures(execution, sortedLocations)
+        end = time.clock()
+        print(str(end - start) + " seconds\n")
 
     execution.produceReceipt()
+
+    print("Complete!")
 
 
 """
