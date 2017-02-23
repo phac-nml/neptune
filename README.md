@@ -38,9 +38,10 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.3.0**
+**Neptune 1.2.4**
 
-WIP
+This release makes several small improvements, including: reducing the standard
+output clutter, adding timings to stages, and updating the documentation.
 
 ## Requirements ##
 ------------------
