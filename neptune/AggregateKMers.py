@@ -139,6 +139,7 @@ def findSmallest(strings, SENTINEL):
 
     return smallest
 
+
 """
 # =============================================================================
 
@@ -192,6 +193,7 @@ def aggregateKMer(kmer, kmers, files):
             kmers[i] = line.split()[0] if line.split() else line
 
     return count
+
 
 """
 # =============================================================================
@@ -312,6 +314,7 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
             if os.path.exists(filename):
                     os.remove(filename)
 
+
 """
 # =============================================================================
 
@@ -330,6 +333,7 @@ def parse(parameters):
 
     # aggregate
     aggregate(inclusionLocations, exclusionLocations, outputLocation, delete)
+
 
 """
 # =============================================================================
@@ -381,6 +385,7 @@ def main():
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
+
 
 """
 # =============================================================================

@@ -26,7 +26,9 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
+
+import time
 
 import os
 import argparse
@@ -124,8 +126,6 @@ POST:
 """
 def countKMers(execution):
 
-    print("CountKMers starting ...")
-
     if not os.path.exists(execution.inclusionOutputDirectory):
         os.makedirs(execution.inclusionOutputDirectory)
 
@@ -170,9 +170,8 @@ def countKMers(execution):
 
     execution.jobManager.runJobs(jobs)
 
-    print("CountKMers finished!")
-
     return (inclusionKMerLocations, exclusionKMerLocations)
+
 
 """
 # =============================================================================
@@ -203,8 +202,6 @@ POST:
 """
 def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
-    print("AggregateKMers starting ...")
-
     if execution.organization:
 
         aggregateMultipleFiles(
@@ -218,7 +215,6 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 
     shutil.rmtree(execution.kmersOutputDirectory)
 
-    print("AggregateKMers finished!")
 
 """
 # =============================================================================
@@ -274,6 +270,7 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
 
     aggregateFile.close()
 
+
 """
 # =============================================================================
 
@@ -308,6 +305,7 @@ def aggregateSingleFiles(
 
     execution.jobManager.runJobs([job])
 
+
 """
 # =============================================================================
 
@@ -329,8 +327,6 @@ POST:
 # =============================================================================
 """
 def extractSignatures(execution):
-
-    print("ExtractSignatures starting ...")
 
     jobs = []
     outputLocations = []
@@ -359,9 +355,8 @@ def extractSignatures(execution):
 
     execution.jobManager.runJobs(jobs)
 
-    print("ExtractSignatures finished!")
-
     return outputLocations
+
 
 """
 # =============================================================================
@@ -386,8 +381,6 @@ POST:
 # =============================================================================
 """
 def filterSignatures(execution, candidateLocations):
-
-    print("Filtering signatures ...")
 
     # MAKE DATABASES
     INCLUSION_NAME = "INCLUSION"
@@ -450,9 +443,8 @@ def filterSignatures(execution, candidateLocations):
 
     shutil.rmtree(execution.databaseDirectoryLocation)
 
-    print("Filtering finished!")
-
     return sortedLocations
+
 
 """
 # =============================================================================
@@ -480,15 +472,12 @@ POST:
 """
 def consolidateSignatures(execution, sortedLocations):
 
-    print("Consolidating signatures ...")
-
     job = execution.jobManager.createConsolidateJob(
         sortedLocations, execution.seedSize,
         execution.consolidatedDirectoryLocation)
 
     execution.jobManager.runJobs([job])
 
-    print("Consolidating finished!")
 
 """
 # =============================================================================
@@ -500,30 +489,53 @@ EXECUTE
 def execute(execution):
 
     # --- K-MER COUNTING ---
+    print("k-mer Counting...")
+    start = time.clock()
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- K-MER AGGREGATION ---
+    print("k-mer Aggregation...")
+    start = time.clock()
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE EXTRACTION ---
+    print("Signature Extraction...")
+    start = time.clock()
     candidateLocations = extractSignatures(execution)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE FILTERING ---
+    print("Signature Filtering...")
+    start = time.clock()
     sortedLocations = filterSignatures(execution, candidateLocations)
+    end = time.clock()
+    print(str(end - start) + " seconds\n")
 
     # Are all the signature files empty?
     if (all((os.stat(location).st_size == 0)
             for location in sortedLocations)):
 
         # Yes -- they are all empty.
-        print "NOTICE: No signatures were identified."
+        print("NOTICE: No signatures were identified.\n")
 
     else:
 
         # --- CONSOLIDATE SIGNATURES ---
+        print("Consolidate Signatures...")
+        start = time.clock()
         consolidateSignatures(execution, sortedLocations)
+        end = time.clock()
+        print(str(end - start) + " seconds\n")
 
     execution.produceReceipt()
+
+    print("Complete!")
+
 
 """
 # =============================================================================
@@ -551,6 +563,7 @@ def executeDRMAA(parameters):
         execution = Execution.Execution(jobManager, parameters)
         execute(execution)
 
+
 """
 # =============================================================================
 
@@ -574,6 +587,7 @@ def executeParallel(parameters):
     execution = Execution.Execution(jobManager, parameters)
     execute(execution)
 
+
 """
 # =============================================================================
 
@@ -588,6 +602,7 @@ def parse(parameters):
 
     else:
         executeParallel(parameters)
+
 
 """
 # =============================================================================
@@ -819,7 +834,10 @@ def main():
 
     args = parser.parse_args()
     parameters = vars(args)
+
+    print("Neptune v" + str(__version__) + "\n")
     parse(parameters)
+
 
 """
 # =============================================================================
