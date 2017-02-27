@@ -394,7 +394,7 @@ class Execution():
             if expected < EXPECTED_HITS_THRESHOLD:
 
                 self.k = k
-                print "k = " + str(self.k)
+                print "k = " + str(self.k) + "\n"
                 return
 
         # No suitable k estimated.

@@ -488,8 +488,6 @@ EXECUTE
 """
 def execute(execution):
 
-    print("Neptune v" + str(__version__) + "\n")
-
     # --- K-MER COUNTING ---
     print("k-mer Counting...")
     start = time.clock()
@@ -836,6 +834,8 @@ def main():
 
     args = parser.parse_args()
     parameters = vars(args)
+
+    print("Neptune v" + str(__version__) + "\n")
     parse(parameters)
 
 
