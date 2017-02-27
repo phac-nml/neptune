@@ -4,7 +4,7 @@ dependencies = ['drmaa', 'numpy', 'scipy', 'biopython']
 
 setup(
     name='neptune',
-    version='1.2.3',
+    version='1.2.4',
     url='https://github.com/phac-nml/neptune.git',
     license='Apache-2.0',
     author='Eric Marinier',
