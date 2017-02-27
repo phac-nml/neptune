@@ -178,7 +178,7 @@ However, any DRMAA-compliant scheduler is expected to work. The instructions for
 
 \subsubsection{Python DRMAA Bindings}
 
-Neptune uses a Python DRMAA binding to schedule parallel jobs and communicate with the scheduler. The information necessary for installing and configuring the Python DRMAA bindings is available the following location:
+Neptune uses a Python DRMAA binding to schedule DRMAA jobs and communicate with the scheduler. The information necessary for installing and configuring the Python DRMAA bindings is available the following location:
 \newline\newline
 \url{https://github.com/pygridtools/drmaa-python}
 
@@ -239,7 +239,10 @@ Neptune requires the location of the inclusion, exclusion, and output directorie
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
-$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
+$ neptune
+    --inclusion /path/to/inclusion/
+    --exclusion /path/to/exclusion/
+    --output /path/to/output/
 \end{lstlisting}
 \end{minipage}
 
@@ -248,11 +251,11 @@ The following parameters are required by Neptune:
 \begin{description}
 
   \item[inclusion] \hfill \\
-  \textbf{-i [LOCATION] [LOCATION ...] // -{}-inclusion [LOCATION] [LOCATION ...]} \hfill \\
+  \textbf{-i [LOCATION ...] // -{}-inclusion [LOCATION ...]} \hfill \\
   A list of inclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-inclusion} parameter. Neptune will automatically include all root-level files within directories.  
   
   \item[exclusion] \hfill \\
-  \textbf{-e [LOCATION] [LOCATION ...] // -{}-exclusion [LOCATION] [LOCATION ...]} \hfill \\
+  \textbf{-e [LOCATION ...] // -{}-exclusion [LOCATION ...]} \hfill \\
   A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-exclusion} parameter. Neptune will automatically include all root-level files within directories.
   
   \item[output] \hfill \\
@@ -269,7 +272,7 @@ The following parameters relate to \textit{k}-mer generation and aggregation:
 
   \item[\textit{k}-mer] \hfill \\
   \textbf{-k [INT] // -{}-kmer [INT]} \hfill \\
-  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random \textit{intra}-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be larger than the smallest sequence record.
+  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random \textit{intra}-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be larger than the smallest sequence record. This will be automatically calculated if not specified.
   
   \item[organization] \hfill \\
   \textbf{-{}-organization [INT]} \hfill \\
@@ -519,13 +522,13 @@ The run receipt contains information about the Neptune execution. It contains a 
 
 \subsection{Overview}
 
-The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune. We will identity signatures within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.
+The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.
 
 \subsection{Input Data}
 
-We will be using very small, artificial genomes for this walkthrough. However, it will be sufficient to illustrate the operation of Neptune. The sequence content is derived from \textit{Escherichia coli} and has been modified to introduce simple variation between genomes.
+We will be using very small, artificial genomes for this walkthrough. However, these small genomes will be sufficient to illustrate the operation of Neptune. The artificial genome sequence content is derived from \textit{Escherichia coli} and has been modified to introduce simple variation between genomes.
 
-The inclusion genomes are located in the following location:
+The example inclusion genomes are located in the following location:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
@@ -533,7 +536,7 @@ neptune/tests/data/example/inclusion/
 \end{lstlisting}
 \end{minipage}
 
-The exclusion genomes are located in the following location:
+The example exclusion genomes are located in the following location:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
@@ -541,11 +544,11 @@ neptune/tests/data/example/exclusion/
 \end{lstlisting}
 \end{minipage}
 
-The inclusion and exclusion directories each contain three FASTA-format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.
+The inclusion and exclusion directories each contain three FASTA format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes primarily differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.
 
 \subsection{Running Neptune}
 
-Neptune will automatically calculate many of the parameters that can be specified, such as the minimum number of targets signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA genomes located within directories. The following command will run Neptune on the example data:
+Neptune will automatically calculate many of the parameters that might otherwise be specified by the user, such as the minimum number of targets signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires the user specify the inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA file genomes located within directories. The following command will run Neptune on the example data and output to the specified directory:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
@@ -560,7 +563,7 @@ $ neptune
 
 \subsubsection{Standard Output}
 
-After running Neptune, the following output will be printed to standard output:
+After running Neptune, very similar output will be printed to standard output, indicating that Neptune is starting and completing different stages of operation:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
@@ -594,9 +597,9 @@ Complete!
 \end{lstlisting}
 \end{minipage}
 
-\subsubsection{Signatures}
+\subsubsection{Consolidated Signatures}
 
-As we did not specify references from which to extract signatures, Neptune automatically investigated all inclusion genomes for signatures and consolidated those signatures into a single file. The \textit{output/consolidated/consolidated.fasta} file contains these consolidated signatures. \ul{This file may be understood as the final output of the application}. The following FASTA output is from the consolidated signatures file produced from this example:
+As we did not specify references from which to extract signatures, Neptune will automatically investigate all inclusion genomes for signatures and consolidate those signatures into a single consolidated signature file. The \textit{output/consolidated/consolidated.fasta} file contains these consolidated signatures. This file may be understood as the final output of the application. The following FASTA output is from the consolidated signatures file produced from this example:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash, title=output/consolidated/consolidated.fasta]
@@ -609,11 +612,13 @@ GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGC
 \end{lstlisting}
 \end{minipage}
 
-The FASTA header contains information relavent to the identified signature. A detailed explanation of this information is located within the \hyperref[section:output]{output section}. The \textit{score} is the sum of the \textit{in} (inclusion/sensitivity) and \textit{ex} (exclusion/specificity) scores, and represents a combined measure of sensitivity and specificity. The \textit{length} describes the length of the signature in bases. The \textit{ref} (reference) and \textit{pos} (position) describe the location of the signature within the reference it was extracted from.
+The FASTA header contains information relavent to the identified signature. A detailed explanation of this information is located within the \hyperref[section:output]{output section} of this manual. The \textit{score} is the sum of the \textit{in} (inclusion/sensitivity) and \textit{ex} (exclusion/specificity) scores, and represents a combined measure of sensitivity and specificity. The \textit{length} describes the length of the signature in bases. The \textit{ref} (reference) and \textit{pos} (position) describe the location of the signature within the reference FASTA record it was extracted from.
 
-In this example, Neptune identified three signatures: 1.0, 1.1, and 1.2 of lengths 103, 640, and 98, respectively. We see that all of these signatures originated from the \textit{inclusion1} reference. These signatures were located at positions 99, 3497, and 5209 within the \textit{inclusion1} reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969. Neptune signature scores have a possible range of values from -1.00 to +1.00.
+In this example, Neptune identified three signatures: 1.0, 1.1, and 1.2 of lengths 103, 640, and 98, respectively. We see that all of these signatures originated from the \textit{inclusion1} reference. These signatures were located at positions 99, 3497, and 5209 within the \textit{inclusion1} reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969, within the possible range of score values from -1.00 to +1.00.
 
-If we're interested in looking at the signatures produced from each individual inclusion target, we need to investigate the output in the output/sorted directory. The following are the signatures extracted exclusively from the \textit{inclusion1.fasta} target:
+\subsubsection{Sorted Signatures}
+
+If we're interested in looking at the signatures produced from each individual inclusion target, we need to investigate the output in the \textit{output/sorted} directory. The following are the signatures extracted exclusively from the \textit{inclusion1.fasta} target:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash, title=output/sorted/inclusion1.fasta]
@@ -652,7 +657,7 @@ CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGA
 \end{lstlisting}
 \end{minipage}
 
-The output from these files appears very similar, as is expected when Neptune identifies highly discriminatory signatures. However, there are some slight differences between some of these signatures. For example, the signatures in each output file have corresponding ID numbers and some of these signatures have slight differences. However, because these IDs are effectively arbitrary, this correspondence will usually never happen when using real data. Nonetheless, we see that signature ID 2 is slightly different sizes in all three inclusion targets (5209, 5206, and 5203) with slightly different scores (0.9966, 0.9933, 0.9833). Another slight difference between the signatures is the sequence similarity of signature ID 1 in \textit{inclusion3.fasta} with exclusion sequence:
+The output from these files appears very similar, as is expected when Neptune identifies highly discriminatory signatures from a homogeneous data set. However, there are some slight differences between some of these signatures. For example, the signatures in each of these output files have corresponding ID numbers and some of these signatures have slight differences. However, because Neptune assigns signature IDs arbitrarily, this correspondence will usually never happen when using real data. Nonetheless, we see that signature ID 2 is slightly different sizes in all three inclusion targets (5209, 5206, and 5203) with slightly different scores (0.9966, 0.9933, 0.9833). Another slight difference between the signatures is the sequence similarity of signature ID 1 in \textit{inclusion3.fasta} with exclusion sequence:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[frame=single, style=bash]
@@ -661,9 +666,9 @@ CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGA
 \end{lstlisting}
 \end{minipage}
 
-This signature had some similarity with exclusion sequence, represented by ex=0.0187, and indicates a small amount of imprecision in this signature. This example illustrates that the \textit{score} (0.9792) is the sum of the \textit{in} (0.9979) and \textit{ex} (0.0187) values.
+This signature had some similarity with exclusion sequence, represented by the \textit{ex=0.0187}, and indicates a small amount of imprecision in this signature. This example also illustrates that the \textit{score} (0.9792) is the sum of the \textit{in} (0.9979) and \textit{ex} (0.0187) values.
 
-These differences in signatures from each target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if only a single answer is desirable.
+These differences in signatures from each inclusion target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.
 
 \end{document}
 
