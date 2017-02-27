@@ -6,7 +6,7 @@
 
 Neptune
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
