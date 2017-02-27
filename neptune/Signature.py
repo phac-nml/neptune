@@ -45,6 +45,7 @@ class Signature():
         self.reference = str(reference)
         self.position = int(position)
 
+
 """
 # =========================================================================
 
@@ -98,6 +99,7 @@ def readSignatures(fileLocation):
 
     return signatures
 
+
 """
 # =============================================================================
 
@@ -124,6 +126,7 @@ def writeSignatures(signatures, destination):
     for signature in signatures:
 
         writeSignature(signature, destination)
+
 
 """
 # =========================================================================
@@ -158,6 +161,7 @@ def writeSignature(signature, destination):
         str("pos=") + str(signature.position) + "\n")
 
     destination.write(str(signature.sequence) + "\n")
+
 
 """
 # =============================================================================

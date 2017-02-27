@@ -2,6 +2,24 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## [1.2.4] - 2017-02-27
+
+This release makes several small improvements, including: reducing the standard
+output clutter, adding timings to stages, and updating the documentation.
+
+### Added
+- Links in the README to the manual.
+- Walkthrough to the manual.
+- Example data to test the software.
+- Timings for stages.
+
+### Changed:
+- Improved clarity in manual.
+- Codeblocks in the manual.
+
+### Removed
+- Considerable clutter has been removed from standard output.
+
 ## [1.2.3] - 2016-07-11
 
 This release simplifies the installation process.
