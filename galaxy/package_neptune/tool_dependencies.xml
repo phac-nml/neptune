@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 
 <tool_dependency>
-    <package name="neptune" version="1.2.3">
+    <package name="neptune" version="1.2.4">
         <install version="1.0">
 
             <actions>
                 <action type="shell_command">git clone https://github.com/phac-nml/neptune.git</action>
-				<action type="shell_command">git checkout tags/v1.2.3</action>
+				<action type="shell_command">git checkout tags/v1.2.4</action>
 
 				<action type="move_directory_files">
 					<source_directory>neptune</source_directory>
@@ -60,7 +60,7 @@ probabilistic models instead of heuristic strategies.
 ## Release ##
 -------------
 
-**Neptune 1.2.3**
+**Neptune 1.2.4**
 
 2016 July 11
 

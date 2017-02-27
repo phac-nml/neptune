@@ -24,11 +24,12 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb,amsmath}
-\usepackage{listings}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{courier}
 \usepackage[margin=1in]{geometry}
+\usepackage[procnames]{listings} % Code Blocks
+\usepackage{soul} % Underline
 
 \lstset{
   frame=tb,
@@ -64,10 +65,30 @@
 \setlength{\parskip}{0.5em}
 
 %opening
-\title{Neptune\\ \normalsize Version 1.2.3}
+\title{Neptune\\ \normalsize Version 1.2.4}
 \author{Eric Marinier}
 
+
 \begin{document}
+
+%Code Block Style Definitions
+\definecolor{keywords}{RGB}{76,154,98}
+\definecolor{comments}{RGB}{87,134,146}
+\definecolor{functions}{RGB}{19,52,131}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
+\definecolor{background}{RGB}{248, 249, 250}
+\definecolor{border}{RGB}{224, 226, 230}
+
+\lstdefinestyle{bash}{language=bash, 
+        keywordstyle=\color{black},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        showstringspaces=false,
+        identifierstyle=\color{black},
+        rulecolor=\color{border},
+        backgroundcolor=\color{background}}
+
 
 \maketitle
 
@@ -88,9 +109,11 @@ This installation guide assumes the use of the \href{https://en.wikipedia.org/wi
 
 Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ python --version
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Dependencies}
 
@@ -98,9 +121,11 @@ $ python --version
 
 This section assumes the user has the \href{https://help.ubuntu.com/community/AptGet/Howto}{APT} package manager. This is common to the \href{https://en.wikipedia.org/wiki/Ubuntu_(operating_system)}{Ubuntu} operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ sudo neptune/install/debian_dependencies.sh
 \end{lstlisting}
+\end{minipage}
 
 \subsubsection{Manual Installation}
 
@@ -119,15 +144,19 @@ If you cannot install the dependencies using the above script, the following dep
 
 Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune/INSTALL.sh
 \end{lstlisting}
+\end{minipage}
 
 Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune/INSTALL.sh PREFIX
 \end{lstlisting}
+\end{minipage}
 
 \newpage
 \subsection{DRMAA Requirements}
@@ -149,7 +178,7 @@ However, any DRMAA-compliant scheduler is expected to work. The instructions for
 
 \subsubsection{Python DRMAA Bindings}
 
-Neptune uses a Python DRMAA binding to schedule parallel jobs and communicate with the scheduler. The information necessary for installing and configuring the Python DRMAA bindings is available the following location:
+Neptune uses a Python DRMAA binding to schedule DRMAA jobs and communicate with the scheduler. The information necessary for installing and configuring the Python DRMAA bindings is available the following location:
 \newline\newline
 \url{https://github.com/pygridtools/drmaa-python}
 
@@ -159,59 +188,74 @@ It may be helpful to create a submission wrapper script for Neptune to avoid ent
 
 \subsubsection{Slurm Wrapper}
 
-\begin{lstlisting}[title={neptune-slurm}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={neptune-slurm}]
 #!/usr/bin/env bash
 
 DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
 
 neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
 \end{lstlisting}
+\end{minipage}
 
-\begin{lstlisting}[title={Slurm Example}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={Slurm Example}]
 $ neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 \subsubsection{SGE Wrapper}
 
-\begin{lstlisting}[title={neptune-sge}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={neptune-sge}]
 #!/usr/bin/env bash
 
 DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
 
 neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
 \end{lstlisting}
+\end{minipage}
 
-\begin{lstlisting}[title={SGE Example}]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title={SGE Example}]
 $ neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 \newpage
 \section{Parameters}
 
 A help message may be viewed by running:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune --help
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Required Parameters}
 
 Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:
 
-\begin{lstlisting}
-$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+$ neptune
+    --inclusion /path/to/inclusion/
+    --exclusion /path/to/exclusion/
+    --output /path/to/output/
 \end{lstlisting}
+\end{minipage}
 
 The following parameters are required by Neptune:
 
 \begin{description}
 
   \item[inclusion] \hfill \\
-  \textbf{-i [LOCATION] [LOCATION ...] // -{}-inclusion [LOCATION] [LOCATION ...]} \hfill \\
+  \textbf{-i [LOCATION ...] // -{}-inclusion [LOCATION ...]} \hfill \\
   A list of inclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-inclusion} parameter. Neptune will automatically include all root-level files within directories.  
   
   \item[exclusion] \hfill \\
-  \textbf{-e [LOCATION] [LOCATION ...] // -{}-exclusion [LOCATION] [LOCATION ...]} \hfill \\
+  \textbf{-e [LOCATION ...] // -{}-exclusion [LOCATION ...]} \hfill \\
   A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the \textbf{-{}-exclusion} parameter. Neptune will automatically include all root-level files within directories.
   
   \item[output] \hfill \\
@@ -228,7 +272,7 @@ The following parameters relate to \textit{k}-mer generation and aggregation:
 
   \item[\textit{k}-mer] \hfill \\
   \textbf{-k [INT] // -{}-kmer [INT]} \hfill \\
-  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random \textit{intra}-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be larger than the smallest sequence record.
+  The size of the \textit{k}-mers. This must be a positive integer and should be large enough such that random \textit{intra}-genome \textit{k}-mer matches, within the largest genome, are unexpected. The size of \textit{k}-mers cannot be larger than the smallest sequence record. This will be automatically calculated if not specified.
   
   \item[organization] \hfill \\
   \textbf{-{}-organization [INT]} \hfill \\
@@ -353,32 +397,47 @@ It may be necessary to specify job submission parameters that are required by yo
 
 \subsection{Basic}
 
-The following example will allow Neptune to automatically calculate many of the parameters used in execution. However, Neptune will make assumptions about the probability two homologous bases are different and use fixed thresholds for signature filtering.
+The following basic example will report all of the signatures that are sufficiently shared by the (FASTA) sequences in the inclusion directory and sufficiently absent from the (FASTA) sequences in the exclusion directory. Neptune will automatically calculate many of the parameters used in this execution.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
-    --inclusion inclusion/
-    --exclusion exclusion/
-    --output output/ 
+    --inclusion inclusion_directory/
+    --exclusion exclusion_directory/
+    --output output_directory/ 
 \end{lstlisting}
+\end{minipage}
+
+The output of immediate interest will be located in the follow file:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+output_directory/consolidated/consolidated.fasta
+\end{lstlisting}
+\end{minipage}
+
+This file will contain a consolidated list of signatures, sorted by their Neptune score, which is a combined estimate of sensitivity and specificity. The signatures with higher scores, near the top of the file, are considered the most discriminatory signatures.
 
 \subsection{File Locations}
 
-You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction.
+You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction:
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
     --inclusion inclusion_dir/ in1.fasta in2.fasta
     --exclusion exclusion_dir/ ex1.fasta ex2.fasta
     --reference in1.fasta in2.fasta    
     --output output/
 \end{lstlisting}
+\end{minipage}
 
 \subsection{DRMAA Parameters}
 
 It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (\mbox{\textbf{-{}-default-specification}}) and further specifies that \textit{k}-mer aggregation jobs (\mbox{\textbf{-{}-aggregate-specification}}) will require more memory. The remaining Neptune parameters are automatically calculated.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
 $ neptune
     --inclusion inclusion/
     --exclusion exclusion/
@@ -386,9 +445,12 @@ $ neptune
     --default-specification "-l h_vmem=6G -pe smp 4"
     --aggregate-specification "-l h_vmem=10G -pe smp 4"
 \end{lstlisting}
+\end{minipage}
+
 
 \newpage
 \section{Output}
+\label{section:output}
 
 Neptune's output directory contains the following items:
 
@@ -429,7 +491,7 @@ TGTCATTCTCCTGTTCTGCCTGTATCACTGC
 Where:
 
 \begin{itemize}
-  \item \textbf{[ID]}: a run-unique ID assigned to the signature
+  \item \textbf{[ID]}: an \ul{arbitrary}, run-unique ID assigned to the signature
   \item \textbf{[SCORE]}: the total signature score
   \item \textbf{[IN SCORE]}: positive inclusion component of signature score
   \item \textbf{[EX SCORE]}: negative exclusion component of signature score
@@ -454,6 +516,159 @@ The aggregated \textit{k}-mers file, aggregated.kmers, contains a list of all \t
 \subsection{Run Receipt}
 
 The run receipt contains information about the Neptune execution. It contains a list of all the files in the inclusion and exclusion group, and the command line parameters used for the execution.
+
+\newpage
+\section{Walkthrough}
+
+\subsection{Overview}
+
+The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.
+
+\subsection{Input Data}
+
+We will be using very small, artificial genomes for this walkthrough. However, these small genomes will be sufficient to illustrate the operation of Neptune. The artificial genome sequence content is derived from \textit{Escherichia coli} and has been modified to introduce simple variation between genomes.
+
+The example inclusion genomes are located in the following location:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+neptune/tests/data/example/inclusion/
+\end{lstlisting}
+\end{minipage}
+
+The example exclusion genomes are located in the following location:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+neptune/tests/data/example/exclusion/
+\end{lstlisting}
+\end{minipage}
+
+The inclusion and exclusion directories each contain three FASTA format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes primarily differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.
+
+\subsection{Running Neptune}
+
+Neptune will automatically calculate many of the parameters that might otherwise be specified by the user, such as the minimum number of targets signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires the user specify the inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA file genomes located within directories. The following command will run Neptune on the example data and output to the specified directory:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+$ neptune
+    --inclusion tests/data/example/inclusion/
+    --exclusion tests/data/example/exclusion/
+    --output output/
+\end{lstlisting}
+\end{minipage}
+
+\subsection{Output}
+
+\subsubsection{Standard Output}
+
+After running Neptune, very similar output will be printed to standard output, indicating that Neptune is starting and completing different stages of operation:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+Neptune v1.2.4
+
+Estimating k-mer size ...
+k = 15
+
+k-mer Counting...
+Submitted 12 jobs.
+0.002063 seconds
+
+k-mer Aggregation...
+Submitted 65 jobs.
+0.010473 seconds
+
+Signature Extraction...
+Submitted 6 jobs.
+0.000771 seconds
+
+Signature Filtering...
+Submitted 2 jobs.
+Submitted 6 jobs.
+0.002498 seconds
+
+Consolidate Signatures...
+Submitted 1 jobs.
+0.000411 seconds
+
+Complete!
+\end{lstlisting}
+\end{minipage}
+
+\subsubsection{Consolidated Signatures}
+
+As we did not specify references from which to extract signatures, Neptune will automatically investigate all inclusion genomes for signatures and consolidate those signatures into a single consolidated signature file. The \textit{output/consolidated/consolidated.fasta} file contains these consolidated signatures. This file may be understood as the final output of the application. The following FASTA output is from the consolidated signatures file produced from this example:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title=output/consolidated/consolidated.fasta]
+>1.0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion1 pos=99
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCAT...
+>1.1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion1 pos=3497
+CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAG...
+>1.2 score=0.9966 in=0.9966 ex=0.0000 len=98 ref=inclusion1 pos=5209
+GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGC...
+\end{lstlisting}
+\end{minipage}
+
+The FASTA header contains information relavent to the identified signature. A detailed explanation of this information is located within the \hyperref[section:output]{output section} of this manual. The \textit{score} is the sum of the \textit{in} (inclusion/sensitivity) and \textit{ex} (exclusion/specificity) scores, and represents a combined measure of sensitivity and specificity. The \textit{length} describes the length of the signature in bases. The \textit{ref} (reference) and \textit{pos} (position) describe the location of the signature within the reference FASTA record it was extracted from.
+
+In this example, Neptune identified three signatures: 1.0, 1.1, and 1.2 of lengths 103, 640, and 98, respectively. We see that all of these signatures originated from the \textit{inclusion1} reference. These signatures were located at positions 99, 3497, and 5209 within the \textit{inclusion1} reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969, within the possible range of score values from -1.00 to +1.00.
+
+\subsubsection{Sorted Signatures}
+
+If we're interested in looking at the signatures produced from each individual inclusion target, we need to investigate the output in the \textit{output/sorted} directory. The following are the signatures extracted exclusively from the \textit{inclusion1.fasta} target:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title=output/sorted/inclusion1.fasta]
+>0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion1 pos=99
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCAT...
+>1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion1 pos=3497
+CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAG...
+>2 score=0.9966 in=0.9966 ex=0.0000 len=98 ref=inclusion1 pos=5209
+GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGC...
+\end{lstlisting}
+\end{minipage}
+
+The following are the signatures extracted exclusively from the \textit{inclusion2.fasta} target:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title=output/sorted/inclusion2.fasta]
+>0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion2 pos=99
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCAT...
+>1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion2 pos=3494
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGA...
+>2 score=0.9933 in=0.9933 ex=0.0000 len=99 ref=inclusion2 pos=5206
+GCGAGTTTTGACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAG...
+\end{lstlisting}
+\end{minipage}
+
+The following are the signatures extracted exclusively from the \textit{inclusion3.fasta} target:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash, title=output/sorted/inclusion3.fasta]
+>0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion3 pos=99
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCAT...
+>2 score=0.9833 in=0.9833 ex=0.0000 len=100 ref=inclusion3 pos=5203
+GCGAGTTTTAACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACCGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGA...
+>1 score=0.9792 in=0.9979 ex=0.0187 len=640 ref=inclusion3 pos=3492
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGA...
+\end{lstlisting}
+\end{minipage}
+
+The output from these files appears very similar, as is expected when Neptune identifies highly discriminatory signatures from a homogeneous data set. However, there are some slight differences between some of these signatures. For example, the signatures in each of these output files have corresponding ID numbers and some of these signatures have slight differences. However, because Neptune assigns signature IDs arbitrarily, this correspondence will usually never happen when using real data. Nonetheless, we see that signature ID 2 is slightly different sizes in all three inclusion targets (5209, 5206, and 5203) with slightly different scores (0.9966, 0.9933, 0.9833). Another slight difference between the signatures is the sequence similarity of signature ID 1 in \textit{inclusion3.fasta} with exclusion sequence:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[frame=single, style=bash]
+>1 score=0.9792 in=0.9979 ex=0.0187 len=640 ref=inclusion3 pos=3492
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGA...
+\end{lstlisting}
+\end{minipage}
+
+This signature had some similarity with exclusion sequence, represented by the \textit{ex=0.0187}, and indicates a small amount of imprecision in this signature. This example also illustrates that the \textit{score} (0.9792) is the sum of the \textit{in} (0.9979) and \textit{ex} (0.0187) values.
+
+These differences in signatures from each inclusion target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.
 
 \end{document}
 
