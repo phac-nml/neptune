@@ -16,9 +16,9 @@ unrelated sporadic or environmental microbes.
 
 # Resources #
 
-* Website: [https://phac-nml.github.io/neptune/](https://phac-nml.github.io/neptune/)
-* Installation: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
-* Walkthrough: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
+* *Website*: [https://phac-nml.github.io/neptune/](https://phac-nml.github.io/neptune/)
+* *Installation*: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
+* *Walkthrough*: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
 
 # Release #
 
@@ -29,8 +29,8 @@ output clutter, adding timings to stages, and updating the documentation.
 
 # Requirements #
 
-Neptune requires Python 2.7. You may check the installed version with the
-following:
+Neptune requires Python 2.7. You may check your installed Python version with 
+the following:
 
         python --version
 
