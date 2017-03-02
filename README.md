@@ -1,4 +1,4 @@
-## Introduction ##
+# Introduction #
 
 A genomic signature is a genomic locus that is sufficiently represented in an 
 inclusion group, and sufficiently absent from a background, or exclusion 
@@ -15,20 +15,20 @@ Neptune may be leveraged to reveal discriminatory signature sequences to
 uniquely delineate one group of organisms, such as isolates associated with a 
 disease cluster or event, from unrelated sporadic or environmental microbes.
 
-## Resources ##
+# Resources #
 
 * Website: [https://phac-nml.github.io/neptune/](https://phac-nml.github.io/neptune/)
 * Installation: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
 * Walkthrough: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
 
-## Release ##
+# Release #
 
 **Neptune 1.2.4**
 
 This release makes several small improvements, including: reducing the standard
 output clutter, adding timings to stages, and updating the documentation.
 
-## Requirements ##
+# Requirements #
 
 Neptune requires Python 2.7. You may check the installed version with the
 following:
@@ -48,7 +48,7 @@ Otherwise, the following dependencies must be installed manually:
 - python-dev
 - NCBI BLAST+
 
-## Installation ##
+# Installation #
 
 It is strongly recommended you refer to the
 [documentation](https://phac-nml.github.io/neptune/install/) for full 
@@ -61,7 +61,7 @@ You may specify an install PREFIX location, and Neptune will install into
 PREFIX/lib and PREFIX/bin. This only requires security privileges if the
 install location requires them.
 
-## Running Neptune ##
+# Running Neptune #
 
 Neptune's command line arguments can be found by running:
 
@@ -76,11 +76,11 @@ Please refer to the
 [documentation](https://phac-nml.github.io/neptune/parameters/) for more 
 details.
 
-## Contact ##
+# Contact #
 
 **Eric Marinier**: eric.marinier@phac-aspc.gc.ca
 
-## Legal ##
+# Legal #
 
 Neptune
 
