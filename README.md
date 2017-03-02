@@ -51,10 +51,11 @@ Otherwise, the following dependencies must be installed manually:
 ## Installation ##
 
 It is strongly recommended you refer to the
-[manual](documentation/manual/Manual.pdf) for full installation instructions.
-Neptune may be installed using the following command:
+[documentation](https://phac-nml.github.io/neptune/install/) for full 
+installation instructions. Neptune may be installed using the following 
+command:
 
-        INSTALL.sh
+    INSTALL.sh
 
 You may specify an install PREFIX location, and Neptune will install into
 PREFIX/lib and PREFIX/bin. This only requires security privileges if the
@@ -64,14 +65,16 @@ install location requires them.
 
 Neptune's command line arguments can be found by running:
 
-        neptune --help
+    neptune --help
 
 A simple example of running Neptune:
 
-        neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
-                --output /path/to/output/
+    neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
+            --output /path/to/output/
 
-Please refer to the [manual](documentation/manual/Manual.pdf) for more details.
+Please refer to the 
+[documentation](https://phac-nml.github.io/neptune/parameters/) for more 
+details.
 
 ## Contact ##
 
