@@ -2,12 +2,17 @@ site_name: Neptune
 
 theme: cinder
 repo_url: "https://github.com/phac-nml/neptune"
-copyright: "Cinder is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a>"
+copyright: "Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a>"
 
 pages:
     - Home: index.md
-    - About: about.md
-    - Install: install.md
+    - Install:
+        - Neptune: install.md
+        - DRMAA: install-drmaa.md
     - Parameters: parameters.md
-    - Examples: examples.md
-    - Output: output.md
+    - Examples:
+        - Simple: examples.md
+        - Walthrough: walkthrough.md
+    - Output:
+        - Neptune: output.md
+        - Signature Format: format.md
