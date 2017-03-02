@@ -16,9 +16,9 @@ unrelated sporadic or environmental microbes.
 
 # Resources #
 
-* *Website*: [https://phac-nml.github.io/neptune/](https://phac-nml.github.io/neptune/)
-* *Installation*: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
-* *Walkthrough*: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
+* **Website**: [https://phac-nml.github.io/neptune/](https://phac-nml.github.io/neptune/)
+* **Installation**: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
+* **Walkthrough**: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
 
 # Release #
 
