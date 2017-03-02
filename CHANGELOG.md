@@ -13,7 +13,7 @@ output clutter, adding timings to stages, and updating the documentation.
 - Example data to test the software.
 - Timings for stages.
 
-### Changed:
+### Changed
 - Improved clarity in manual.
 - Codeblocks in the manual.
 
