@@ -1,186 +1,208 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Walthrough - Neptune</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<html lang="en">
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="../css/highlight.css">
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Walthrough";
-    var mkdocs_page_input_path = "walkthrough.md";
-    var mkdocs_page_url = "/walkthrough/";
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js"></script>
-  <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
-  
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <title>Walthrough - Neptune</title>
+
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
+    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/cinder.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/highlight.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+    WebFont.load({
+        google: {
+            families: ['Open Sans', 'PT Sans']
+        }
+    });
+    </script>
+
+    
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body>
 
-  <div class="wy-grid-for-nav">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
 
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Neptune</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-  </form>
-</div>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-          
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="..">Home</a>
-        
-    </li>
-<li>
-          
-            <li>
-    <ul class="subnav">
-    <li><span>Install</span></li>
-
-        
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
             
-    <li class="toctree-l1 ">
-        <a class="" href="../install/">Neptune</a>
-        
-    </li>
-
-        
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             
-    <li class="toctree-l1 ">
-        <a class="" href="../install-drmaa/">DRMAA</a>
-        
-    </li>
 
-        
-    </ul>
-<li>
-          
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../parameters/">Parameters</a>
-        
-    </li>
-<li>
-          
-            <li>
-    <ul class="subnav">
-    <li><span>Examples</span></li>
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Neptune</a>
+        </div>
 
-        
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
             
-    <li class="toctree-l1 ">
-        <a class="" href="../examples/">Simple</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Walthrough</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#walkthrough">Walkthrough</a></li>
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
                 
-                    <li><a class="toctree-l4" href="#overview">Overview</a></li>
                 
-                    <li><a class="toctree-l4" href="#input-data">Input Data</a></li>
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
                 
-                    <li><a class="toctree-l4" href="#running-neptune">Running Neptune</a></li>
                 
-                    <li><a class="toctree-l4" href="#output">Output</a></li>
                 
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../install/">Neptune</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../install-drmaa/">DRMAA</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../parameters/">Parameters</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../examples/">Simple</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Walthrough</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Output <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../output/">Neptune</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../format/">Signature Format</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
             
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../examples/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../output/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/phac-nml/neptune">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
             </ul>
-        
-    </li>
-
-        
-    </ul>
-<li>
-          
-            <li>
-    <ul class="subnav">
-    <li><span>Output</span></li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../output/">Neptune</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../format/">Signature Format</a>
-        
-    </li>
-
-        
-    </ul>
-<li>
-          
-        </ul>
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Neptune</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
-    
-      
-        
-          <li>Examples &raquo;</li>
-        
-      
-    
-    <li>Walthrough</li>
-    <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/phac-nml/neptune/edit/master/docs/walkthrough.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
-    </li>
-  </ul>
-  <hr/>
+        </div>
+    </div>
 </div>
-          <div role="main">
-            <div class="section">
-              
-                <h1 id="walkthrough">Walkthrough</h1>
+
+    <div class="container">
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="first-level active"><a href="#walkthrough">Walkthrough</a></li>
+        
+            <li class="second-level"><a href="#overview">Overview</a></li>
+            
+        
+            <li class="second-level"><a href="#input-data">Input Data</a></li>
+            
+        
+            <li class="second-level"><a href="#running-neptune">Running Neptune</a></li>
+            
+        
+            <li class="second-level"><a href="#output">Output</a></li>
+            
+                <li class="third-level"><a href="#standard-output">Standard Output</a></li>
+            
+                <li class="third-level"><a href="#consolidated-signatures">Consolidated Signatures</a></li>
+            
+        
+    
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="walkthrough">Walkthrough</h1>
 <h2 id="overview">Overview</h2>
 <p>The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.</p>
 <h2 id="input-data">Input Data</h2>
@@ -271,55 +293,55 @@ CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCA..
 CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCA...
 </code></pre>
 <p>This signature had some similarity with exclusion sequence, represented by the <code>ex=0.0187</code>, and indicates a small amount of imprecision in this signature. This example also illustrates that the <code>score</code> (0.9792) is the sum of the <code>in</code> (0.9979) and <code>ex</code> (0.0187) values.</p>
-<p>These differences in signatures from each inclusion target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.</p>
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../output/" class="btn btn-neutral float-right" title="Neptune">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../examples/" class="btn btn-neutral" title="Simple"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
+<p>These differences in signatures from each inclusion target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.</p></div>
+        
     </div>
-  
 
-  <hr/>
+    <footer class="col-md-12 text-center">
+        <hr>
+        <p>
+        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br></small>
+        
+        <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
+    </footer>
 
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-      <p>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a></p>
-    
-  </div>
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+    var base_url = '..';
+    </script>
+    <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+    <script src="../js/base.js"></script>
 
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-	  
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
-    </section>
-    
-  </div>
+    </body>
 
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/phac-nml/neptune" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="../examples/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../output/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
-</div>
-    <script src="../js/theme.js"></script>
-
-</body>
 </html>
