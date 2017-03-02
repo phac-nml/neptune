@@ -9,11 +9,10 @@ Neptune locates genomic signatures using an exact k-mer matching strategy while
 accommodating k-mer mismatches. The software identifies sequences that are
 sufficiently represented within inclusion targets and sufficiently absent from
 exclusion targets. The signature discovery process is accomplished using
-probabilistic models instead of heuristic strategies.
-
-Neptune may be leveraged to reveal discriminatory signature sequences to 
-uniquely delineate one group of organisms, such as isolates associated with a 
-disease cluster or event, from unrelated sporadic or environmental microbes.
+probabilistic models instead of heuristic strategies. Neptune may be leveraged 
+to reveal discriminatory signature sequences to uniquely delineate one group of 
+organisms, such as isolates associated with a disease cluster or event, from 
+unrelated sporadic or environmental microbes.
 
 # Resources #
 
