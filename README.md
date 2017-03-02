@@ -1,12 +1,14 @@
 # Neptune #
 
-## Description ##
+===============================================================================
 
 Neptune locates genomic signatures using an exact k-mer matching strategy while
 accommodating k-mer mismatches. The software identifies sequences that are
 sufficiently represented within inclusion targets and sufficiently absent from
 exclusion targets. The signature discovery process is accomplished using
 probabilistic models instead of heuristic strategies.
+
+===============================================================================
 
 ## Release ##
 
@@ -20,12 +22,12 @@ output clutter, adding timings to stages, and updating the documentation.
 Neptune requires Python 2.7. You may check the installed version with the
 following:
 
-	$ python --version
+        python --version
 
 If running a Debian distribution (ex: Ubuntu), dependencies may be installed
 using the following command:
 
-	$ sudo install/debian_dependencies.sh
+        sudo install/debian_dependencies.sh
 
 Otherwise, the following dependencies must be installed manually:
 
@@ -41,7 +43,7 @@ It is strongly recommended you refer to the
 [manual](documentation/manual/Manual.pdf) for full installation instructions.
 Neptune may be installed using the following command:
 
-        $ INSTALL.sh
+        INSTALL.sh
 
 You may specify an install PREFIX location, and Neptune will install into
 PREFIX/lib and PREFIX/bin. This only requires security privileges if the
@@ -51,12 +53,12 @@ install location requires them.
 
 Neptune's command line arguments can be found by running:
 
-	$ neptune --help
+        neptune --help
 
 A simple example of running Neptune:
 
-	$ neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
-		--output /path/to/output/
+        neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
+                --output /path/to/output/
 
 Please refer to the [manual](documentation/manual/Manual.pdf) for more details.
 
