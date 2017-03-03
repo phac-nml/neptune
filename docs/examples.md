@@ -1,13 +1,15 @@
 # Examples #
 
-## Basic ##
+## Basic Execution ##
 
 The following basic example will report all of the signatures that are sufficiently shared by the (FASTA) sequences in the inclusion directory and sufficiently absent from the (FASTA) sequences in the exclusion directory. Neptune will automatically calculate many of the parameters used in this execution.
 
-    neptune
-        --inclusion inclusion_directory/
-        --exclusion exclusion_directory/
-        --output output_directory/
+```bash
+neptune
+    --inclusion inclusion_directory/
+    --exclusion exclusion_directory/
+    --output output_directory/
+```
 
 The output of immediate interest will be located in the follow file:
 
@@ -15,24 +17,40 @@ The output of immediate interest will be located in the follow file:
 
 This file will contain a consolidated list of signatures, sorted by their Neptune score, which is a combined estimate of sensitivity and specificity. The signatures with higher scores, near the top of the file, are considered the most discriminatory signatures.
 
+## Faster Execution ##
+
+The following example highlights options that allow Neptune to run faster when running in parallel mode (default). It will attempt to run Neptune on 16 parallel processes (`--parallelization`) and parallelize *k*-mer counting and aggregation into 64 tasks (`--organization`) distributed over the 16 parallel processes available.
+
+```bash
+neptune
+    --inclusion inclusion_directory/
+    --exclusion exclusion_directory/
+    --output output_directory/
+    --parallelization 16
+    --organization 3
+```
+
 ## Specifying File Locations ##
 
 You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction:
 
-    neptune
-        --inclusion inclusion_dir/ in1.fasta in2.fasta
-        --exclusion exclusion_dir/ ex1.fasta ex2.fasta
-        --reference in1.fasta in2.fasta
-        --output output/
+```bash
+neptune
+    --inclusion inclusion_dir/ in1.fasta in2.fasta
+    --exclusion exclusion_dir/ ex1.fasta ex2.fasta
+    --reference in1.fasta in2.fasta
+    --output output/
+```
 
 ## DRMAA Parameters ##
 
 It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (--default-specification) and further specifies that *k*-mer aggregation jobs (--aggregate-specification) will require more memory. The remaining Neptune parameters are automatically calculated.
 
-    neptune
-        --inclusion inclusion/
-        --exclusion exclusion/
-        --output output/
-        --default-specification "-l h_vmem=6G -pe smp 4"
-        --aggregate-specification "-l h_vmem=10G -pe smp 4"
-
+```bash
+neptune
+    --inclusion inclusion/
+    --exclusion exclusion/
+    --output output/
+    --default-specification "-l h_vmem=6G -pe smp 4"
+    --aggregate-specification "-l h_vmem=10G -pe smp 4"
+```

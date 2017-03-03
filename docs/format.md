@@ -2,13 +2,17 @@
 
 The signatures produced by Neptune are output in FASTA format with additional information in the description line. Signatures are output in the following format:
 
-    >[ID] [SCORE] [IN SCORE] [EX SCORE] [LENGTH] [REF] [POS]
-    [SEQUENCE]
+```text
+>[ID] [SCORE] [IN SCORE] [EX SCORE] [LENGTH] [REF] [POS]
+[SEQUENCE]
+```
 
 The following is an example:
 
-    >425 score=0.86 in=0.98 ex=-0.13 len=31 ref=ecoli pos=160
-    TGTCATTCTCCTGTTCTGCCTGTATCACTGC
+```text
+>425 score=0.86 in=0.98 ex=-0.13 len=31 ref=ecoli pos=160
+TGTCATTCTCCTGTTCTGCCTGTATCACTGC
+```
 
 Where:
 

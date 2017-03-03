@@ -27,26 +27,38 @@ Neptune uses a Python DRMAA binding to schedule DRMAA jobs and communicate with 
 
 It may be helpful to create a submission wrapper script for Neptune to avoid entering the same DRMAA native specification parameters for every submission. The following SGE and Slurm submission wrapper scripts automatically include native specification parameters, appropriate for the scheduling environment, which may be overwritten by the submitting user as necessary.
 
-### Slurm Wrapper ###
+### Slurm ###
 
-    #!/usr/bin/env bash
-    
-    DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
+#### Wrapper ####
 
-    neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
+```bash
+#!/usr/bin/env bash
 
-### Slurm Example ###
+DRMAA_LIBRARY_PATH=/usr/local/lib/libdrmaa.so.1
 
-    neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
+neptune --drmaa --default-specification "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240" $@
+```
 
-### SGE Wrapper ###
+#### Example ####
 
-    #!/usr/bin/env bash
+```bash
+neptune-slurm -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
+```
 
-    DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
+### SGE ###
 
-    neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
+#### Wrapper ####
 
-### SGE Example ###
+```bash
+#!/usr/bin/env bash
 
-    neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
+DRMAA_LIBRARY_PATH=/opt/gridengine/lib/linux-x64/libdrmaa.so
+
+neptune --drmaa --default-specification "-l h_vmem=8G -pe smp 4" $@
+```
+
+#### Example ####
+
+```bash
+neptune-sge -i /path/to/inclusion/ -e /path/to/exclusion/ -o /path/to/output/
+```
