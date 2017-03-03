@@ -70,6 +70,12 @@
                 
                 
                 
+                    <li >
+                        <a href="CHANGELOG/">News</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -82,7 +88,7 @@
                         
                             
 <li >
-    <a href="install-drmaa/">DRMAA</a>
+    <a href="install-drmaa/">DRMAA Configuration</a>
 </li>
 
                         
@@ -109,7 +115,7 @@
                         
                             
 <li >
-    <a href="walkthrough/">Walthrough</a>
+    <a href="walkthrough/">Walkthrough</a>
 </li>
 
                         
@@ -154,7 +160,7 @@
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="install/">
+                        <a rel="prev" href="CHANGELOG/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -181,20 +187,43 @@
     
         <li class="first-level active"><a href="#neptune">Neptune</a></li>
         
+            <li class="second-level"><a href="#release">Release</a></li>
+            
+        
+            <li class="second-level"><a href="#resources">Resources</a></li>
+            
+        
+            <li class="second-level"><a href="#contact">Contact</a></li>
+            
+        
     
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
 
 <h1 id="neptune">Neptune</h1>
-<p>Neptune locates genomic signatures using an exact <em>k</em>-mer matching strategy while accommodating <em>k</em>-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is guided by probabilistic models instead of heuristic strategies. Neptune identifies general-purpose signatures are agnostic of application-specific requirements, such as physical and chemical properties, and may require further investigation to determine their appropriateness for application.</p></div>
+<p>A genomic signature is a genomic locus that is sufficiently represented in an inclusion group, and sufficiently absent from a background, or exclusion group. A signature might correlate genomic features with phenotypic traits, such as the presence of a gene with increased organism pathogenicity.</p>
+<p>Neptune locates genomic signatures using an exact <em>k</em>-mer matching strategy while accommodating <em>k</em>-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.</p>
+<h2 id="release">Release</h2>
+<p><strong>Neptune 1.2.4</strong></p>
+<p>This release makes several small improvements, including: reducing the standard output clutter, adding timings to stages, and updating the documentation.</p>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><strong>Installation</strong>: <a href="https://phac-nml.github.io/neptune/install/">https://phac-nml.github.io/neptune/install/</a></li>
+<li><strong>Walkthrough</strong>: <a href="https://phac-nml.github.io/neptune/walkthrough/">https://phac-nml.github.io/neptune/walkthrough/</a></li>
+</ul>
+<h2 id="contact">Contact</h2>
+<ul>
+<li><strong>Eric Marinier</strong>: eric.marinier@phac-aspc.gc.ca</li>
+<li><strong>Gary van Domselaar</strong>: gary.vandomselaar@phac-aspc.gc.ca</li>
+</ul></div>
         
     </div>
 
     <footer class="col-md-12 text-center">
         <hr>
         <p>
-        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br></small>
+        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2017<br></small>
         
         <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
     </footer>
@@ -242,5 +271,5 @@
 
 <!--
 MkDocs version : 0.16.1
-Build Date UTC : 2017-03-02 17:58:51
+Build Date UTC : 2017-03-03 21:13:24
 -->

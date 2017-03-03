@@ -70,6 +70,12 @@
                 
                 
                 
+                    <li >
+                        <a href="../CHANGELOG/">News</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -82,7 +88,7 @@
                         
                             
 <li >
-    <a href="../install-drmaa/">DRMAA</a>
+    <a href="../install-drmaa/">DRMAA Configuration</a>
 </li>
 
                         
@@ -109,7 +115,7 @@
                         
                             
 <li >
-    <a href="../walkthrough/">Walthrough</a>
+    <a href="../walkthrough/">Walkthrough</a>
 </li>
 
                         
@@ -184,19 +190,17 @@
             <li class="second-level"><a href="#mandatory">Mandatory</a></li>
             
         
-            <li class="second-level"><a href="#k-mer">k-mer</a></li>
+            <li class="second-level"><a href="#optional">Optional</a></li>
             
-        
-            <li class="second-level"><a href="#filtering">Filtering</a></li>
+                <li class="third-level"><a href="#k-mer">k-mer</a></li>
             
-        
-            <li class="second-level"><a href="#extraction">Extraction</a></li>
+                <li class="third-level"><a href="#filtering">Filtering</a></li>
             
-        
-            <li class="second-level"><a href="#parallelization">Parallelization</a></li>
+                <li class="third-level"><a href="#extraction">Extraction</a></li>
             
-        
-            <li class="second-level"><a href="#drmaa">DRMAA</a></li>
+                <li class="third-level"><a href="#parallelization">Parallelization</a></li>
+            
+                <li class="third-level"><a href="#drmaa">DRMAA</a></li>
             
         
     
@@ -206,15 +210,17 @@
 
 <h1 id="parameters">Parameters</h1>
 <p>A help message may be viewed by running:</p>
-<pre><code>neptune --help
+<pre><code class="bash">neptune --help
 </code></pre>
+
 <h2 id="mandatory">Mandatory</h2>
 <p>Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:</p>
-<pre><code>neptune
+<pre><code class="bash">neptune
     --inclusion /path/to/inclusion/directory/
     --exclusion /path/to/exclusion/directory/
     --output /path/to/output/directory/
 </code></pre>
+
 <p>The following parameters are required by Neptune:</p>
 <table>
 <thead>
@@ -230,13 +236,13 @@
 <td>-i</td>
 <td>--inclusion</td>
 <td>FASTA</td>
-<td>A list of inclusion targets in FASTA format. You may list multiple file or directory locations following the parameter. Neptune will automatically include all root-level files within directories.</td>
+<td>A list of inclusion targets in FASTA format. You may list multiple file or directory locations following the parameter. Neptune will automatically include all files within directories. However, Neptune will not recurse into additional directories.</td>
 </tr>
 <tr>
 <td>-e</td>
 <td>--exclusion</td>
 <td>FASTA</td>
-<td>A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the parameter. Neptune will automatically include all root-level files within directories.</td>
+<td>A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the parameter. Neptune will automatically include all files within directories. However, Neptune will not recurse into additional directories.</td>
 </tr>
 <tr>
 <td>-o</td>
@@ -246,7 +252,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="k-mer"><em>k</em>-mer</h2>
+<h2 id="optional">Optional</h2>
+<p>The optional parameters will either be automatically calculated or be assigned default values.</p>
+<h3 id="k-mer"><em>k</em>-mer</h3>
 <p>The following parameters relate to <em>k</em>-mer generation and aggregation:</p>
 <table>
 <thead>
@@ -272,7 +280,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="filtering">Filtering</h2>
+<h3 id="filtering">Filtering</h3>
 <p>The following command-line parameters relate to signature filtering:</p>
 <table>
 <thead>
@@ -304,7 +312,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="extraction">Extraction</h2>
+<h3 id="extraction">Extraction</h3>
 <p>The following command-line parameters relate to signature extraction:</p>
 <table>
 <thead>
@@ -366,7 +374,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="parallelization">Parallelization</h2>
+<h3 id="parallelization">Parallelization</h3>
 <p>The following parameters relate to the parallelization of Neptune:</p>
 <table>
 <thead>
@@ -386,7 +394,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="drmaa">DRMAA</h2>
+<h3 id="drmaa">DRMAA</h3>
 <p>It may be necessary to specify job submission parameters that are required by your cluster-computing environment. If you require DRM-specific command line arguments, they may be provided to Neptune using one of several arguments. The --default-specification parameter will provide the DRM-specific arguments to all jobs which are created. Additional command line arguments allow precise specifications for each type of job.</p>
 <table>
 <thead>
@@ -454,7 +462,7 @@
     <footer class="col-md-12 text-center">
         <hr>
         <p>
-        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br></small>
+        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2017<br></small>
         
         <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
     </footer>

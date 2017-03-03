@@ -70,6 +70,12 @@
                 
                 
                 
+                    <li >
+                        <a href="../CHANGELOG/">News</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -82,7 +88,7 @@
                         
                             
 <li >
-    <a href="../install-drmaa/">DRMAA</a>
+    <a href="../install-drmaa/">DRMAA Configuration</a>
 </li>
 
                         
@@ -109,7 +115,7 @@
                         
                             
 <li >
-    <a href="../walkthrough/">Walthrough</a>
+    <a href="../walkthrough/">Walkthrough</a>
 </li>
 
                         
@@ -181,7 +187,10 @@
     
         <li class="first-level active"><a href="#examples">Examples</a></li>
         
-            <li class="second-level"><a href="#basic">Basic</a></li>
+            <li class="second-level"><a href="#basic-execution">Basic Execution</a></li>
+            
+        
+            <li class="second-level"><a href="#faster-execution">Faster Execution</a></li>
             
         
             <li class="second-level"><a href="#specifying-file-locations">Specifying File Locations</a></li>
@@ -196,33 +205,45 @@
         <div class="col-md-9" role="main">
 
 <h1 id="examples">Examples</h1>
-<h2 id="basic">Basic</h2>
+<h2 id="basic-execution">Basic Execution</h2>
 <p>The following basic example will report all of the signatures that are sufficiently shared by the (FASTA) sequences in the inclusion directory and sufficiently absent from the (FASTA) sequences in the exclusion directory. Neptune will automatically calculate many of the parameters used in this execution.</p>
-<pre><code>neptune
+<pre><code class="bash">neptune
     --inclusion inclusion_directory/
     --exclusion exclusion_directory/
     --output output_directory/
 </code></pre>
+
 <p>The output of immediate interest will be located in the follow file:</p>
 <pre><code>output_directory/consolidated/consolidated.fasta
 </code></pre>
 <p>This file will contain a consolidated list of signatures, sorted by their Neptune score, which is a combined estimate of sensitivity and specificity. The signatures with higher scores, near the top of the file, are considered the most discriminatory signatures.</p>
+<h2 id="faster-execution">Faster Execution</h2>
+<p>The following example highlights options that allow Neptune to run faster when running in parallel mode (default). It will attempt to run Neptune on 16 parallel processes (<code>--parallelization</code>) and parallelize <em>k</em>-mer counting and aggregation into 64 tasks (<code>--organization</code>) distributed over the 16 parallel processes available.</p>
+<pre><code class="bash">neptune
+    --inclusion inclusion_directory/
+    --exclusion exclusion_directory/
+    --output output_directory/
+    --parallelization 16
+    --organization 3
+</code></pre>
+
 <h2 id="specifying-file-locations">Specifying File Locations</h2>
 <p>You may wish to specify particular files used in signature discovery. This may be important when specifying references for signature extraction:</p>
-<pre><code>neptune
+<pre><code class="bash">neptune
     --inclusion inclusion_dir/ in1.fasta in2.fasta
     --exclusion exclusion_dir/ ex1.fasta ex2.fasta
     --reference in1.fasta in2.fasta
     --output output/
 </code></pre>
+
 <h2 id="drmaa-parameters">DRMAA Parameters</h2>
 <p>It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (--default-specification) and further specifies that <em>k</em>-mer aggregation jobs (--aggregate-specification) will require more memory. The remaining Neptune parameters are automatically calculated.</p>
-<pre><code>neptune
+<pre><code class="bash">neptune
     --inclusion inclusion/
     --exclusion exclusion/
     --output output/
-    --default-specification "-l h_vmem=6G -pe smp 4"
-    --aggregate-specification "-l h_vmem=10G -pe smp 4"
+    --default-specification &quot;-l h_vmem=6G -pe smp 4&quot;
+    --aggregate-specification &quot;-l h_vmem=10G -pe smp 4&quot;
 </code></pre></div>
         
     </div>
@@ -230,7 +251,7 @@
     <footer class="col-md-12 text-center">
         <hr>
         <p>
-        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br></small>
+        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2017<br></small>
         
         <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
     </footer>

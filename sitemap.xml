@@ -4,7 +4,15 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/CHANGELOG/</loc>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,13 +21,13 @@
         
     <url>
      <loc>/install/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/install-drmaa/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -28,7 +36,7 @@
     
     <url>
      <loc>/parameters/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -37,13 +45,13 @@
         
     <url>
      <loc>/examples/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/walkthrough/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -53,13 +61,13 @@
         
     <url>
      <loc>/output/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/format/</loc>
-     <lastmod>2017-03-02</lastmod>
+     <lastmod>2017-03-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

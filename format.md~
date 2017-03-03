@@ -54,3 +54,4 @@ The position describes the base position of the signature within the contig refe
 ## Sequence ##
 
 The sequence describes the sequence content of the signature and follows the specifications of FASTA format. However, the sequence will not contain line breaks, regardless of the sequence length.
+
