@@ -6,7 +6,9 @@ This installation guide assumes the use of the [BASH](https://en.wikipedia.org/w
 
 Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:
 
-    python --version
+```bash
+python --version
+```
 
 ## Dependencies ##
 
@@ -14,7 +16,9 @@ Neptune requires Python 2.7. Note that Python 2.7 is provided with many major di
 
 This section assumes the user has the [APT](https://help.ubuntu.com/community/AptGet/Howto) package manager. This is common to the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu_(operating_system)) operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
 
-    sudo neptune/install/debian_dependencies.sh
+```bash
+sudo neptune/install/debian_dependencies.sh
+```
 
 ### Manual Installation ###
 
@@ -30,9 +34,12 @@ If you cannot install the dependencies using the above script, the following dep
 
 Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
 
-    neptune/INSTALL.sh
+```bash
+neptune/INSTALL.sh
+```
 
 Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
 
-    neptune/INSTALL.sh PREFIX
-
+```bash
+neptune/INSTALL.sh PREFIX
+```
