@@ -1,0 +1,152 @@
+diff --git a/INSTALL.sh b/INSTALL.sh
+index 9664843..18b57d7 100755
+--- a/INSTALL.sh
++++ b/INSTALL.sh
+@@ -38,7 +38,7 @@ pip install biopython
+ pip install drmaa
+ 
+ # NEPTUNE
+-pip install $DIR/
++pip install --upgrade --ignore-installed $DIR/
+ 
+ # BIN
+ cp $DIR/install/neptune $BIN/neptune
+diff --git a/neptune/Database.py b/neptune/Database.py
+index 1b1d5f9..ae38b9b 100644
+--- a/neptune/Database.py
++++ b/neptune/Database.py
+@@ -26,6 +26,7 @@ specific language governing permissions and limitations under the License.
+ 
+ import subprocess
+ import os
++import sys
+ 
+ """
+ # =============================================================================
+@@ -114,7 +115,7 @@ def createDatabaseJob(inputLocation, outputLocation):
+ 
+     # Output
+     NULL = open(os.devnull, "w")
+-    subprocess.check_call(args, stdout=NULL, stderr=NULL)
++    subprocess.check_output(args, stderr=NULL)
+     NULL.close()
+ 
+ 
+@@ -176,7 +177,7 @@ def queryDatabase(
+ 
+     # Output
+     NULL = open(os.devnull, "w")
+-    subprocess.check_call(args, stdout=NULL, stderr=NULL)
++    subprocess.check_output(args, stderr=sys.stdout)
+     NULL.close()
+ 
+     return outputLocation
+diff --git a/neptune/ExtractSignatures.py b/neptune/ExtractSignatures.py
+index c5b36e4..bab267c 100755
+--- a/neptune/ExtractSignatures.py
++++ b/neptune/ExtractSignatures.py
+@@ -199,9 +199,9 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
+     if gap < 1:
+         raise RuntimeError("The gap size is out of range.")
+ 
+-    # output
+-    if outputFile is None:
+-        raise RuntimeError("The output location is not specified.")
++#    # output
++#    if outputFile is None:
++#        raise RuntimeError("The output location is not specified.")
+ 
+     regions = []
+ 
+@@ -269,7 +269,7 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
+             i, 0.0, 0.0, 0.0, regions[i].sequence,
+             regions[i].reference, regions[i].position)
+ 
+-        Signature.writeSignature(signature, outputFile)
++        #Signature.writeSignature(signature, outputFile)
+ 
+ 
+ """
+@@ -787,9 +787,9 @@ def parse(parameters):
+     reportFile.close()
+ 
+     # --- Extraction ---
+-    outputFile = open(parameters[OUTPUT], 'w')
+-    extract(references, k, inmers, exmers, size, gap, outputFile)
+-    outputFile.close()
++    #outputFile = open(parameters[OUTPUT], 'w')
++    extract(references, k, inmers, exmers, size, gap, None)
++    #outputFile.close()
+ 
+ 
+ """
+diff --git a/neptune/JobManagerParallel.py b/neptune/JobManagerParallel.py
+index 900eb30..22d0ee5 100644
+--- a/neptune/JobManagerParallel.py
++++ b/neptune/JobManagerParallel.py
+@@ -51,6 +51,16 @@ import Database
+ 
+ PROCESSES_DEFAULT = 8
+ 
++def wrapper(function, parameters):
++
++    try:
++        function(parameters)
++    except Exception as e:
++        print e.output
++        print type(e).__name__
++        raise Exception(str(e))
++
++
+ """
+ # =============================================================================
+ 
+@@ -110,6 +120,7 @@ class JobManagerParallel(JobManager.JobManager):
+         print "Submitted " + str(len(jobs)) + " jobs."
+         self.synchronize(jobs)
+ 
++
+     """
+     # =========================================================================
+ 
+@@ -136,7 +147,8 @@ class JobManagerParallel(JobManager.JobManager):
+     def synchronize(self, jobs):
+ 
+         for job in jobs:
+-            job.wait()
++            job.get()
++
+ 
+     """
+     # =========================================================================
+@@ -167,9 +179,11 @@ class JobManagerParallel(JobManager.JobManager):
+         parameters[CountKMers.KMER] = k
+         parameters[CountKMers.ORGANIZATION] = organization
+ 
+-        job = self.pool.apply_async(
+-            CountKMers.parse,
+-            args=(parameters,))
++        job = self.pool.apply_async(wrapper, args=(CountKMers.parse, parameters, ))
++
++        #job = self.pool.apply_async(
++        #    CountKMers.parse,
++        #    args=(parameters,))
+ 
+         return job
+ 
+@@ -452,10 +466,12 @@ class JobManagerParallel(JobManager.JobManager):
+         parameters[FilterSignatures.SEED_SIZE] = seedSize \
+             if seedSize else None
+ 
+-        job = self.pool.apply_async(
+-            FilterSignatures.parse,
+-            args=(parameters,))
++        job = self.pool.apply_async(wrapper, args=(FilterSignatures.parse, parameters, ))
+ 
++#        job = self.pool.apply_async(
++#            FilterSignatures.parse,
++#            args=(parameters,))
++#
+         return job
+ 
+     """
