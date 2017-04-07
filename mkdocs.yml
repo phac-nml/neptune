@@ -7,7 +7,9 @@ copyright: "Neptune is licensed under the <a href='https://github.com/phac-nml/n
 
 pages:
     - Home: index.md
-    - News: CHANGELOG.md
+    - News:
+        - news.md
+        - CHANGELOG.md
     - Install:
         - Neptune: install.md
         - DRMAA Configuration: install-drmaa.md
