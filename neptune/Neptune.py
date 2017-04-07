@@ -49,7 +49,8 @@ GLOBALS
 # =============================================================================
 """
 
-# FILE NAMES
+# FILE NAMES #
+
 KMERS = "kmers"
 INCLUSION = "inclusion"
 EXCLUSION = "exclusion"
@@ -63,41 +64,68 @@ DATABASE = "database"
 CONSOLIDATED = "consolidated"
 LOG = "log"
 
-# ARGUMENT NAMES
-OUTPUT = "output"
-DRMAA = "drmaa"
-VERSION = "version"
+# ARGUMENTS #
 
-PARALLELIZATION = "parallelization"
-DEFAULT_SPECIFICATION = "default-specification"
-COUNT_SPECIFICATION = "count-specification"
-AGGREGATE_SPECIFICATION = "aggregate-specification"
-EXTRACT_SPECIFICATION = "extract-specification"
-DATABASE_SPECIFICATION = "database-specification"
-FILTER_SPECIFICATION = "filter-specification"
-CONSOLIDATE_SPECIFICATION = "consolidate-specification"
+# Note: Some of the command line arguments are drawn from other scripts:
 
-# ARGUMENTS
+# CountKMers.py
+# AggregateKMers.py
+# ExtractSignatures.py
+# FilterSignatures.py
+# ConsolidateSignatures.py
+
 LONG = "--"
-
-OUTPUT_LONG = LONG + OUTPUT
-DRMAA_LONG = LONG + DRMAA
-VERSION_LONG = LONG + VERSION
-PARALLELIZATION_LONG = LONG + PARALLELIZATION
-
-DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
-COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
-AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
-EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
-DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
-FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
-CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
-
 SHORT = "-"
 
+# REQUIRED ARGUMENTS #
+
+OUTPUT = "output"
+OUTPUT_LONG = LONG + OUTPUT
 OUTPUT_SHORT = SHORT + "o"
-PARALLELIZATION_SHORT = SHORT + "p"
+
+# OPTIONAL ARGUMENTS #
+
+# DRMAA mode switch
+DRMAA = "drmaa"
+DRMAA_LONG = LONG + DRMAA
+
+# Version number
+VERSION = "version"
+VERSION_LONG = LONG + VERSION
 VERSION_SHORT = SHORT + "V"
+
+# Number of parallel threads to use
+PARALLELIZATION = "parallelization"
+PARALLELIZATION_LONG = LONG + PARALLELIZATION
+PARALLELIZATION_SHORT = SHORT + "p"
+
+# DRMAA default specification
+DEFAULT_SPECIFICATION = "default-specification"
+DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
+
+# DRMAA specification for CountKMers.py
+COUNT_SPECIFICATION = "count-specification"
+COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
+
+# DRMAA specification for AggregateKMers.py
+AGGREGATE_SPECIFICATION = "aggregate-specification"
+AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
+
+# DRMAA specification for ExtractSignatures.py
+EXTRACT_SPECIFICATION = "extract-specification"
+EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
+
+# DRMAA specification for Database.py
+DATABASE_SPECIFICATION = "database-specification"
+DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
+
+# DRMAA specification for FilterSignatures.py
+FILTER_SPECIFICATION = "filter-specification"
+FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
+
+# DRMAA specification for ConsolidateSignatures.py
+CONSOLIDATE_SPECIFICATION = "consolidate-specification"
+CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
 
 """
 # =============================================================================

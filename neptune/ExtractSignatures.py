@@ -57,11 +57,11 @@ AAAAT 3 0
 USAGE
 -----
 
-ExtractSignatures.py [-h] -r REFERENCE [-rs REFERENCE-SIZE] [-q RATE]
-                            -i INCLUSION [INCLUSION ...] [-ih INHITS] -e
-                            EXCLUSION [EXCLUSION ...] [-eh EXHITS] -k KMERS
-                            [-g GAP] [-s SIZE] [-gc GC-CONTENT]
-                            [-c CONFIDENCE] -o OUTPUT
+ExtractSignatures.py [-h] -r REFERENCE -i INCLUSION [INCLUSION ...] -e
+                            EXCLUSION [EXCLUSION ...] -k KMERS -o OUTPUT
+                            [-rs REFERENCE-SIZE] [-q RATE] [-ih INHITS]
+                            [-eh EXHITS] [-g GAP] [-s SIZE] [-gc GC-CONTENT]
+                            [-c CONFIDENCE]
 
 
 EXAMPLE
@@ -223,27 +223,50 @@ class Region():
 # =============================================================================
 
 EXTRACT
+-------
 
-PURPOSE:
-    Extracts candidate signatures from the set of references.
 
-    The extraction process is guided by the inclusion and exclusion k-mer
-    dictionaries. This function is concerned only about k-mer existence in
-    those dictionaries.
+PURPOSE
+-------
 
-INPUT:
-    [STRING ITERABLE] [references] - An iterable object of string references.
-        This is intended to correspond to a list of single or multi-fasta
-        files.
-    [INT >= 1] [k] - The k-mer size.
-    [STRING DICTIONARY] [inmers] - The inclusion k-mers dictionary.
-    [STRING DICTIONARY] [exmers] - The inclusion k-mers dictionary.
-    [INT >= 1] [size] - The minimum signature size.
-    [INT >= 1] [gap] - The maximum allowable gap size.
-    [FILE] [outputFile] = The output file to write candidate signatures.
+Extracts candidate signatures from the set of references.
 
-POST:
-    The candidate signatures will be written to the output file.
+The extraction process is guided by the inclusion and exclusion k-mer
+dictionaries and the reference. This function is concerned only about k-mer
+existence in those dictionaries.
+
+
+INPUT
+-----
+
+[STRING ITERABLE] [references]
+    An iterable object of string references. This is intended to correspond to
+    a list of single or multi-fasta files.
+
+[INT >= 1] [k]
+    The k-mer size.
+
+[KMER DICTIONARY] [inmers]
+    The inclusion k-mers dictionary.
+
+[KMER DICTIONARY] [exmers]
+    The exclusion k-mers dictionary.
+
+[INT >= 1] [size]
+    The minimum signature size in characters.
+
+[INT >= 1] [gap]
+    The maximum allowable gap size in k-mers. Note that this works in k-mer
+    space, not in sequence character spaces.
+
+[FILE] [outputFile]
+    The output file to write candidate signatures.
+
+
+POST
+----
+
+The candidate signatures will be written to the [outputFile].
 
 # =============================================================================
 """
@@ -350,19 +373,32 @@ def extract(references, k, inmers, exmers, size, gap, outputFile):
 # =============================================================================
 
 CALCULATE PROBABILITY THAT HOMOLOGOUS BASES MUTATE AND MATCH
+------------------------------------------------------------
 
 P(X_M = Y_M)_H
 
-PURPOSE:
-    Calculates the probability that homologous bases both mutate to the same
-    matching base, given a certain GC-content environment.
 
-INPUT:
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
+PURPOSE
+-------
 
-RETURN:
-    [0 <= FLOAT <= 1] [P(X_M = Y_M)_H] - The proability that homologous bases
-        mutate and match.
+Calculates the probability that homologous bases both mutate to the same
+matching base, given a certain GC content.
+
+
+INPUT
+-----
+
+[0 <= FLOAT <= 1] [GC]
+    The GC-content of the environment. A high GC means that it is more likely
+    that homologuous bases both mutate to the same base, because most mutations
+    will be to either G's or C's.
+
+
+RETURN
+------
+
+[0 <= FLOAT <= 1] [P(X_M = Y_M)_H]
+    The proability that homologous bases both mutate and match each other.
 
 # =============================================================================
 """
@@ -398,7 +434,7 @@ PURPOSE:
 INPUT:
     [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
         mutating.
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
+    [0 <= FLOAT <= 1] [GC] - The GC content of the environment.
 
 RETURN:
     [0 <= FLOAT <= 1] [P(X = Y)_H] - The probability that homologous bases
@@ -431,22 +467,36 @@ def calculateProbHBM(mutationRate, GC):
 # =============================================================================
 
 CALCULATE PROBABILITY THAT HOMOLOGOUS K-MERS MATCH
+--------------------------------------------------
 
 P(k_X = k_Y)_H
 
-PURPOSE:
-    Calculates the probability that homologous k-mers match, given a certain
-    mutation rate, GC-content, and k-mer size.
 
-INPUT:
-    [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
-        mutating.
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
-    [INT >= 1] [kmerSize] - The size of the k-mers.
+PURPOSE
+-------
 
-RETURN:
-    [0 <= FLOAT <= 1] [P(k_X = k_Y)_H] - The probability that homologous k-mers
-        match.
+Calculates the probability that homologous k-mers match, given a certain
+mutation rate, GC-content, and k-mer size.
+
+
+INPUT
+-----
+
+[0 <= FLOAT <= 1] [mutationRate]
+    The probability of an arbitrary base mutating.
+
+[0 <= FLOAT <= 1] [GC]
+    The GC content of the environment.
+
+[INT >= 1] [kmerSize]
+    The size of the k-mers.
+
+
+RETURN
+------
+
+[0 <= FLOAT <= 1] [P(k_X = k_Y)_H]
+    The probability that homologous k-mers match.
 
 # =============================================================================
 """
@@ -477,15 +527,30 @@ def calculateProbHKM(mutationRate, GC, kmerSize):
 # =============================================================================
 
 ESTIMATE SIGNATURE SIZE
+-----------------------
 
-PURPOSE:
-    Estimates the minimum candidate size.
 
-INPUT:
-    [INT >= 1] [kmerSize] - The size of the k-mers.
+PURPOSE
+-------
 
-RETURN:
-    [INT] [estimate] - An estimate of the minimum candidate size.
+Estimates the minimum candidate size. This function uses a constant factor and
+multiplies it by the k-mer size to determine a minimum default signature size.
+
+A minimum signature size is often useful because longer signatures tend to be
+more specific that shorter signatures.
+
+INPUT
+-----
+
+[INT >= 1] [kmerSize]
+    The size of the k-mers.
+
+
+RETURN
+------
+
+[INT] [estimate]
+    An estimate of the minimum candidate signature size.
 
 # =============================================================================
 """
@@ -502,20 +567,39 @@ def estimateSignatureSize(kmerSize):
 # =============================================================================
 
 ESTIMATE GAP SIZE
+-----------------
 
-PURPOSE:
-    Estimates the maximum gap size before abandoning a candidate region.
 
-INPUT:
-    [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
-        mutating.
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
-    [INT >= 1] [kmerSize] - The size of the k-mers.
-    [0 < FLOAT < 1] [confidence] - The statistical confidence.
+PURPOSE
+-------
 
-RETURN:
-    [INT] [estimate] - An estimate of the maximum allowable gap size. This will
-        be rounded up to the next integer.
+Estimates the maximum k-mer gap size before abandoning a candidate signature
+region. When k-mer gap sizes become too long, it becomes more likely that we
+are observing multiple signatures, rather than one signature.
+
+INPUT
+-----
+
+[0 <= FLOAT <= 1] [mutationRate]
+    The probability of an arbitrary base mutating.
+
+[0 <= FLOAT <= 1] [GC]
+    The GC-content of the environment.
+
+[INT >= 1] [kmerSize]
+    The size of the k-mers.
+
+[0 < FLOAT < 1] [confidence]
+    The statistical confidence level in decision making involving
+    probabilities when producing candidate signatures.
+
+
+RETURN
+------
+
+[INT] [estimate]
+    An estimate of the maximum allowable k-mer gap size. This will be rounded
+    up to the next integer.
 
 # =============================================================================
 """
@@ -559,50 +643,90 @@ def estimateGapSize(mutationRate, GC, kmerSize, confidence):
 # =============================================================================
 
 ESTIMATE EXCLUSION HITS
+-----------------------
 
-PURPOSE:
-    Estimates the minimum number of exclusion hits to prevent candidate
-    building.
 
-INPUT:
-    [INT >= 0] [totalExclusion] - The total number of exclusion targets.
-    [0 <= FLOAT <= 1] [rate] - The probability of an arbitrary base
-        mismatching (ex: SNV).
-    [INT >= 1] [kmerSize] - The size of the k-mers, such that 1 <= kmerSize.
+PURPOSE
+-------
 
-RETURN:
-    [INT >= 0] [estimate] - An estimate of the minimum number of exclusion
-        k-mer hits before rejection.
+Estimates the minimum number of exclusion hits to prevent candidate building.
+This function currently defaults to returning 1, meaning any exclusion hit
+will immediately end signature construction. This approach achieves maximum
+k-mer specificity. However, the sequence specificity is usually not 100%.
+
+This function is left open to accept several parameters which might be used
+in the future to determine a more nuanced estimate.
+
+
+INPUT
+-----
+
+[INT >= 0] [totalExclusion]
+    The total number of exclusion targets.
+
+[0 <= FLOAT <= 1] [rate]
+    The probability of an arbitrary base mismatching (ex: SNV).
+
+[INT >= 1] [kmerSize]
+    The size of the k-mers.
+
+
+RETURN
+------
+
+[INT >= 1] [estimate]
+    An estimate of the minimum number of exclusion k-mer hits before rejection.
 
 # =============================================================================
 """
 def estimateExclusionHits(totalExclusion, rate, kmerSize):
 
-    estimate = 1.0
+    ESTIMATE = int(1)
 
-    return estimate
+    return ESTIMATE
 
 
 """
 # =============================================================================
 
 ESTIMATE INCLUSION HITS
+-----------------------
 
-PURPOSE:
-    Estimates the minimum number of inclusion hits required for confident
-    candidate building.
 
-INPUT:
-    [INT >= 0] [totalInclusion] - The total number of inclusion targets.
-    [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
-        mutating.
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
-    [INT >= 1] [kmerSize] - The size of the k-mers.
-    [0 < FLOAT < 1] [confidence] - The statistical confidence.
+PURPOSE
+-------
 
-RETURN:
-    [INT >= 0] [estimate] - An estimate of the minimum number of inclusion
-        k-mer hits.
+Estimates the minimum number of inclusion hits required for confident
+candidate signature building.
+
+
+INPUT
+-----
+
+[INT >= 0] [totalInclusion]
+    The total number of inclusion targets.
+
+[0 <= FLOAT <= 1] [mutationRate]
+    The probability of an arbitrary base mutating.
+
+[0 <= FLOAT <= 1] [GC]
+    The GC content of the environment.
+
+[INT >= 1] [kmerSize]
+    The size of the k-mers.
+
+[0 < FLOAT < 1] [confidence]
+    The statistical confidence level in decision making involving
+    probabilities when producing candidate signatures.
+
+
+RETURN
+------
+
+[INT >= 0] [estimate]
+    An estimate of the minimum number of inclusion k-mer hits. This is the
+    number of inclusion targets that must share a k-mer observed in a reference
+    for it to be considered in candidate signature construction.
 
 # =============================================================================
 """
@@ -646,15 +770,35 @@ def estimateInclusionHits(
 # =============================================================================
 
 ESTIMATE K
+----------
 
-PURPOSE:
-    Estimates the size of k from the k-mers file.
 
-INPUT:
-    [FILE] [kmerFile] - The file of aggregated k-mers.
+PURPOSE
+-------
 
-RETURN:
-    [INT >= 1] [estimate] - An estimate of the k-mer size.
+Estimates the size of k from the k-mers file. This function will read the first
+k-mer in the file and assume the k-mers are all the same length.
+
+
+INPUT
+-----
+
+[FILE] [kmerFile]
+    The file of aggregated k-mers. This file must be open and ready to be
+    read from the start of the file.
+
+
+RETURN
+------
+
+[INT >= 1] [estimate]
+    An estimate of the k-mer size.
+
+
+POST
+----
+
+One line will have been read from the file and the file will not be closed.
 
 # =============================================================================
 """
@@ -672,26 +816,42 @@ def estimateK(kmerFile):
 # =============================================================================
 
 BUILD K-MERS
+------------
 
-PURPOSE:
-    Builds the inclusion and exclusion k-mer dictionaries from a single
-    aggregated k-mer file.
 
-INPUT:
-    [FILE] [kmerFile] - A readable file-like object of aggregated k-mers.
-    [(STRING KMER) -> (INT) DICTIONARY] [inmers] - The inclusion k-mer
-        dictionary to fill with k-mers.
-    [(STRING KMER) -> (INT) DICTIONARY] [exmers] - The exclusion k-mer
-        dictionary to fill with k-mers.
-    [INT >= 0] [inhits] - The minimum number of inclusion k-mers for a
-        candidate.
-    [INT >= 0] [exhits] - The maximum number of exclusion k-mers for a
-        candidate.
+PURPOSE
+-------
+
+Builds the inclusion and exclusion k-mer dictionaries from a single aggregated
+k-mer file. This will likely cause a significant amount of memory to be
+allocated.
+
+
+INPUT
+-----
+
+[FILE] [kmerFile]
+    A readable file-like object of aggregated k-mers.
+
+[(STRING KMER) -> (INT) DICTIONARY] [inmers]
+    The inclusion k-mer dictionary to fill with k-mers.
+
+[(STRING KMER) -> (INT) DICTIONARY] [exmers]
+    The exclusion k-mer dictionary to fill with k-mers.
+
+[INT >= 0] [inhits]
+    The minimum number of inclusion targets that must contain a k-mer observed
+    in the reference to begin or continue building candidate signatures.
+
+[INT >= 0] [exhits]
+    The maximum allowable number of exclusion targets that may contain a k-mer
+    observed in the reference before terminating the construction of a
+    candidate signature.
 
 POST:
     The inclusion and exclusion k-mer dictionaries will be filled with all
-    k-mers found in the k-mers file with at least inhits and at most exhits
-    counts for the inclusion and exclusion k-mers, respectively.
+    k-mers found in the k-mers file with at least [inhits] and at least
+    [exhits] counts for the inclusion and exclusion k-mers, respectively.
 
 # =============================================================================
 """
@@ -716,28 +876,63 @@ def buildKMers(kmerFile, inmers, exmers, inhits, exhits):
 # =============================================================================
 
 REPORT PARAMETERS
+-----------------
 
-PURPOSE:
-    This function outputs the parameters to standard output.
 
-INPUT:
-    [FILE] [reportFile] - The writable file-like object to write the report.
-    [FILE LOCATION] [referenceLocation] - The single reference to extract
-        candidates from.
-    [INT >= 0] [referenceSize] - The size of the reference.
-    [0 <= FLOAT <= 1] [rate] - The rate of mutations and/or errors.
-    [INT >= 0] [totalInclusion] - The number of inclusion genome files.
-    [INT >= 0] [totalExclusion] - The number of exclusion genome files.
-    [INT >= 0] [inhits] - The minimum number of inclusion k-mer hits.
-    [INT >= 0] [exhits] - The maximum number of exclusion k-mer hits.
-    [INT >= 1] [k] - The size of the k-mer.
-    [FILE LOCATION] [kmerLocation] - The file containing aggregated k-mers.
-    [INT >= 1] [gap] - The maximum inclusion k-mer gap size.
-    [INT >= 1] [size] - The minimum size of any candidate.
-    [0 <= FLOAT <= 1] [GC] - The GC-content of the environment.
+PURPOSE
+-------
 
-POST:
-    The parameters will be written to [reportFile].
+This function outputs the parameters to standard output. This can be useful
+for debugging.
+
+
+INPUT
+-----
+
+[FILE] [reportFile]
+    The writable file-like object to write the report.
+
+[FILE LOCATION] [referenceLocation]
+    The single reference to extract candidates from.
+
+[INT >= 0] [referenceSize]
+    The size of the reference.
+
+[0 <= FLOAT <= 1] [rate]
+    The rate of mutations and/or errors.
+
+[INT >= 0] [totalInclusion]
+    The number of inclusion genome files.
+
+[INT >= 0] [totalExclusion]
+    The number of exclusion genome files.
+
+[INT >= 0] [inhits]
+    The minimum number of inclusion k-mer hits.
+
+[INT >= 0] [exhits]
+    The maximum number of exclusion k-mer hits.
+
+[INT >= 1] [k]
+    The size of the k-mer.
+
+[FILE LOCATION] [kmerLocation]
+    The file containing aggregated k-mers.
+
+[INT >= 1] [gap]
+    The maximum inclusion k-mer gap size.
+
+[INT >= 1] [size]
+    The minimum size of any candidate.
+
+[0 <= FLOAT <= 1] [GC]
+    The average GC content of all the targets..
+
+
+POST
+----
+
+The parameters will be written to [reportFile].
 
 # =============================================================================
 """
