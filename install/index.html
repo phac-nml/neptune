@@ -73,8 +73,23 @@
                 
                 
                 
-                    <li >
-                        <a href="../CHANGELOG/">News</a>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../news/">News</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../CHANGELOG/">CHANGELOG</a>
+</li>
+
+                        
+                        </ul>
                     </li>
                 
                 
@@ -190,17 +205,28 @@
     
         <li class="first-level active"><a href="#installation">Installation</a></li>
         
-            <li class="second-level"><a href="#python">Python</a></li>
+            <li class="second-level"><a href="#bioconda">Bioconda</a></li>
+            
+                <li class="third-level"><a href="#overview">Overview</a></li>
+            
+                <li class="third-level"><a href="#miniconda-python-27">Miniconda (Python 2.7)</a></li>
+            
+                <li class="third-level"><a href="#bioconda_1">Bioconda</a></li>
+            
+                <li class="third-level"><a href="#neptune-miniconda-27">Neptune (Miniconda 2.7)</a></li>
+            
+                <li class="third-level"><a href="#neptune-miniconda-36">Neptune (Miniconda 3.6)</a></li>
             
         
-            <li class="second-level"><a href="#dependencies">Dependencies</a></li>
+            <li class="second-level"><a href="#direct">Direct</a></li>
             
-                <li class="third-level"><a href="#debian-based-installation">Debian-Based Installation</a></li>
+                <li class="third-level"><a href="#overview_1">Overview</a></li>
             
-                <li class="third-level"><a href="#manual-installation">Manual Installation</a></li>
+                <li class="third-level"><a href="#python">Python</a></li>
             
-        
-            <li class="second-level"><a href="#neptune">Neptune</a></li>
+                <li class="third-level"><a href="#dependencies">Dependencies</a></li>
+            
+                <li class="third-level"><a href="#neptune">Neptune</a></li>
             
         
     
@@ -209,19 +235,88 @@
         <div class="col-md-9" role="main">
 
 <h1 id="installation">Installation</h1>
-<p>This installation guide assumes the use of the <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">BASH</a> Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on all environments is beyond the scope of this documentation. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the <a href="http://gridscheduler.sourceforge.net/">SGE</a> and <a href="http://slurm.schedmd.com/">Slurm</a> schedulers.</p>
-<h2 id="python">Python</h2>
+<p>This installation guide assumes the use of the <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">BASH</a> Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a <a href="https://bioconda.github.io/">Bioconda</a> package. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the <a href="http://gridscheduler.sourceforge.net/">SGE</a> and <a href="http://slurm.schedmd.com/">Slurm</a> schedulers.</p>
+<h2 id="bioconda">Bioconda</h2>
+<p>The simpliest way to install Neptune is using the <a href="https://bioconda.github.io/">Bioconda</a> channel for the <a href="https://conda.io/docs/intro.html">conda</a> package management system. We recommend installing conda with the <a href="https://conda.io/miniconda.html">Miniconda</a> package. There are two variants of the Miniconda installer: Python 2.7 and Python 3.6. However, the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 2.7 64-bit Linux <a href="https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh">installer</a>. Otherwise, you will need to explicitly use Neptune within a <a href="https://conda.io/docs/using/envs.html">conda environment</a>.</p>
+<h3 id="overview">Overview</h3>
+<p>The Bioconda-based Neptune installation involves the following:</p>
+<ol>
+<li>Installing <a href="https://bioconda.github.io/">Bioconda</a></li>
+<li>Installing the "neptune" Bioconda package (<code>conda install neptune</code>).</li>
+</ol>
+<p>We provide detailed instructions below.</p>
+<h3 id="miniconda-python-27">Miniconda (Python 2.7)</h3>
+<p><a href="https://bioconda.github.io/">Bioconda</a> requires conda to be installed and we recommend using the <a href="https://conda.io/miniconda.html">Miniconda</a> package. Miniconda may be installed with the follow instructions:</p>
+<pre><code class="bash">wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+chmod 755 Miniconda2-latest-Linux-x86_64.sh
+./Miniconda2-latest-Linux-x86_64.sh
+</code></pre>
+
+<p>You will likely want Miniconda to append the install location to your PATH and will need to select this option during the installation process. After installation, you will then need to either open a new terminal or source your bashrc file in the current terminal for Miniconda to become available on the PATH:</p>
+<pre><code class="bash">source ~/.bashrc
+</code></pre>
+
+<p>You can check if your Miniconda installation was successful with the following:</p>
+<pre><code class="bash">conda --version
+</code></pre>
+
+<h3 id="bioconda_1">Bioconda</h3>
+<p>You will need to add the following channels to conda. They must be added in this order so that priority is set correctly.</p>
+<pre><code class="bash">conda config --add channels conda-forge
+conda config --add channels defaults
+conda config --add channels r
+conda config --add channels bioconda
+</code></pre>
+
+<h3 id="neptune-miniconda-27">Neptune (Miniconda 2.7)</h3>
+<p>The following instructions assume you are using Miniconda with Python 2.7, as described above. After enabling Bioconda, Neptune may be installed as a Bioconda package with the following:</p>
+<pre><code class="bash">conda install neptune
+</code></pre>
+
+<p>You can check if Neptune was installed correctly with the following:</p>
+<pre><code class="bash">neptune --version
+</code></pre>
+
+<h3 id="neptune-miniconda-36">Neptune (Miniconda 3.6)</h3>
+<p>The follwing instructions assume you are using the Python 3.6 version of Miniconda. In this circumstance, we need to install Neptune within a Python 2.7 environment:</p>
+<pre><code class="bash">conda create --name neptune python=2.7 neptune
+</code></pre>
+
+<p>This Neptune environment can be activated with the following:</p>
+<pre><code class="bash">source activate neptune
+</code></pre>
+
+<p>You can check if Neptune was installed correctly with the following:</p>
+<pre><code class="bash">neptune --version
+</code></pre>
+
+<p>The current environment may be deactivated with the following:</p>
+<pre><code class="bash">source deactivate
+</code></pre>
+
+<p>It is important to note that this Neptune Bioconda environment will need to be activated in order to run the Neptune application. However, the benefit is that your system will be shielded from the Python 2.7 installation required by Neptune.</p>
+<h2 id="direct">Direct</h2>
+<p>The following instructions describe how to install Neptune directly. These instructions will likely require administrative privilages.</p>
+<h3 id="overview_1">Overview</h3>
+<p>The direct Neptune installation involves the following:</p>
+<ol>
+<li>Installing Python 2.7</li>
+<li>Installing dependencies (Ubuntu: <code>sudo neptune/install/debian_dependencies.sh</code>)</li>
+<li>Installing Neptune (<code>neptune/INSTALL.sh</code>)</li>
+</ol>
+<p>We provide more detailed instructions below.</p>
+<h3 id="python">Python</h3>
 <p>Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:</p>
 <pre><code class="bash">python --version
 </code></pre>
 
-<h2 id="dependencies">Dependencies</h2>
-<h3 id="debian-based-installation">Debian-Based Installation</h3>
+<h3 id="dependencies">Dependencies</h3>
+<h4 id="debian-based-installation">Debian-Based Installation</h4>
 <p>This section assumes the user has the <a href="https://help.ubuntu.com/community/AptGet/Howto">APT</a> package manager. This is common to the <a href="https://en.wikipedia.org/wiki/Ubuntu_(operating_system)">Ubuntu</a> operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:</p>
 <pre><code class="bash">sudo neptune/install/debian_dependencies.sh
 </code></pre>
 
-<h3 id="manual-installation">Manual Installation</h3>
+<h4 id="manual-installation">Manual Installation</h4>
 <p>If you cannot install the dependencies using the above script, the following dependencies must be manually installed, if necessary, by the user:</p>
 <ul>
 <li>pip</li>
@@ -230,7 +325,7 @@
 <li>python-dev</li>
 <li>NCBI BLAST+</li>
 </ul>
-<h2 id="neptune">Neptune</h2>
+<h3 id="neptune">Neptune</h3>
 <p>Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:</p>
 <pre><code class="bash">neptune/INSTALL.sh
 </code></pre>

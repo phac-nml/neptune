@@ -26,9 +26,24 @@
             "title": "Contact"
         }, 
         {
-            "location": "/CHANGELOG/", 
-            "text": "Change Log\n\n\nAll notable changes to Neptune will be documented in this file.\n\n\n[1.2.4] - 2017-02-27\n\n\nThis release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.\n\n\nAdded\n\n\n\n\nLinks in the README to the manual.\n\n\nWalkthrough to the manual.\n\n\nExample data to test the software.\n\n\nTimings for stages.\n\n\n\n\nChanged\n\n\n\n\nImproved clarity in manual.\n\n\nCodeblocks in the manual.\n\n\n\n\nRemoved\n\n\n\n\nConsiderable clutter has been removed from standard output.\n\n\n\n\n[1.2.3] - 2016-07-11\n\n\nThis release simplifies the installation process.\n\n\nAdded\n\n\n\n\nA script for automatically installing Debian dependencies.\n\n\n\n\nChanged\n\n\n\n\nThe dependencies have changed. Several are now installed as part of Neptune.\n\n\nThe Neptune installation no longer requires security privilages.\n\n\nNeptune may be installed multiple times in multiple locations.\n\n\nNumPy and SciPy are now installed using pip.\n\n\n\n\n[1.2.2] - 2016-04-06\n\n\nThis release includes some Galaxy improvements and fixes a signature scoring problem.\n\n\nChanged\n\n\n\n\nGalaxy XML files have been updated to use different packages of Python.\n\n\n\n\nFixed\n\n\n\n\nA bug confusing inclusion and exclusion has been fixed.\n\n\n\n\n[1.2.1] - 2016-03-23\n\n\nThis release of Neptune adds support for Galaxy.\n\n\nAdded\n\n\n\n\nGalaxy-related files: capsules, XML files.\n\n\n\n\nChanged\n\n\n\n\nNeptune.py and Execution.py are now compatible with Galaxy.\n\n\n\n\n[1.2.0] - 2016-03-18\n\n\nThis release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.\n\n\nAdded\n\n\n\n\nNeptune may be run in parallel on a single machine without DRMAA.\n\n\n\"--version\" command line option.\n\n\n\n\nChanged\n\n\n\n\nSeveral command-line parameters have been changed.\n\n\nThe \"--parallelization\" / \"-p\" parameter effects all parallelization.\n\n\nThe exclusion score is now displayed as a positive number.\n\n\n\n\n[1.1.1] - 2016-02-24\n\n\nThis release of Neptune updates the installation instructions to be more\ninformative.\n\n\nChanged\n\n\n\n\nUpdated README and manual installation instructions.\n\n\nModified the style of code examples in the manual.\n\n\n\n\n[1.1.0] - 2016-01-19\n\n\nThis release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.\n\n\nAdded\n\n\n\n\nNeptune now automatically consolidates signatures into a single file.\n\n\nDRMAA job names.\n\n\nNeptune now maintains DRMAA log files.\n\n\nAdded the ability to specify the BLAST seed size.\n\n\n\n\nChanged\n\n\n\n\nThe run receipt has been reorganized.\n\n\nRemoved some unneeded output files.\n\n\nRemoved some unneeded print statements.\n\n\nRemoved the --verbose parameter. There was no functionality.\n\n\n\n\nFixed\n\n\n\n\nNeptune is now compatible with the Slurm scheduler.\n\n\nUpdated PEP8/Flake8 code compliance (W503).\n\n\n\n\n[1.0.0] - 2015-11-18\n\n\nThis is the initial release of Neptune.", 
+            "location": "/news/", 
+            "text": "News\n\n\nBioconda Installation\n\n\n2017-04-07\n\n\nWe have added instructions for how to install Neptune using \nBioconda\n in the \nconda\n package manager. This may simplify installation of Neptune for many users.", 
             "title": "News"
+        }, 
+        {
+            "location": "/news/#news", 
+            "text": "", 
+            "title": "News"
+        }, 
+        {
+            "location": "/news/#bioconda-installation", 
+            "text": "2017-04-07  We have added instructions for how to install Neptune using  Bioconda  in the  conda  package manager. This may simplify installation of Neptune for many users.", 
+            "title": "Bioconda Installation"
+        }, 
+        {
+            "location": "/CHANGELOG/", 
+            "text": "Change Log\n\n\nAll notable changes to Neptune will be documented in this file.\n\n\n1.2.4\n\n\n2017-02-27\n\n\nThis release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.\n\n\nAdded\n\n\n\n\nLinks in the README to the manual.\n\n\nWalkthrough to the manual.\n\n\nExample data to test the software.\n\n\nTimings for stages.\n\n\n\n\nChanged\n\n\n\n\nImproved clarity in manual.\n\n\nCodeblocks in the manual.\n\n\n\n\nRemoved\n\n\n\n\nConsiderable clutter has been removed from standard output.\n\n\n\n\n1.2.3\n\n\n2016-07-11\n\n\nThis release simplifies the installation process.\n\n\nAdded\n\n\n\n\nA script for automatically installing Debian dependencies.\n\n\n\n\nChanged\n\n\n\n\nThe dependencies have changed. Several are now installed as part of Neptune.\n\n\nThe Neptune installation no longer requires security privilages.\n\n\nNeptune may be installed multiple times in multiple locations.\n\n\nNumPy and SciPy are now installed using pip.\n\n\n\n\n1.2.2\n\n\n2016-04-06\n\n\nThis release includes some Galaxy improvements and fixes a signature scoring problem.\n\n\nChanged\n\n\n\n\nGalaxy XML files have been updated to use different packages of Python.\n\n\n\n\nFixed\n\n\n\n\nA bug confusing inclusion and exclusion has been fixed.\n\n\n\n\n1.2.1\n\n\n2016-03-23\n\n\nThis release of Neptune adds support for Galaxy.\n\n\nAdded\n\n\n\n\nGalaxy-related files: capsules, XML files.\n\n\n\n\nChanged\n\n\n\n\nNeptune.py and Execution.py are now compatible with Galaxy.\n\n\n\n\n1.2.0\n\n\n2016-03-18\n\n\nThis release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.\n\n\nAdded\n\n\n\n\nNeptune may be run in parallel on a single machine without DRMAA.\n\n\n\"--version\" command line option.\n\n\n\n\nChanged\n\n\n\n\nSeveral command-line parameters have been changed.\n\n\nThe \"--parallelization\" / \"-p\" parameter effects all parallelization.\n\n\nThe exclusion score is now displayed as a positive number.\n\n\n\n\n1.1.1\n\n\n2016-02-24\n\n\nThis release of Neptune updates the installation instructions to be more\ninformative.\n\n\nChanged\n\n\n\n\nUpdated README and manual installation instructions.\n\n\nModified the style of code examples in the manual.\n\n\n\n\n1.1.0\n\n\n2016-01-19\n\n\nThis release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.\n\n\nAdded\n\n\n\n\nNeptune now automatically consolidates signatures into a single file.\n\n\nDRMAA job names.\n\n\nNeptune now maintains DRMAA log files.\n\n\nAdded the ability to specify the BLAST seed size.\n\n\n\n\nChanged\n\n\n\n\nThe run receipt has been reorganized.\n\n\nRemoved some unneeded output files.\n\n\nRemoved some unneeded print statements.\n\n\nRemoved the --verbose parameter. There was no functionality.\n\n\n\n\nFixed\n\n\n\n\nNeptune is now compatible with the Slurm scheduler.\n\n\nUpdated PEP8/Flake8 code compliance (W503).\n\n\n\n\n1.0.0\n\n\n2015-11-18\n\n\nThis is the initial release of Neptune.", 
+            "title": "CHANGELOG"
         }, 
         {
             "location": "/CHANGELOG/#change-log", 
@@ -36,9 +51,9 @@
             "title": "Change Log"
         }, 
         {
-            "location": "/CHANGELOG/#124-2017-02-27", 
-            "text": "This release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.", 
-            "title": "[1.2.4] - 2017-02-27"
+            "location": "/CHANGELOG/#124", 
+            "text": "2017-02-27  This release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.", 
+            "title": "1.2.4"
         }, 
         {
             "location": "/CHANGELOG/#added", 
@@ -56,9 +71,9 @@
             "title": "Removed"
         }, 
         {
-            "location": "/CHANGELOG/#123-2016-07-11", 
-            "text": "This release simplifies the installation process.", 
-            "title": "[1.2.3] - 2016-07-11"
+            "location": "/CHANGELOG/#123", 
+            "text": "2016-07-11  This release simplifies the installation process.", 
+            "title": "1.2.3"
         }, 
         {
             "location": "/CHANGELOG/#added_1", 
@@ -71,9 +86,9 @@
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#122-2016-04-06", 
-            "text": "This release includes some Galaxy improvements and fixes a signature scoring problem.", 
-            "title": "[1.2.2] - 2016-04-06"
+            "location": "/CHANGELOG/#122", 
+            "text": "2016-04-06  This release includes some Galaxy improvements and fixes a signature scoring problem.", 
+            "title": "1.2.2"
         }, 
         {
             "location": "/CHANGELOG/#changed_2", 
@@ -86,9 +101,9 @@
             "title": "Fixed"
         }, 
         {
-            "location": "/CHANGELOG/#121-2016-03-23", 
-            "text": "This release of Neptune adds support for Galaxy.", 
-            "title": "[1.2.1] - 2016-03-23"
+            "location": "/CHANGELOG/#121", 
+            "text": "2016-03-23  This release of Neptune adds support for Galaxy.", 
+            "title": "1.2.1"
         }, 
         {
             "location": "/CHANGELOG/#added_2", 
@@ -101,9 +116,9 @@
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#120-2016-03-18", 
-            "text": "This release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.", 
-            "title": "[1.2.0] - 2016-03-18"
+            "location": "/CHANGELOG/#120", 
+            "text": "2016-03-18  This release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.", 
+            "title": "1.2.0"
         }, 
         {
             "location": "/CHANGELOG/#added_3", 
@@ -116,9 +131,9 @@
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#111-2016-02-24", 
-            "text": "This release of Neptune updates the installation instructions to be more\ninformative.", 
-            "title": "[1.1.1] - 2016-02-24"
+            "location": "/CHANGELOG/#111", 
+            "text": "2016-02-24  This release of Neptune updates the installation instructions to be more\ninformative.", 
+            "title": "1.1.1"
         }, 
         {
             "location": "/CHANGELOG/#changed_5", 
@@ -126,9 +141,9 @@
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#110-2016-01-19", 
-            "text": "This release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.", 
-            "title": "[1.1.0] - 2016-01-19"
+            "location": "/CHANGELOG/#110", 
+            "text": "2016-01-19  This release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.", 
+            "title": "1.1.0"
         }, 
         {
             "location": "/CHANGELOG/#added_4", 
@@ -146,19 +161,59 @@
             "title": "Fixed"
         }, 
         {
-            "location": "/CHANGELOG/#100-2015-11-18", 
-            "text": "This is the initial release of Neptune.", 
-            "title": "[1.0.0] - 2015-11-18"
+            "location": "/CHANGELOG/#100", 
+            "text": "2015-11-18  This is the initial release of Neptune.", 
+            "title": "1.0.0"
         }, 
         {
             "location": "/install/", 
-            "text": "Installation\n\n\nThis installation guide assumes the use of the \nBASH\n Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on all environments is beyond the scope of this documentation. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the \nSGE\n and \nSlurm\n schedulers.\n\n\nPython\n\n\nNeptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:\n\n\npython --version\n\n\n\n\nDependencies\n\n\nDebian-Based Installation\n\n\nThis section assumes the user has the \nAPT\n package manager. This is common to the \nUbuntu\n operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:\n\n\nsudo neptune/install/debian_dependencies.sh\n\n\n\n\nManual Installation\n\n\nIf you cannot install the dependencies using the above script, the following dependencies must be manually installed, if necessary, by the user:\n\n\n\n\npip\n\n\nvirtualenv\n\n\nbuild-essential\n\n\npython-dev\n\n\nNCBI BLAST+\n\n\n\n\nNeptune\n\n\nNeptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:\n\n\nneptune/INSTALL.sh\n\n\n\n\nAlternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:\n\n\nneptune/INSTALL.sh PREFIX", 
+            "text": "Installation\n\n\nThis installation guide assumes the use of the \nBASH\n Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a \nBioconda\n package. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the \nSGE\n and \nSlurm\n schedulers.\n\n\nBioconda\n\n\nThe simpliest way to install Neptune is using the \nBioconda\n channel for the \nconda\n package management system. We recommend installing conda with the \nMiniconda\n package. There are two variants of the Miniconda installer: Python 2.7 and Python 3.6. However, the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 2.7 64-bit Linux \ninstaller\n. Otherwise, you will need to explicitly use Neptune within a \nconda environment\n.\n\n\nOverview\n\n\nThe Bioconda-based Neptune installation involves the following:\n\n\n\n\nInstalling \nBioconda\n\n\nInstalling the \"neptune\" Bioconda package (\nconda install neptune\n).\n\n\n\n\nWe provide detailed instructions below.\n\n\nMiniconda (Python 2.7)\n\n\nBioconda\n requires conda to be installed and we recommend using the \nMiniconda\n package. Miniconda may be installed with the follow instructions:\n\n\nwget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh\nchmod 755 Miniconda2-latest-Linux-x86_64.sh\n./Miniconda2-latest-Linux-x86_64.sh\n\n\n\n\nYou will likely want Miniconda to append the install location to your PATH and will need to select this option during the installation process. After installation, you will then need to either open a new terminal or source your bashrc file in the current terminal for Miniconda to become available on the PATH:\n\n\nsource ~/.bashrc\n\n\n\n\nYou can check if your Miniconda installation was successful with the following:\n\n\nconda --version\n\n\n\n\nBioconda\n\n\nYou will need to add the following channels to conda. They must be added in this order so that priority is set correctly.\n\n\nconda config --add channels conda-forge\nconda config --add channels defaults\nconda config --add channels r\nconda config --add channels bioconda\n\n\n\n\nNeptune (Miniconda 2.7)\n\n\nThe following instructions assume you are using Miniconda with Python 2.7, as described above. After enabling Bioconda, Neptune may be installed as a Bioconda package with the following:\n\n\nconda install neptune\n\n\n\n\nYou can check if Neptune was installed correctly with the following:\n\n\nneptune --version\n\n\n\n\nNeptune (Miniconda 3.6)\n\n\nThe follwing instructions assume you are using the Python 3.6 version of Miniconda. In this circumstance, we need to install Neptune within a Python 2.7 environment:\n\n\nconda create --name neptune python=2.7 neptune\n\n\n\n\nThis Neptune environment can be activated with the following:\n\n\nsource activate neptune\n\n\n\n\nYou can check if Neptune was installed correctly with the following:\n\n\nneptune --version\n\n\n\n\nThe current environment may be deactivated with the following:\n\n\nsource deactivate\n\n\n\n\nIt is important to note that this Neptune Bioconda environment will need to be activated in order to run the Neptune application. However, the benefit is that your system will be shielded from the Python 2.7 installation required by Neptune.\n\n\nDirect\n\n\nThe following instructions describe how to install Neptune directly. These instructions will likely require administrative privilages.\n\n\nOverview\n\n\nThe direct Neptune installation involves the following:\n\n\n\n\nInstalling Python 2.7\n\n\nInstalling dependencies (Ubuntu: \nsudo neptune/install/debian_dependencies.sh\n)\n\n\nInstalling Neptune (\nneptune/INSTALL.sh\n)\n\n\n\n\nWe provide more detailed instructions below.\n\n\nPython\n\n\nNeptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:\n\n\npython --version\n\n\n\n\nDependencies\n\n\nDebian-Based Installation\n\n\nThis section assumes the user has the \nAPT\n package manager. This is common to the \nUbuntu\n operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:\n\n\nsudo neptune/install/debian_dependencies.sh\n\n\n\n\nManual Installation\n\n\nIf you cannot install the dependencies using the above script, the following dependencies must be manually installed, if necessary, by the user:\n\n\n\n\npip\n\n\nvirtualenv\n\n\nbuild-essential\n\n\npython-dev\n\n\nNCBI BLAST+\n\n\n\n\nNeptune\n\n\nNeptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:\n\n\nneptune/INSTALL.sh\n\n\n\n\nAlternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:\n\n\nneptune/INSTALL.sh PREFIX", 
             "title": "Neptune"
         }, 
         {
             "location": "/install/#installation", 
-            "text": "This installation guide assumes the use of the  BASH  Unix shell. Neptune may be installed on most 64-bit Unix environments. However, the specifics of installations on all environments is beyond the scope of this documentation. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the  SGE  and  Slurm  schedulers.", 
+            "text": "This installation guide assumes the use of the  BASH  Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a  Bioconda  package. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the  SGE  and  Slurm  schedulers.", 
             "title": "Installation"
+        }, 
+        {
+            "location": "/install/#bioconda", 
+            "text": "The simpliest way to install Neptune is using the  Bioconda  channel for the  conda  package management system. We recommend installing conda with the  Miniconda  package. There are two variants of the Miniconda installer: Python 2.7 and Python 3.6. However, the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 2.7 64-bit Linux  installer . Otherwise, you will need to explicitly use Neptune within a  conda environment .", 
+            "title": "Bioconda"
+        }, 
+        {
+            "location": "/install/#overview", 
+            "text": "The Bioconda-based Neptune installation involves the following:   Installing  Bioconda  Installing the \"neptune\" Bioconda package ( conda install neptune ).   We provide detailed instructions below.", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/install/#miniconda-python-27", 
+            "text": "Bioconda  requires conda to be installed and we recommend using the  Miniconda  package. Miniconda may be installed with the follow instructions:  wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh\nchmod 755 Miniconda2-latest-Linux-x86_64.sh\n./Miniconda2-latest-Linux-x86_64.sh  You will likely want Miniconda to append the install location to your PATH and will need to select this option during the installation process. After installation, you will then need to either open a new terminal or source your bashrc file in the current terminal for Miniconda to become available on the PATH:  source ~/.bashrc  You can check if your Miniconda installation was successful with the following:  conda --version", 
+            "title": "Miniconda (Python 2.7)"
+        }, 
+        {
+            "location": "/install/#bioconda_1", 
+            "text": "You will need to add the following channels to conda. They must be added in this order so that priority is set correctly.  conda config --add channels conda-forge\nconda config --add channels defaults\nconda config --add channels r\nconda config --add channels bioconda", 
+            "title": "Bioconda"
+        }, 
+        {
+            "location": "/install/#neptune-miniconda-27", 
+            "text": "The following instructions assume you are using Miniconda with Python 2.7, as described above. After enabling Bioconda, Neptune may be installed as a Bioconda package with the following:  conda install neptune  You can check if Neptune was installed correctly with the following:  neptune --version", 
+            "title": "Neptune (Miniconda 2.7)"
+        }, 
+        {
+            "location": "/install/#neptune-miniconda-36", 
+            "text": "The follwing instructions assume you are using the Python 3.6 version of Miniconda. In this circumstance, we need to install Neptune within a Python 2.7 environment:  conda create --name neptune python=2.7 neptune  This Neptune environment can be activated with the following:  source activate neptune  You can check if Neptune was installed correctly with the following:  neptune --version  The current environment may be deactivated with the following:  source deactivate  It is important to note that this Neptune Bioconda environment will need to be activated in order to run the Neptune application. However, the benefit is that your system will be shielded from the Python 2.7 installation required by Neptune.", 
+            "title": "Neptune (Miniconda 3.6)"
+        }, 
+        {
+            "location": "/install/#direct", 
+            "text": "The following instructions describe how to install Neptune directly. These instructions will likely require administrative privilages.", 
+            "title": "Direct"
+        }, 
+        {
+            "location": "/install/#overview_1", 
+            "text": "The direct Neptune installation involves the following:   Installing Python 2.7  Installing dependencies (Ubuntu:  sudo neptune/install/debian_dependencies.sh )  Installing Neptune ( neptune/INSTALL.sh )   We provide more detailed instructions below.", 
+            "title": "Overview"
         }, 
         {
             "location": "/install/#python", 

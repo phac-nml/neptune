@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">   
     <link rel="shortcut icon" href="../neptune.ico">
 
-    <title>News - Neptune</title>
+    <title>CHANGELOG - Neptune</title>
 
     <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
@@ -73,8 +73,23 @@
                 
                 
                 
-                    <li class="active">
-                        <a href="./">News</a>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../news/">News</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">CHANGELOG</a>
+</li>
+
+                        
+                        </ul>
                     </li>
                 
                 
@@ -158,7 +173,7 @@
                 </li>
                 
                     <li >
-                        <a rel="next" href="..">
+                        <a rel="next" href="../news/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
@@ -190,7 +205,7 @@
     
         <li class="first-level active"><a href="#change-log">Change Log</a></li>
         
-            <li class="second-level"><a href="#124-2017-02-27">[1.2.4] - 2017-02-27</a></li>
+            <li class="second-level"><a href="#124">1.2.4</a></li>
             
                 <li class="third-level"><a href="#added">Added</a></li>
             
@@ -199,40 +214,39 @@
                 <li class="third-level"><a href="#removed">Removed</a></li>
             
         
-            <li class="second-level"><a href="#123-2016-07-11">[1.2.3] - 2016-07-11</a></li>
+            <li class="second-level"><a href="#123">1.2.3</a></li>
             
                 <li class="third-level"><a href="#added_1">Added</a></li>
             
                 <li class="third-level"><a href="#changed_1">Changed</a></li>
             
-        
-            <li class="second-level"><a href="#122-2016-04-06">[1.2.2] - 2016-04-06</a></li>
+                <li class="third-level"><a href="#122">1.2.2</a></li>
             
                 <li class="third-level"><a href="#changed_2">Changed</a></li>
             
                 <li class="third-level"><a href="#fixed">Fixed</a></li>
             
         
-            <li class="second-level"><a href="#121-2016-03-23">[1.2.1] - 2016-03-23</a></li>
+            <li class="second-level"><a href="#121">1.2.1</a></li>
             
                 <li class="third-level"><a href="#added_2">Added</a></li>
             
                 <li class="third-level"><a href="#changed_3">Changed</a></li>
             
         
-            <li class="second-level"><a href="#120-2016-03-18">[1.2.0] - 2016-03-18</a></li>
+            <li class="second-level"><a href="#120">1.2.0</a></li>
             
                 <li class="third-level"><a href="#added_3">Added</a></li>
             
                 <li class="third-level"><a href="#changed_4">Changed</a></li>
             
         
-            <li class="second-level"><a href="#111-2016-02-24">[1.1.1] - 2016-02-24</a></li>
+            <li class="second-level"><a href="#111">1.1.1</a></li>
             
                 <li class="third-level"><a href="#changed_5">Changed</a></li>
             
         
-            <li class="second-level"><a href="#110-2016-01-19">[1.1.0] - 2016-01-19</a></li>
+            <li class="second-level"><a href="#110">1.1.0</a></li>
             
                 <li class="third-level"><a href="#added_4">Added</a></li>
             
@@ -241,7 +255,7 @@
                 <li class="third-level"><a href="#fixed_1">Fixed</a></li>
             
         
-            <li class="second-level"><a href="#100-2015-11-18">[1.0.0] - 2015-11-18</a></li>
+            <li class="second-level"><a href="#100">1.0.0</a></li>
             
         
     
@@ -251,7 +265,8 @@
 
 <h1 id="change-log">Change Log</h1>
 <p>All notable changes to Neptune will be documented in this file.</p>
-<h2 id="124-2017-02-27">[1.2.4] - 2017-02-27</h2>
+<h2 id="124">1.2.4</h2>
+<p>2017-02-27</p>
 <p>This release makes several small improvements, including: reducing the standard
 output clutter, adding timings to stages, and updating the documentation.</p>
 <h3 id="added">Added</h3>
@@ -270,7 +285,8 @@ output clutter, adding timings to stages, and updating the documentation.</p>
 <ul>
 <li>Considerable clutter has been removed from standard output.</li>
 </ul>
-<h2 id="123-2016-07-11">[1.2.3] - 2016-07-11</h2>
+<h2 id="123">1.2.3</h2>
+<p>2016-07-11</p>
 <p>This release simplifies the installation process.</p>
 <h3 id="added_1">Added</h3>
 <ul>
@@ -283,7 +299,8 @@ output clutter, adding timings to stages, and updating the documentation.</p>
 <li>Neptune may be installed multiple times in multiple locations.</li>
 <li>NumPy and SciPy are now installed using pip.</li>
 </ul>
-<h2 id="122-2016-04-06">[1.2.2] - 2016-04-06</h2>
+<h3 id="122">1.2.2</h3>
+<p>2016-04-06</p>
 <p>This release includes some Galaxy improvements and fixes a signature scoring problem.</p>
 <h3 id="changed_2">Changed</h3>
 <ul>
@@ -293,7 +310,8 @@ output clutter, adding timings to stages, and updating the documentation.</p>
 <ul>
 <li>A bug confusing inclusion and exclusion has been fixed.</li>
 </ul>
-<h2 id="121-2016-03-23">[1.2.1] - 2016-03-23</h2>
+<h2 id="121">1.2.1</h2>
+<p>2016-03-23</p>
 <p>This release of Neptune adds support for Galaxy.</p>
 <h3 id="added_2">Added</h3>
 <ul>
@@ -303,7 +321,8 @@ output clutter, adding timings to stages, and updating the documentation.</p>
 <ul>
 <li>Neptune.py and Execution.py are now compatible with Galaxy.</li>
 </ul>
-<h2 id="120-2016-03-18">[1.2.0] - 2016-03-18</h2>
+<h2 id="120">1.2.0</h2>
+<p>2016-03-18</p>
 <p>This release of Neptune allows for execution on a single machine without
 requiring DRMAA. Furthermore, several command line parameters have been
 modified.</p>
@@ -318,7 +337,8 @@ modified.</p>
 <li>The "--parallelization" / "-p" parameter effects all parallelization.</li>
 <li>The exclusion score is now displayed as a positive number.</li>
 </ul>
-<h2 id="111-2016-02-24">[1.1.1] - 2016-02-24</h2>
+<h2 id="111">1.1.1</h2>
+<p>2016-02-24</p>
 <p>This release of Neptune updates the installation instructions to be more
 informative.</p>
 <h3 id="changed_5">Changed</h3>
@@ -326,7 +346,8 @@ informative.</p>
 <li>Updated README and manual installation instructions.</li>
 <li>Modified the style of code examples in the manual.</li>
 </ul>
-<h2 id="110-2016-01-19">[1.1.0] - 2016-01-19</h2>
+<h2 id="110">1.1.0</h2>
+<p>2016-01-19</p>
 <p>This release of Neptune introduces a simple signature consolidation step, which
 consolidates signatures produced from multiple files into a single file.
 Furthermore, the software has been updated to be compatible with the Slurm
@@ -350,7 +371,8 @@ scheduler.</p>
 <li>Neptune is now compatible with the Slurm scheduler.</li>
 <li>Updated PEP8/Flake8 code compliance (W503).</li>
 </ul>
-<h2 id="100-2015-11-18">[1.0.0] - 2015-11-18</h2>
+<h2 id="100">1.0.0</h2>
+<p>2015-11-18</p>
 <p>This is the initial release of Neptune.</p></div>
         
     </div>
