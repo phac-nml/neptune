@@ -355,7 +355,7 @@ class Execution():
             for line in inclusionFile:
 
                 if line[0] != ">":
-                    line = line.strip()
+                    line = line.strip().upper()
 
                     size += len(line)
                     sumGC += line.count('G') + line.count('C')
