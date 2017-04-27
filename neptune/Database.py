@@ -25,7 +25,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import subprocess
-import os
+import sys
 
 """
 # =============================================================================
@@ -74,7 +74,8 @@ INPUT:
 POST:
     A Python subprocess is executed for the create database job. Control will
     return to the calling function after this subprocess is complete. The
-    output of the subprocess will be written to NULL.
+    standard error will be redirected to standard  output and, in turn, the
+    standard output will be discard unless a CalledProcessError is raised.
 
 # =============================================================================
 """
@@ -113,9 +114,7 @@ def createDatabaseJob(inputLocation, outputLocation):
     args.append(OUTPUT_LOCATION)
 
     # Output
-    NULL = open(os.devnull, "w")
-    subprocess.check_call(args, stdout=NULL, stderr=NULL)
-    NULL.close()
+    subprocess.check_output(args, stderr=sys.stdout)
 
 
 """
@@ -140,8 +139,9 @@ RETURN:
         This is the same location as the passed [outputLocation]
 
 POST:
-    A query file will be created at the [outputLocation]. The output of the
-    subprocess will be written to NULL.
+    A query file will be created at the [outputLocation]. The standard error
+    will be redirected to standard  output and, in turn, the standard output
+    will be discard unless a CalledProcessError is raised.
 
 # =============================================================================
 """
@@ -175,8 +175,6 @@ def queryDatabase(
         DUST, DUST_VALUE]
 
     # Output
-    NULL = open(os.devnull, "w")
-    subprocess.check_call(args, stdout=NULL, stderr=NULL)
-    NULL.close()
+    subprocess.check_output(args, stderr=sys.stdout)
 
     return outputLocation
