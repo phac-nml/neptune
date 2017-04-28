@@ -205,6 +205,84 @@ class TestMain(unittest.TestCase):
     """
     # =========================================================================
 
+    Test a Genome with Only Ns (Simple)
+
+    PURPOSE:
+        Tests an execution of Neptune from the main method where an input
+        contains a genome of entirely Ns. This only specifies mandatory
+        parameters.
+
+    INPUT:
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/n.fasta")
+        parameters[ExtractSignatures.EXCLUSION] = ["tests/data/neptune/alternative.fasta"]
+        parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
+
+    EXPECT:
+        RuntimeError when estimating the GC content of the n.fasta file.
+
+    # =========================================================================
+    """
+    def test_n_genome_simple(self):
+
+        parameters = {}
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/n.fasta")
+        parameters[ExtractSignatures.EXCLUSION] = ["tests/data/neptune/alternative.fasta"]
+        parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
+
+        sys.argv[1:] = [
+            ExtractSignatures.INCLUSION_LONG, str(parameters[ExtractSignatures.INCLUSION]),
+            ExtractSignatures.EXCLUSION_LONG, str(parameters[ExtractSignatures.EXCLUSION]),
+            OUTPUT_LONG, str(parameters[OUTPUT])]
+
+        with self.assertRaises(RuntimeError):
+            main()
+
+    """
+    # =========================================================================
+
+    Test a Genome with Only Ns (Specifying GC and k)
+
+    PURPOSE:
+        Tests an execution of Neptune from the main method where an input
+        contains a genome of entirely Ns. This function specifies the GC
+        content and k-mer size, so as to circumvent the RuntimeError that would
+        be thrown when trying to calculate these parameters for an input
+        containing only Ns.
+
+    INPUT:
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/n.fasta")
+        parameters[ExtractSignatures.EXCLUSION] = ["tests/data/neptune/alternative.fasta"]
+        parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
+
+    EXPECT:
+        RuntimeError when estimating the GC content of the n.fasta file.
+
+    # =========================================================================
+    """
+    def test_n_genome_simple_specify_gc_k(self):
+
+        parameters = {}
+        parameters[ExtractSignatures.INCLUSION] = getPath("tests/data/neptune/n.fasta")
+        parameters[ExtractSignatures.EXCLUSION] = ["tests/data/neptune/alternative.fasta"]
+        parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
+        parameters[ExtractSignatures.GC_CONTENT] = 0.5
+        parameters[CountKMers.KMER] = 5
+
+        sys.argv[1:] = [
+            ExtractSignatures.INCLUSION_LONG, str(parameters[ExtractSignatures.INCLUSION]),
+            ExtractSignatures.EXCLUSION_LONG, str(parameters[ExtractSignatures.EXCLUSION]),
+            OUTPUT_LONG, str(parameters[OUTPUT]),
+            ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
+            CountKMers.KMER_LONG, str(parameters[CountKMers.KMER])]
+
+        print sys.argv[1:]
+
+        with self.assertRaises(RuntimeError):
+            main()
+
+    """
+    # =========================================================================
+
     test_organization
 
     PURPOSE:
