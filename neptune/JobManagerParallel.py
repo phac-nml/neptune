@@ -38,6 +38,7 @@ node.
 """
 
 import multiprocessing
+import subprocess
 
 import JobManager
 import CountKMers
@@ -136,7 +137,7 @@ class JobManagerParallel(JobManager.JobManager):
     def synchronize(self, jobs):
 
         for job in jobs:
-            job.wait()
+            job.get()
 
     """
     # =========================================================================
@@ -168,8 +169,7 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[CountKMers.ORGANIZATION] = organization
 
         job = self.pool.apply_async(
-            CountKMers.parse,
-            args=(parameters,))
+            submit, args=(CountKMers.parse, [parameters], ))
 
         return job
 
@@ -227,8 +227,7 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[AggregateKMers.DELETE] = True
 
         job = self.pool.apply_async(
-            AggregateKMers.parse,
-            args=(parameters,))
+            submit, args=(AggregateKMers.parse, [parameters], ))
 
         return job
 
@@ -324,8 +323,7 @@ class JobManagerParallel(JobManager.JobManager):
         parameters[ExtractSignatures.OUTPUT] = outputLocation
 
         job = self.pool.apply_async(
-            ExtractSignatures.parse,
-            args=(parameters,))
+            submit, args=(ExtractSignatures.parse, [parameters], ))
 
         return job
 
@@ -371,9 +369,11 @@ class JobManagerParallel(JobManager.JobManager):
 
         aggregatedFile.close()
 
+        parameters = [aggregatedLocation, outputLocation]
+
+        # NOTE: parameters is already a list
         job = self.pool.apply_async(
-            Database.createDatabaseJob,
-            args=(aggregatedLocation, outputLocation,))
+            submit, args=(Database.createDatabaseJob, parameters, ))
 
         return job
 
@@ -453,8 +453,7 @@ class JobManagerParallel(JobManager.JobManager):
             if seedSize else None
 
         job = self.pool.apply_async(
-            FilterSignatures.parse,
-            args=(parameters,))
+            submit, args=(FilterSignatures.parse, [parameters], ))
 
         return job
 
@@ -497,7 +496,55 @@ class JobManagerParallel(JobManager.JobManager):
             if outputDirectoryLocation else None
 
         job = self.pool.apply_async(
-            ConsolidateSignatures.parse,
-            args=(parameters,))
+            submit, args=(ConsolidateSignatures.parse, [parameters], ))
 
         return job
+
+
+"""
+# =============================================================================
+
+SUBMIT
+
+PURPOSE:
+    This submit function wraps all function calls in a try-except block that
+    explicitly catches CalledProcessError that are thrown. This function
+    should be called directly by all pool.apply_async(...) calls, instead of
+    having pool.apply_async(...) directly call the intended function.
+
+    The purpose of this function to is work around an issue in Python 2.7
+    with CalledProcessError exceptions failing to propogate their exceptions
+    upwards to the calling process. They instead report a misleading error
+    and hang the program in a state that is hard to terminate (ctrl-C did not
+    work). We work around this problem by catching CalledProcessError and
+    throwing a new generic Exception in its place. This exception will
+    terminate the execution of the entire program so long as
+    JobManagerParallel's synchronize() class method is using .get() to wait
+    for jobs to finish and not .wait().
+
+    ERROR: https://bugs.python.org/issue9400
+
+    NOTE: This solution might only be required in Python 2.7 and not in
+    Python 3.
+
+INPUT:
+    [FUNCTION] [function] - The function to be executed.
+    [ARGUMENTS] [arguments] - The arguments that will be passed to [function].
+
+POST:
+    The [function] will be run with [parameters] with a try-except block. When
+    a CalledProcessError is raised, this function will catch the error and
+    throw a generic Exception in it's place, which will help terminate the
+    execution of the software immediately.
+
+# =============================================================================
+"""
+def submit(function, arguments):
+
+    # NOTE: This may only be required in Python 2.7.
+
+    try:
+        function(*arguments)
+
+    except subprocess.CalledProcessError as cpe:
+        raise Exception(str(cpe))
