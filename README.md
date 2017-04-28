@@ -27,38 +27,18 @@ unrelated sporadic or environmental microbes.
 This release makes several small improvements, including: reducing the standard
 output clutter, adding timings to stages, and updating the documentation.
 
-# Requirements #
-
-Neptune requires Python 2.7. You may check your installed Python version with 
-the following:
-
-        python --version
-
-If running a Debian distribution (ex: Ubuntu), dependencies may be installed
-using the following command:
-
-        sudo install/debian_dependencies.sh
-
-Otherwise, the following dependencies must be installed manually:
-
-- python-pip
-- python-virtualenv
-- build-essential
-- python-dev
-- NCBI BLAST+
-
 # Installation #
 
 It is strongly recommended you refer to the
 [documentation](https://phac-nml.github.io/neptune/install/) for full 
-installation instructions. Neptune may be installed using the following 
-command:
+installation instructions. Neptune may be installed on any 64-bit Linux system
+using Bioconda:
 
-    INSTALL.sh
+ 1. Install [Bioconda](https://bioconda.github.io/)
+ 2. Install the "neptune" Bioconda package (conda install neptune).
 
-You may specify an install PREFIX location, and Neptune will install into
-PREFIX/lib and PREFIX/bin. This only requires security privileges if the
-install location requires them.
+Neptune may also be installed directly and instructions are available in the
+[documentation](https://phac-nml.github.io/neptune/install/).
 
 # Running Neptune #
 
