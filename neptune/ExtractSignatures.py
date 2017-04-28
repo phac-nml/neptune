@@ -1167,8 +1167,6 @@ def main():
         help=CONFIDENCE_HELP,
         type=float, required=False)
 
-
-
     args = parser.parse_args()
     parameters = vars(args)
     parse(parameters)
