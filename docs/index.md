@@ -6,12 +6,13 @@ Neptune locates genomic signatures using an exact *k*-mer matching strategy whil
 
 ## Release ##
 
-**Neptune 1.2.4**
+**Neptune 1.2.5**
 
-This release makes several small improvements, including: reducing the standard output clutter, adding timings to stages, and updating the documentation.
+This release provides fixes for ambiguous crashes as a consequence of inputs containing no A, C, G, or T characters, and also makes improvements to the code quality.
 
 ## Resources ##
 
+* **Source**: [https://github.com/phac-nml/neptune](https://github.com/phac-nml/neptune)
 * **Installation**: [https://phac-nml.github.io/neptune/install/](https://phac-nml.github.io/neptune/install/)
 * **Walkthrough**: [https://phac-nml.github.io/neptune/walkthrough/](https://phac-nml.github.io/neptune/walkthrough/)
 
