@@ -139,7 +139,7 @@ EXTRACT_SPECIFICATION_HELP = "The DRMAA parameters specific to candidate \
 DATABASE_SPECIFICATION = "database-specification"
 DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
 DATABASE_SPECIFICATION_HELP = "The DRMAA parameters specific to database \
-    construction and querying"
+    construction and querying."
 
 # DRMAA specification for FilterSignatures.py
 FILTER_SPECIFICATION = "filter-specification"

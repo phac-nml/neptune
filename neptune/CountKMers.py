@@ -120,12 +120,14 @@ KMER_HELP = "The size of the k-mers."
 # Organization
 ORGANIZATION = "organization"
 ORGANIZATION_LONG = LONG + ORGANIZATION
-ORGANIZATION_HELP = "The degree of k-mer organization in the output files. \
+ORGANIZATION_HELP = "The degree of k-mer organization in the output files.\
     This exploits the four-character alphabet of nucleotides to produce \
     several k-mer output files, with all k-mers in a file beginning with the \
     same short sequence of nucleotides. This parameter determines the number \
     of nucleotides to use and will produce 4^X output files, where X is the \
-    number of nucleotides specified by this parameter."
+    number of nucleotides specified by this parameter. The number of output \
+    files directly corresponds to the amount of parallelization in the k-mer \
+    aggregation process."
 
 """
 # =============================================================================
