@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -46,22 +46,35 @@ AGGREGATE_OTHER = "__OTHER__"
 # =============================================================================
 
 GET AGGREGATION TAGS
+--------------------
 
-PURPOSE:
-    Produces a list of aggregation tags associate with the specified degree
-    of parallelization.
 
-INPUT:
-    [INT >= 0] [parallelization] - The degree of parallelization.
+PURPOSE
+-------
 
-RETURN:
-    [STRING ITERABLE] [tags] - An iterable object of sequence tags.
+Produces a list of aggregation tags associated with the specified degree of
+organization.
 
-        There will be (4^[parallelization]) tags produced and an
-        "AGGREGATE_OTHER" tag.
 
-        These tags will contain A, C, G, and T, and arranged in lexicographic
-        order with the "AGGREGATE_OTHER" tag at the very end.
+INPUT
+-----
+
+[INT >= 0] [parallelization]
+    The degree of parallelization.
+
+
+RETURN
+------
+
+[STRING ITERABLE] [tags]
+
+    An iterable object of sequence tags.
+
+    There will be (4^[organization]) tags produced and an "AGGREGATE_OTHER"
+    tag.
+
+    These tags will contain A, C, G, and T, and arranged in lexicographic
+    order with the "AGGREGATE_OTHER" tag at the very end.
 
 # =============================================================================
 """
@@ -88,24 +101,37 @@ def getAggregationTags(parallelization):
 # =============================================================================
 
 GENERATE SEQUENCE
+-----------------
 
-PURPOSE:
-    Generates and returns a nucleotide sequence of a specified
-    length from a passed integer value.
 
-INPUT:
-    [INT >= 0] [integer] - The integer to convert to sequence.
-    [INT >= 0] [length] - The length of the sequence to return.
+PURPOSE
+-------
 
-RETURN:
-    [STRING] [sequence] - A sequence of length [length] generated from the
-        integer [integer].
+Generates and returns a nucleotide sequence of a specified length from a passed
+integer value.
 
-        Sequences are genrated such that, for all 0 <= x < 4^[length]:
 
-        generateSequence(x, [length]) < generateSequence(x+1, [length])
+INPUT
+-----
 
-        when considered lexicographically.
+[INT >= 0] [integer]
+    The integer to convert to sequence.
+
+[INT >= 0] [length]
+    The length of the sequence to return.
+
+
+RETURN
+------
+
+[STRING] [sequence]
+    A sequence of length [length] generated from the [integer].
+
+    Sequences are genrated such that, for all 0 <= x < 4^[length]:
+
+    generateSequence(x, [length]) < generateSequence(x+1, [length])
+
+    when evaluated lexicographically.
 
 # =============================================================================
 """
@@ -145,15 +171,27 @@ def generateSequence(integer, length):
 # =============================================================================
 
 REVERSE COMPLEMENT
+------------------
 
-PURPOSE:
-    Produces and returns the reverse complement of the sequence.
 
-INPUT:
-    [STRING] [sequence] - The sequence to reverse complement.
+PURPOSE
+-------
 
-RETURN:
-    [STRING] [reverse] - The reverse complement of the passed sequence.
+Produces and returns the reverse complement of the sequence.
+
+
+INPUT
+-----
+
+[STRING] [sequence]
+    The sequence to reverse complement.
+
+
+RETURN
+------
+
+[STRING] [reverse]
+    The reverse complement of the passed sequence.
 
 # =============================================================================
 """
@@ -167,15 +205,28 @@ def reverseComplement(sequence):
 # =============================================================================
 
 BUILD REFERENCES
+----------------
 
-PURPOSE:
-    Builds string references from the reference file.
 
-INPUT:
-    [FILE] [referenceFile] - The file from which to build the string reference.
+PURPOSE
+-------
 
-RETURN:
-    [STRING ITERABLE] [references] - A list of string references.
+Builds string references (contig pieces) from the reference file.
+
+
+INPUT
+-----
+
+[FILE] [referenceFile]
+    The file from which to build the string reference.
+
+
+RETURN
+------
+
+[STRING ITERABLE] [references]
+    A list of string references where contigs comprise the different items
+    in the iterable object.
 
 # =============================================================================
 """

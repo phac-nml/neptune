@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -71,50 +71,87 @@ GLOBALS
 # =============================================================================
 """
 
-# NAMES
-INCLUSION_DATABASE = "inclusion-database"
-EXCLUSION_DATABASE = "exclusion-database"
-INCLUSION = "inclusion"
-EXCLUSION = "exclusion"
-INPUT = "input"
-FILTERED_OUTPUT = "filtered-output"
-SORTED_OUTPUT = "sorted-output"
-FILTER_PERCENT = "filter-percent"
-FILTER_LENGTH = "filter-length"
-SEED_SIZE = "seed-size"
-
-# ARGUMENTS
-LONG = "--"
-
-INCLUSION_DATABASE_LONG = LONG + INCLUSION_DATABASE
-EXCLUSION_DATABASE_LONG = LONG + EXCLUSION_DATABASE
-INCLUSION_LONG = LONG + INCLUSION
-EXCLUSION_LONG = LONG + EXCLUSION
-INPUT_LONG = LONG + INPUT
-FILTERED_OUTPUT_LONG = LONG + FILTERED_OUTPUT
-SORTED_OUTPUT_LONG = LONG + SORTED_OUTPUT
-FILTER_PERCENT_LONG = LONG + FILTER_PERCENT
-FILTER_LENGTH_LONG = LONG + FILTER_LENGTH
-SEED_SIZE_LONG = LONG + SEED_SIZE
-
-SHORT = "-"
-
-INCLUSION_DATABASE_SHORT = SHORT + "dbin"
-EXCLUSION_DATABASE_SHORT = SHORT + "dbex"
-INCLUSION_SHORT = SHORT + "i"
-EXCLUSION_SHORT = SHORT + "e"
-INPUT_SHORT = SHORT + "r"
-FILTERED_OUTPUT_SHORT = SHORT + "fo"
-SORTED_OUTPUT_SHORT = SHORT + "so"
-FILTER_PERCENT_SHORT = LONG + "fp"
-FILTER_LENGTH_SHORT = SHORT + "fl"
-SEED_SIZE_SHORT = SHORT + "ss"
+PROGRAM_DESCRIPTION = "This script filters signature candidates that match \
+        sufficiently to any target in an exclusion database. Any signatures \
+        that to do not align sufficiently to any exclusion target are written \
+        to the output file and are considered filtered signatures."
 
 # DEFAULTS
 
 FILTER_PERCENT_DEFAULT = 0.50
 FILTER_LENGTH_DEFAULT = 0.50
 SEED_SIZE_DEFAULT = 11
+
+# ARGUMENTS #
+
+LONG = "--"
+SHORT = "-"
+
+# REQUIRED ARGUMENTS #
+
+INCLUSION_DATABASE = "inclusion-database"
+INCLUSION_DATABASE_LONG = LONG + INCLUSION_DATABASE
+INCLUSION_DATABASE_SHORT = SHORT + "dbin"
+INCLUSION_DATABASE_HELP = "The file location of inclusion database. This must \
+    be in BLASTN database format."
+
+EXCLUSION_DATABASE = "exclusion-database"
+EXCLUSION_DATABASE_LONG = LONG + EXCLUSION_DATABASE
+EXCLUSION_DATABASE_SHORT = SHORT + "dbex"
+EXCLUSION_DATABASE_HELP = "The file location of exclusion database. This must \
+    be in BLASTN database format."
+
+INCLUSION = "inclusion"
+INCLUSION_LONG = LONG + INCLUSION
+INCLUSION_SHORT = SHORT + "i"
+INCLUSION_HELP = "The (probably multiple) FASTA file locations of the \
+    inclusion genomes. This parameters should not include directories."
+
+EXCLUSION = "exclusion"
+EXCLUSION_LONG = LONG + EXCLUSION
+EXCLUSION_SHORT = SHORT + "e"
+EXCLUSION_HELP = "The (probably multiple) FASTA file locations of the \
+    inclusion genomes. This parameters should not include directories."
+
+INPUT = "input"
+INPUT_LONG = LONG + INPUT
+INPUT_SHORT = SHORT + "r"
+INPUT_HELP = "The file location of the signature candidates to be filtered."
+
+FILTERED_OUTPUT = "filtered-output"
+FILTERED_OUTPUT_LONG = LONG + FILTERED_OUTPUT
+FILTERED_OUTPUT_SHORT = SHORT + "fo"
+FILTERED_OUTPUT_HELP = "The file location to write the filtered signature \
+    output."
+
+SORTED_OUTPUT = "sorted-output"
+SORTED_OUTPUT_LONG = LONG + SORTED_OUTPUT
+SORTED_OUTPUT_SHORT = SHORT + "so"
+SORTED_OUTPUT_HELP = "The file location to write the filtered and sorted \
+    signature output."
+
+# OPTIONAL ARGUMENTS #
+
+FILTER_PERCENT = "filter-percent"
+FILTER_PERCENT_LONG = LONG + FILTER_PERCENT
+FILTER_PERCENT_SHORT = LONG + "fp"
+FILTER_PERCENT_HELP = "The maximum percent identity of a candidate signature \
+    with an exclusion hit before discarding the signature. When both the \
+    filtered percent and filtered length limits are exceed, the signature is \
+    discarded."
+
+FILTER_LENGTH = "filter-length"
+FILTER_LENGTH_LONG = LONG + FILTER_LENGTH
+FILTER_LENGTH_SHORT = SHORT + "fl"
+FILTER_LENGTH_HELP = "The maximum shared fractional length of an exclusion \
+    target alignment with a candidate signature before discarding the \
+    signature. When both the filtered percent and filtered length limits are \
+    exceed, the signature is discarded."
+
+SEED_SIZE = "seed-size"
+SEED_SIZE_LONG = LONG + SEED_SIZE
+SEED_SIZE_SHORT = SHORT + "ss"
+SEED_SIZE_HELP = "The seed size used during alignment."
 
 """
 # =============================================================================
@@ -128,22 +165,39 @@ class FilterSignatures():
     """
     # =========================================================================
 
-    INIT
+    INITIALIZE
+    ----------
 
-    PURPOSE:
-        Constructs the FilterSignatures object.
 
-    INPUT:
-        [FILE LOCATION] [candidatesLocation] - The location of the candidate
-            signatures.
-        [FILE LOCATION] [filteredLocation] - The file location to write the
-            filtered signatures.
-        [FILE LOCATION] [sortedLocation] - The file location to write the
-            sorted signatures.
-        [1 <= INT] [totalInclusion] - The total number of inclusion targets.
-        [1 <= INT] [totalExclusion] - The total number of exclusion targets.
-        [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
-            for the signature to be considered a hit and used in scoring.
+    PURPOSE
+    -------
+
+    Constructs the FilterSignatures object. This object is meant to minimize
+    the number passed parameters in function calls by bundling the information
+    into an object. However, this might be inelegant in design.
+
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [candidatesLocation]
+        The file location of the candidate signatures in FASTA format.
+
+    [FILE LOCATION] [filteredLocation]
+        The file location to write the filtered signatures (in FASTA format).
+
+    [FILE LOCATION] [sortedLocation]
+        The file location to write the sorted signatures (in FASTA format).
+
+    [1 <= INT] [totalInclusion]
+        The total number of inclusion targets.
+
+    [1 <= INT] [totalExclusion]
+        The total number of exclusion targets.
+
+    [0 <= FLOAT 0 <= 1] [filterLength]
+        The minimum query alignment length for the signature to be considered
+        a hit and used in scoring.
 
     # =========================================================================
     """
@@ -171,21 +225,35 @@ class FilterSignatures():
     """
     # =========================================================================
 
-    UPDATE HIT OVERALL DICTIONARY
+    UPDATE THE "BEST HIT OVERALL" DICTIONARY
+    ----------------------------------------
 
-    PURPOSE:
-        The overall score dictionary will be updated with the passed hit. This
-        function is looking to keep the best hit for a query, regardless of the
-        subject (reference).
 
-    INPUT:
-        [HIT] [hit] - The database hit object associated with the hit.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    The overall score dictionary will be updated with the passed hit. This
+    function is looking to keep the best hit for a query, regardless of the
+    subject (reference).
 
-    POST:
-        The [self.exclusionOverallDictionary] dictionary will be updated.
+
+    INPUT
+    -----
+
+    [HIT] [hit]
+        The database hit object associated with the alignment hit.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The [self.exclusionOverallDictionary] dictionary will be updated.
 
     # =========================================================================
     """
@@ -205,20 +273,34 @@ class FilterSignatures():
     """
     # =========================================================================
 
-    UPDATE PAIR DICTIONARY
+    UPDATE THE "BEST PAIR HIT" DICTIONARY
+    -------------------------------------
 
-    PURPOSE:
-        The passed pair score dictionary will be updated with the passed hit.
-        This function is looking for the best hit for a (hit, reference) pair.
 
-    INPUT:
-        [HIT] [hit] - The hit object associated with the hit.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    The passed pair score dictionary will be updated with the passed hit. This
+    function is looking for the best hit for a (hit, reference) pair.
 
-    POST:
-        The passed dictionary object will be updated.
+
+    INPUT
+    -----
+
+    [HIT] [hit]
+        The hit object associated with the hit.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The passed dictionary object will be updated.
 
     # =========================================================================
     """
@@ -246,18 +328,27 @@ class FilterSignatures():
     # =========================================================================
 
     UPDATE EXCLUSION SCORES
+    -----------------------
 
-    PURPOSE:
-        Updates the exclusion score and negative component of the overall
-        score.
 
-    RETURN:
-        [NONE]
+    PURPOSE
+    -------
 
-    POST:
-        The exclusion scores and negative component of the overall scores of
-        [self.overallScore] and [self.exclusionScore] will be updated using the
-        [self.exclusionPairDictionary].
+    Updates the exclusion score and negative component of the overall score.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The exclusion scores and negative component of the overall scores of
+    [self.overallScore] and [self.exclusionScore] will be updated using the
+    [self.exclusionPairDictionary].
 
     # =========================================================================
     """
@@ -291,18 +382,27 @@ class FilterSignatures():
     # =========================================================================
 
     UPDATE INCLUSION SCORES
+    -----------------------
 
-    PURPOSE:
-        Updates the inclusion score and positive component of the overall
-        score.
 
-    RETURN:
-        [NONE]
+    PURPOSE
+    -------
 
-    POST:
-        The exclusion scores and negative component of the overall scores of
-        [self.overallScore] and [self.inclusionScore] will be updated using the
-        [self.inclusionPairDictionary].
+    Updates the inclusion score and positive component of the overall score.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The exclusion scores and negative component of the overall scores of
+    [self.overallScore] and [self.inclusionScore] will be updated using the
+    [self.inclusionPairDictionary].
 
     # =========================================================================
     """
@@ -336,17 +436,27 @@ class FilterSignatures():
     # =========================================================================
 
     REPORT FILTERED CANDIDATES
+    --------------------------
 
-    PURPOSE:
-        Reports all of the filtered candidate signatures to output. These are
-        the candidate signatures that were are not immediately removed by
-        filtering against the exclusion database.
 
-    RETURN:
-        [NONE]
+    PURPOSE
+    -------
 
-    POST:
-        The filtered candidates will be written to the [self.filtedLocation].
+    Reports all of the filtered candidate signatures to output. These are the
+    candidate signatures that were are not immediately removed by filtering
+    against the exclusion database.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The filtered candidates will be written to the [self.filtedLocation].
 
     # =========================================================================
     """
@@ -378,21 +488,34 @@ class FilterSignatures():
     # =========================================================================
 
     REPORT SORTED
+    -------------
 
-    PURPOSE:
-        Reports all of the filtered signatures in sorted order to output. This
-        function does not sort the signatures. The sorted order is informed by
-        the [sortedSignatureIDs] parameter.
 
-    INPUT:
-        [(SIGNATURE ID) LIST] [sortedSignatureIDs] - An iterable list, in
-            sorted order, of signature IDs.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Reports all of the filtered signatures in sorted order to output. This
+    function does not sort the signatures. The sorted order is informed by the
+    [sortedSignatureIDs] parameter.
 
-    POST:
-        The sorted signatures will be written to the [self.filteredLocation].
+
+    INPUT
+    -----
+
+    [(SIGNATURE ID) LIST] [sortedSignatureIDs]
+        An iterable list, in sorted order, of signature IDs.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The sorted signatures will be written to the [self.filteredLocation].
 
     # =========================================================================
     """
@@ -434,21 +557,33 @@ class FilterSignatures():
     # =========================================================================
 
     REPORT SIGNATURES
+    -----------------
 
-    PURPOSE:
-        Reports the candidate signatures which are not found in the list of
-        filterable signatures.
 
-    INPUT:
-        [FILE LOCATION] [exclusionQueryLocation] - The file location of the
-            signatures to filter.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Reports the candidate signatures which are not found in the list of
+    filterable signatures.
 
-    POST:
-        A file of filterted signatures will be produced at
-        [self.filteredLocation].
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [exclusionQueryLocation]
+        The file location of the signatures to filter.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    A file of filterted signatures will be produced at [self.filteredLocation].
 
     # =========================================================================
     """
@@ -473,20 +608,34 @@ class FilterSignatures():
     # =========================================================================
 
     SORT
+    ----
 
-    PURPOSE:
-        Sorts the filtered signatures according to their signature score.
 
-    INPUT:
-        [FILE LOCATION] [inclusionQueryLocation] - The file location of the
-            filtered signatures against the inclusion targets.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Sorts the filtered signatures according to their signature score.
 
-    POST:
-        The [self.filteredLocation] signatures will be written to the
-        [self.sortedLocation] in score-descending order.
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [inclusionQueryLocation]
+        The file location of the filtered signatures against the inclusion
+        targets.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The [self.filteredLocation] signatures will be written to the
+    [self.sortedLocation] in score-descending order.
 
     # =========================================================================
     """
@@ -515,36 +664,62 @@ class FilterSignatures():
 # =============================================================================
 
 FILTER SIGNATURES
+-----------------
 
-PURPOSE:
-    Reports the filtered signatures, both as a list of candidates and in sorted
-    order.
 
-INPUT:
-    [FILE LOCATION] [inclusionDatabaseLocation] - The file location of the
-        inclusion database.
-    [FILE LOCATION] [exclusionDatabaseLocation] - The file location of the
-        exclusion database.
-    [1 <= INT] [totalInclusion] - The total number of inclusion targets.
-    [1 <= INT] [totalExclusion] - The total number of exclusion targets.
-    [FILE LOCATION] [candidatesLocation] - The location of the candidate
-        signatures.
-    [FILE LOCATION] [filteredOutputLocation] - The file location to write the
-        filtered signatures.
-    [FILE LOCATION] [sortedOutputLocation] - The file location to write the
-        sorted signatures.
-    [0 <= FLOAT 0 <= 1] [filterLength] - The minimum query alignment length
-        for the signature to be considered a hit and used in scoring.
-    [0 <= FLOAT 0 <= 1] [filterPercent] - The maximum percent identity of an
-        exclusion hit with a candidate.
-    [4 <= INT] [seedSize] - The seed size used in alignments.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Reports the filtered signatures, both as a list of candidates and in sorted
+order.
 
-POST:
-    Filtered signatures will be written to [filteredOutputLocation] and
-    sorted signatures will be written to [sortedOutputLocation].
+
+INPUT
+-----
+
+[FILE LOCATION] [inclusionDatabaseLocation]
+    The file location of the inclusion database.
+
+[FILE LOCATION] [exclusionDatabaseLocation]
+    The file location of the exclusion database.
+
+[1 <= INT] [totalInclusion]
+    The total number of inclusion targets.
+
+[1 <= INT] [totalExclusion]
+    The total number of exclusion targets.
+
+[FILE LOCATION] [candidatesLocation]
+    The location of the candidate signatures.
+
+[FILE LOCATION] [filteredOutputLocation]
+    The file location to write the filtered signatures.
+
+[FILE LOCATION] [sortedOutputLocation]
+    The file location to write the sorted signatures.
+
+[0 <= FLOAT 0 <= 1] [filterLength]
+    The minimum query alignment length for the signature to be considered a hit
+    and used in scoring.
+
+[0 <= FLOAT 0 <= 1] [filterPercent]
+    The maximum percent identity of an exclusion hit with a candidate.
+
+[4 <= INT] [seedSize]
+    The seed size used in alignments.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+Filtered signatures will be written to [filteredOutputLocation] and sorted
+signatures will be written to [sortedOutputLocation].
 
 # =============================================================================
 """
@@ -619,80 +794,76 @@ def main():
 
     # --- Parser ---
     parser = argparse.ArgumentParser(
-        description='Filters signature candidates which match sufficiently to \
-        any target in an exclusion database. Any signatures which to do not \
-        align sufficiently to any exclusion target are written to file and \
-        are considered filtered signatures.')
+        description=PROGRAM_DESCRIPTION)
 
     parser.add_argument(
         INCLUSION_DATABASE_SHORT,
         INCLUSION_DATABASE_LONG,
         dest=INCLUSION_DATABASE,
-        help="inclusion database location",
+        help=INCLUSION_DATABASE_HELP,
         type=str, required=True)
 
     parser.add_argument(
         EXCLUSION_DATABASE_SHORT,
         EXCLUSION_DATABASE_LONG,
         dest=EXCLUSION_DATABASE,
-        help="exclusion database location",
+        help=EXCLUSION_DATABASE_HELP,
         type=str, required=True)
 
     parser.add_argument(
         INCLUSION_SHORT,
         INCLUSION_LONG,
         dest=INCLUSION,
-        help="inclusion genome(s)",
+        help=INCLUSION_HELP,
         type=str, required=True, nargs='+')
 
     parser.add_argument(
         EXCLUSION_SHORT,
         EXCLUSION_LONG,
         dest=EXCLUSION,
-        help="exclusion genome(s)",
+        help=EXCLUSION_HELP,
         type=str, required=True, nargs='+')
 
     parser.add_argument(
         INPUT_SHORT,
         INPUT_LONG,
         dest=INPUT,
-        help="candidates location",
+        help=INPUT_HELP,
         type=str, required=True)
 
     parser.add_argument(
         FILTERED_OUTPUT_SHORT,
         FILTERED_OUTPUT_LONG,
         dest=FILTERED_OUTPUT,
-        help="filtered output location",
+        help=FILTERED_OUTPUT_HELP,
         type=str, required=True)
 
     parser.add_argument(
         SORTED_OUTPUT_SHORT,
         SORTED_OUTPUT_LONG,
         dest=SORTED_OUTPUT,
-        help="sorted output location",
+        help=SORTED_OUTPUT_HELP,
         type=str, required=True)
 
     parser.add_argument(
         FILTER_PERCENT_SHORT,
         FILTER_PERCENT_LONG,
         dest=FILTER_PERCENT,
-        help="the maximum percent identity of an exclusion hit",
+        help=FILTER_PERCENT_HELP,
         type=float, required=False)
 
     parser.add_argument(
         FILTER_LENGTH_SHORT,
         FILTER_LENGTH_LONG,
         dest=FILTER_LENGTH,
-        help="the maximum shared fractional length of an exclusion hit \
-            with a candidate",
+        help=FILTER_LENGTH_HELP,
         type=float, required=False)
 
     parser.add_argument(
         SEED_SIZE_SHORT,
         SEED_SIZE_LONG,
         dest=SEED_SIZE,
-        help="the seed size used during alignment",
+        help=SEED_SIZE_HELP,
         type=int, required=False)
 
     args = parser.parse_args()
