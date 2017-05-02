@@ -89,7 +89,7 @@ class Hit():
         The line-by-line output of a very specific BLAST query. The command
         line parameter that produces the necessary input in BLAST 2.2.28+ is
         as follows:
-        
+
         "-outfmt 6 qseqid qlen sseqid length pident score"
 
         Namely, this function expects the following items to be provided on

@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -49,6 +49,13 @@ GLOBALS
 # =============================================================================
 """
 
+PROGRAM_DESCRIPTION = "Neptune identifies signatures using an exact k-mer \
+    matching strategy. Neptune locates sequence that is sufficiently present \
+    in many inclusion targets and sufficiently absent from exclusion targets."
+
+PROGRAM_USAGE = "%(prog)s -i INCLUSION [INCLUSION ...] -e EXCLUSION \n\t \
+    [EXCLUSION ...] -o OUTPUT"
+
 # FILE NAMES #
 
 KMERS = "kmers"
@@ -82,12 +89,16 @@ SHORT = "-"
 OUTPUT = "output"
 OUTPUT_LONG = LONG + OUTPUT
 OUTPUT_SHORT = SHORT + "o"
+OUTPUT_HELP = "The directory to place all output."
 
 # OPTIONAL ARGUMENTS #
 
 # DRMAA mode switch
 DRMAA = "drmaa"
 DRMAA_LONG = LONG + DRMAA
+DRMAA_HELP = "Whether or not to run Neptune in DRMAA-mode and attempt to \
+    schedule jobs through DRMAA. This will require setting up DRMAA in \
+    advance."
 
 # Version number
 VERSION = "version"
@@ -98,57 +109,85 @@ VERSION_SHORT = SHORT + "V"
 PARALLELIZATION = "parallelization"
 PARALLELIZATION_LONG = LONG + PARALLELIZATION
 PARALLELIZATION_SHORT = SHORT + "p"
+PARALLELIZATION_HELP = "The number of processes to run simultaneously. Note \
+    that this is only applicable when running Neptune in non-DRMAA mode \
+    (default)."
 
 # DRMAA default specification
 DEFAULT_SPECIFICATION = "default-specification"
 DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
+DEFAULT_SPECIFICATION_HELP = "The default DRMAA parameters."
 
 # DRMAA specification for CountKMers.py
 COUNT_SPECIFICATION = "count-specification"
 COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
+COUNT_SPECIFICATION_HELP = "The DRMAA parameters specific to k-mer counting."
 
 # DRMAA specification for AggregateKMers.py
 AGGREGATE_SPECIFICATION = "aggregate-specification"
 AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
+AGGREGATE_SPECIFICATION_HELP = "The DRMAA specific parameters specific to \
+    k-mer aggregation."
 
 # DRMAA specification for ExtractSignatures.py
 EXTRACT_SPECIFICATION = "extract-specification"
 EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
+EXTRACT_SPECIFICATION_HELP = "The DRMAA parameters specific to candidate \
+    signature extraction."
 
 # DRMAA specification for Database.py
 DATABASE_SPECIFICATION = "database-specification"
 DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
+DATABASE_SPECIFICATION_HELP = "The DRMAA parameters specific to database \
+    construction and querying"
 
 # DRMAA specification for FilterSignatures.py
 FILTER_SPECIFICATION = "filter-specification"
 FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
+FILTER_SPECIFICATION_HELP = "The DRMAA parameters specific to candidate \
+    signature filtering."
 
 # DRMAA specification for ConsolidateSignatures.py
 CONSOLIDATE_SPECIFICATION = "consolidate-specification"
 CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
+CONSOLIDATE_SPECIFICATION_HELP = "The DRMAA parameters specific to filtered \
+    signature consolidation."
 
 """
 # =============================================================================
 
 COUNT K-MERS
+------------
 
-PURPOSE:
-    This function prepares and runs a CountKMers job for every inclusion
-    and exclusion file. These jobs are run using the DRMAA framework.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
+PURPOSE
+-------
 
-RETURN:
-    [((FILE LOCATION) ITERATOR, (FILE LOCATION) ITERATOR) TUPLE]
-    [(inclusionKMerLocations, exclusionKMerLocations)] -
-        The returned tuple will contain two lists of the locations of the
-        written inclusion and exclusion k-mers.
+This function prepares and runs a CountKMers.py job for every inclusion and
+exclusion file. These jobs are run using the DRMAA framework.
 
-POST:
-    A DRMAA job is submitted for each inclusion and exclusion file. The
-    execution will be halted until all the jobs are completed.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+
+RETURN
+------
+
+[((FILE LOCATION) ITERATOR, (FILE LOCATION) ITERATOR) TUPLE]
+[(inclusionKMerLocations, exclusionKMerLocations)]
+    The returned tuple will contain two lists of the locations of the
+    written inclusion and exclusion k-mers.
+
+
+POST
+----
+
+A DRMAA job is submitted for each inclusion and exclusion file. The execution
+will be halted until all the jobs are completed.
 
 # =============================================================================
 """
@@ -205,26 +244,40 @@ def countKMers(execution):
 # =============================================================================
 
 AGGREGATE K-MERS
+----------------
 
-PURPOSE:
-    This function prepares and runs a AggregateKMers.py job which, in turn,
-    aggregates multuple prepared k-mer files into a single k-mers file.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
-        k-mer file output locations.
-    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
-        k-mer file output locations.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+This function prepares and runs a AggregateKMers.py job which, in turn,
+aggregates multuple prepared k-mer files into a single k-mers file.
 
-POST:
-    A DRMAA job is submitted that aggregates the prepared inclusion and
-    exclusion k-mers. The execution of the script will be halted until the
-    job has finished.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+[(FILE LOCATION) ITERATOR] [inclusionKMerLocations]
+    A list of inclusion k-mer file output locations.
+
+[(FILE LOCATION) ITERATOR] [exclusionKMerLocations]
+    A list of exclusion k-mer file output locations.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+A DRMAA job is submitted that aggregates the prepared inclusion and exclusion
+k-mers. The execution of the script will be halted until the job has finished.
 
 # =============================================================================
 """
@@ -248,24 +301,40 @@ def aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations):
 # =============================================================================
 
 AGGREGATE MULTIPLE FILES
+------------------------
 
-PURPOSE:
-    Aggregates k-mer count files produced from genomes, such that
-    there was multiple k-mer files produced per genome.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
-        k-mer file output locations.
-    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
-        k-mer file output locations.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Aggregates k-mer count files produced from genomes, when there were multiple
+k-mer files produced per genome.
 
-POST:
-    The k-mer count files are aggregated into a single k-mer count file.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+[(FILE LOCATION) ITERATOR] [inclusionKMerLocations]
+    A list of inclusion k-mer file output locations.
+
+[(FILE LOCATION) ITERATOR] [exclusionKMerLocations]
+    A list of exclusion k-mer file output locations.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The k-mer count files are aggregated into a single k-mer count file. The
+execution of the script will be halted until the job has finished.
 
 # =============================================================================
 """
@@ -303,24 +372,40 @@ def aggregateMultipleFiles(execution, inclusionLocations, exclusionLocations):
 # =============================================================================
 
 AGGREGATE SINGLE FILES
+----------------------
 
-PURPOSE:
-    Aggregates k-mer count files produced from genomes, such that
-    there was only one k-mer file produced per genome.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [(FILE LOCATION) ITERATOR] [inclusionKMerLocations] - A list of inclusion
-        k-mer file output locations.
-    [(FILE LOCATION) ITERATOR] [exclusionKMerLocations] - A list of exclusion
-        k-mer file output locations.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Aggregates k-mer count files produced from genomes, when there was only one
+k-mer file produced per genome.
 
-POST:
-    The k-mer count files are aggregated into a single k-mer count file.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+[(FILE LOCATION) ITERATOR] [inclusionKMerLocations]
+    A list of inclusion k-mer file output locations.
+
+[(FILE LOCATION) ITERATOR] [exclusionKMerLocations]
+    A list of exclusion k-mer file output locations.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The k-mer count files are aggregated into a single k-mer count file. The
+execution of the script will be halted until the job is finished.
 
 # =============================================================================
 """
@@ -338,19 +423,38 @@ def aggregateSingleFiles(
 # =============================================================================
 
 EXTRACT SIGNATURES
+------------------
 
-PURPOSE:
-    Prepares and runs an extract k-mers job using DRMAA. This, in turn,
-    extracts signatures from a reference genome.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-POST:
-    A DRMAA job is submitted that extracts signatures from a reference genome
-    using information from aggregated k-mer information from inclusion and
-    exclusion genomes. The execution of the script will be halted until the
-    job has finished.
+PURPOSE
+-------
+
+Prepares and runs an extract k-mers job using DRMAA. This, in turn, extracts
+signatures from a reference genome.
+
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+
+RETURN
+------
+
+[(FILE LOCATION) ITERATOR] [outputLocations]
+    The file locations of the extracted signatures, corresponding to either
+    the references specified by the user, or, if none are specified, all the
+    inclusion genomes.
+
+POST
+----
+
+A DRMAA job is submitted that extracts signatures from a reference genome
+using information from aggregated k-mer information from inclusion and
+exclusion genomes. The execution of the script will be halted until the job
+has finished.
 
 # =============================================================================
 """
@@ -390,21 +494,36 @@ def extractSignatures(execution):
 # =============================================================================
 
 FILTER SIGNATURES
+-----------------
 
-PURPOSE:
-    Filters the candidate signatures using the exclusion genomes.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [(FILE LOCATION) ITERATOR] [candidateLocations] - The location of candidate
-        signatures.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Filters the candidate signatures using the exclusion genomes.
 
-POST:
-    A file of filtered candidates and sorted candidates will be produced.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+[(FILE LOCATION) ITERATOR] [candidateLocations]
+    The location of candidate signatures.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+A file of filtered candidates and sorted candidates will be produced. The
+execution of the script will be halted until the job has finished.
 
 # =============================================================================
 """
@@ -478,23 +597,37 @@ def filterSignatures(execution, candidateLocations):
 # =============================================================================
 
 CONSOLIDATE SIGNATURES
+----------------------
 
-PURPOSE:
-    Consolidates signatures from several Neptune signature files into a single
-    representative Neptune signature file, determined by the signature score
-    and sequence similarity of all the contributing signatures.
 
-INPUT:
-    [EXECUTION] [execution] - The Execution object containing all of the
-        current execution's parameters.
-    [(FILE LOCATION) LIST] [sortedLocations] - The file locations of candidate
-        signatures.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Consolidates signatures from several Neptune signature files into a single
+representative Neptune signature file, determined by the signature score
+and sequence similarity of all the contributing signatures.
 
-POST:
-    The produced signatures will be consolidated into a single signature file.
+
+INPUT
+-----
+
+[EXECUTION] [execution]
+    The Execution object containing all of the current execution's parameters.
+
+[(FILE LOCATION) LIST] [sortedLocations]
+    The file locations of candidate signatures.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The produced signatures will be consolidated into a single signature file.
 
 # =============================================================================
 """
@@ -641,213 +774,199 @@ MAIN
 """
 def main():
 
-    # --- PARSER ---
+    # --- PARSER --- #
     parser = argparse.ArgumentParser(
-        description='Neptune identifies signatures using an exact k-mer \
-        matching strategy. Neptune locates sequence that is sufficiently \
-        present in many inclusion targets and sufficiently absent from \
-        exclusion targets.',
+        description=PROGRAM_DESCRIPTION,
+        usage=PROGRAM_USAGE)
 
-        usage="%(prog)s -i INCLUSION [INCLUSION ...] -e EXCLUSION \n\t" +
-        "[EXCLUSION ...] -o OUTPUT")
-
-    # --- VERSION ---
+    # --- VERSION --- #
     parser.add_argument(
         VERSION_SHORT,
         VERSION_LONG,
         action='version',
         version='%(prog)s ' + str(__version__))
 
-    # --- REQUIRED ---
+    # --- REQUIRED --- #
     required = parser.add_argument_group("REQUIRED")
 
     required.add_argument(
         ExtractSignatures.INCLUSION_SHORT,
         ExtractSignatures.INCLUSION_LONG,
         dest=ExtractSignatures.INCLUSION,
-        help="FASTA inclusion genome(s) to investigate for signatures",
+        help=ExtractSignatures.INCLUSION_HELP,
         type=str, required=True, nargs='+')
 
     required.add_argument(
         ExtractSignatures.EXCLUSION_SHORT,
         ExtractSignatures.EXCLUSION_LONG,
         dest=ExtractSignatures.EXCLUSION,
-        help="FASTA exclusion genome(s) that will be a background for the \
-        inclusion genome(s)",
+        help=ExtractSignatures.EXCLUSION_HELP,
         type=str, required=True, nargs='+')
 
     required.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
-        help="output directory",
+        help=OUTPUT_HELP,
         type=str, required=True)
 
-    # --- KMERS ---
+    # --- KMERS --- #
     kmers = parser.add_argument_group("KMERS")
 
     kmers.add_argument(
         CountKMers.KMER_SHORT,
         CountKMers.KMER_LONG,
         dest=CountKMers.KMER,
-        help="k-mer size",
+        help=CountKMers.KMER_HELP,
         type=int, required=False)
 
     kmers.add_argument(
         CountKMers.ORGANIZATION_LONG,
         dest=CountKMers.ORGANIZATION,
-        help="number of base positions used in k-mer organization; \
-        affects the the speed of k-mer aggregation",
+        help=CountKMers.ORGANIZATION_HELP,
         type=int, default=3)
 
-    # --- FILTERING ---
+    # --- FILTERING --- #
     filtering = parser.add_argument_group("FILTERING")
 
     filtering.add_argument(
         FilterSignatures.FILTER_PERCENT_LONG,
         dest=FilterSignatures.FILTER_PERCENT,
-        help="the maximum percent identity of an exclusion hit; removes \
-        candidates that have exclusion hit matches higher than this value",
+        help=FilterSignatures.FILTER_PERCENT_HELP,
         type=float, required=False)
 
     filtering.add_argument(
         FilterSignatures.FILTER_LENGTH_LONG,
         dest=FilterSignatures.FILTER_LENGTH,
-        help="the maximum shared fractional length of an exclusion hit \
-            with a candidate; remove candidates that have exclusion hit \
-            matches longer than this value",
+        help=FilterSignatures.FILTER_LENGTH_HELP,
         type=float, required=False)
 
     filtering.add_argument(
         FilterSignatures.SEED_SIZE_LONG,
         dest=FilterSignatures.SEED_SIZE,
-        help="the seed size used during alignment",
+        help=FilterSignatures.SEED_SIZE_HELP,
         type=int, required=False)
 
-    # --- EXTRACTION ---
+    # --- EXTRACTION --- #
     extraction = parser.add_argument_group("EXTRACTION")
 
     extraction.add_argument(
         ExtractSignatures.REFERENCE_SHORT,
         ExtractSignatures.REFERENCE_LONG,
         dest=ExtractSignatures.REFERENCE,
-        help="FASTA reference(s) from which to extract signatures",
+        help=ExtractSignatures.REFERENCE_HELP,
         type=str, required=False, nargs='+')
 
     extraction.add_argument(
         ExtractSignatures.REFERENCE_SIZE_LONG,
         dest=ExtractSignatures.REFERENCE_SIZE,
-        help="estimated reference size",
+        help=ExtractSignatures.REFERENCE_SIZE_HELP,
         type=int, required=False)
 
     extraction.add_argument(
         ExtractSignatures.RATE_LONG,
         dest=ExtractSignatures.RATE,
-        help="probability of homologous bases not matching",
+        help=ExtractSignatures.RATE_HELP,
         type=float, required=False)
 
     extraction.add_argument(
         ExtractSignatures.INHITS_LONG,
         dest=ExtractSignatures.INHITS,
-        help="minimum inclusion hits to start or continue building candidate \
-        a signature",
+        help=ExtractSignatures.INHITS_HELP,
         type=int, required=False)
 
     extraction.add_argument(
         ExtractSignatures.EXHITS_LONG,
         dest=ExtractSignatures.EXHITS,
-        help="minimum exclusion hits to terminate a candidate signature",
+        help=ExtractSignatures.EXHITS_HELP,
         type=int, required=False)
 
     extraction.add_argument(
         ExtractSignatures.GAP_LONG,
         dest=ExtractSignatures.GAP,
-        help="maximum number of consecutive k-mers in a candidate \
-            without an inclusion hit before terminating the candidate",
+        help=ExtractSignatures.GAP_HELP,
         type=int, required=False)
 
     extraction.add_argument(
         ExtractSignatures.SIZE_LONG,
         dest=ExtractSignatures.SIZE,
-        help="minimum candidate signature size",
+        help=ExtractSignatures.SIZE_HELP,
         type=int, required=False)
 
     extraction.add_argument(
         ExtractSignatures.GC_LONG,
         dest=ExtractSignatures.GC_CONTENT,
-        help="the GC-content of the environment",
+        help=ExtractSignatures.GC_HELP,
         type=float, required=False)
 
     extraction.add_argument(
         ExtractSignatures.CONFIDENCE_LONG,
         dest=ExtractSignatures.CONFIDENCE,
-        help="statistical confidence level used when extending k-mer gaps, \
-        determining minimum inclusion hit observations",
+        help=ExtractSignatures.CONFIDENCE_HELP,
         type=float, required=False)
 
-    # --- PARALLELIZATION ---
+    # --- PARALLELIZATION --- #
     parallelization = parser.add_argument_group("PARALLELIZATION")
 
     parallelization.add_argument(
         PARALLELIZATION_SHORT,
         PARALLELIZATION_LONG,
         dest=PARALLELIZATION,
-        help="the maximum number of parallel worker processes to create \
-            (non-DRMAA mode)",
+        help=PARALLELIZATION_HELP,
         type=int, default=8)
 
-    # --- DRMAA ---
+    # --- DRMAA --- #
     drmaa = parser.add_argument_group("DRMAA")
 
     drmaa.add_argument(
         DRMAA_LONG,
         dest=DRMAA,
-        help="runs Neptune in DRMAA mode",
+        help=DRMAA_HELP,
         action='store_true')
 
     drmaa.add_argument(
         DEFAULT_SPECIFICATION_LONG,
         dest=DEFAULT_SPECIFICATION,
-        help="DRM-specific parameters for all jobs",
+        help=DEFAULT_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         COUNT_SPECIFICATION_LONG,
         dest=COUNT_SPECIFICATION,
-        help="DRM-specific parameters for k-mer counting",
+        help=COUNT_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         AGGREGATE_SPECIFICATION_LONG,
         dest=AGGREGATE_SPECIFICATION,
-        help="DRM-specific parameters for k-mer aggregation",
+        help=AGGREGATE_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         EXTRACT_SPECIFICATION_LONG,
         dest=EXTRACT_SPECIFICATION,
-        help="DRM-specific parameters for signature extraction",
+        help=EXTRACT_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         DATABASE_SPECIFICATION_LONG,
         dest=DATABASE_SPECIFICATION,
-        help="DRM-specific parameters for database construction",
+        help=DATABASE_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         FILTER_SPECIFICATION_LONG,
         dest=FILTER_SPECIFICATION,
-        help="DRM-specific parameters for signature filtering",
+        help=FILTER_SPECIFICATION_HELP,
         type=str, required=False)
 
     drmaa.add_argument(
         CONSOLIDATE_SPECIFICATION_LONG,
         dest=CONSOLIDATE_SPECIFICATION,
-        help="DRM-specific parameters for signature filtering",
+        help=CONSOLIDATE_SPECIFICATION_HELP,
         type=str, required=False)
 
-    # --- ArgParse Work-Around ---
+    # --- ArgParse Work-Around --- #
     for i in range(len(sys.argv)):
         if ((sys.argv[i] == DEFAULT_SPECIFICATION_LONG or
                 sys.argv[i] == COUNT_SPECIFICATION_LONG or

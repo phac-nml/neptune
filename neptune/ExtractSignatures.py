@@ -38,7 +38,8 @@ PURPOSE
 
 This script extracts candidate signatures from one or more inclusion files
 within the context of one or more exclusion files. The signatures are extracted
-from a reference using k-mers generated from all inclusion and exclusion inputs.
+from a reference using k-mers generated from all inclusion and exclusion
+inputs.
 
 
 INPUT

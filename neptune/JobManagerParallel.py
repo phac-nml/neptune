@@ -175,7 +175,7 @@ class JobManagerParallel(JobManager.JobManager):
     def synchronize(self, jobs):
 
         for job in jobs:
-            job.get() # get() over wait() to propagate excetions upwards 
+            job.get()  # get() over wait() to propagate excetions upwards
 
     """
     # =========================================================================
@@ -263,7 +263,7 @@ class JobManagerParallel(JobManager.JobManager):
         CountKMers.count(...)
         CountKMers.writeMultipleFiles(...)
         Neptune.aggregateMultipleFiles(...)
-        
+
 
     RETURN
     ------

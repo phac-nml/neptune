@@ -563,7 +563,7 @@ class FilterSignatures():
     PURPOSE
     -------
 
-    Reports the candidate signatures which are not found in the list of 
+    Reports the candidate signatures which are not found in the list of
     filterable signatures.
 
 

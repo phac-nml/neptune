@@ -84,7 +84,7 @@ GLOBALS
 PROGRAM_DESCRIPTION = "Counts k-mers in a FASTA or multi FASTA file and \
     writes them to either one or multiple files. Only the lexicographically \
     smaller of a k-mer and its reverse is reported. The k-mers are reported \
-    in sorted order.'
+    in sorted order."
 
 # DEFAULTS
 
