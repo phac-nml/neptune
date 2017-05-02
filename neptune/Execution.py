@@ -361,6 +361,11 @@ class Execution():
                     sumGC += line.count('G') + line.count('C')
                     sumAT += line.count('A') + line.count('T')
 
+            if (sumGC + sumAT) == 0:
+                raise RuntimeError(
+                    "There are no A, C, G, or T characters in file: " +
+                    str(inclusionLocation) + "\n")
+
             gcContent = float(sumGC) / float(sumGC + sumAT)
 
             # SIZE
@@ -398,7 +403,7 @@ class Execution():
                 return
 
         # No suitable k estimated.
-        raise RuntimeError("ERROR: No suitable value for k determined.\n")
+        raise RuntimeError("No suitable value for k determined.\n")
 
     """
     # =========================================================================
