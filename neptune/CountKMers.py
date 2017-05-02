@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -81,61 +81,103 @@ GLOBALS
 # =============================================================================
 """
 
-# NAMES
-INPUT = "input"
-OUTPUT = "output"
-KMER = "kmer"
-ORGANIZATION = "organization"
-
-# ARGUMENTS
-LONG = "--"
-
-INPUT_LONG = LONG + INPUT
-OUTPUT_LONG = LONG + OUTPUT
-KMER_LONG = LONG + KMER
-ORGANIZATION_LONG = LONG + ORGANIZATION
-
-SHORT = "-"
-
-INPUT_SHORT = SHORT + "i"
-OUTPUT_SHORT = SHORT + "o"
-KMER_SHORT = SHORT + "k"
+PROGRAM_DESCRIPTION = "Counts k-mers in a FASTA or multi FASTA file and \
+    writes them to either one or multiple files. Only the lexicographically \
+    smaller of a k-mer and its reverse is reported. The k-mers are reported \
+    in sorted order."
 
 # DEFAULTS
 
 ORGANIZATION_DEFAULT = 0
 
+# ARGUMENTS
+
+LONG = "--"
+SHORT = "-"
+
+# REQUIRED ARGUMENTS #
+
+# Input
+INPUT = "input"
+INPUT_LONG = LONG + INPUT
+INPUT_SHORT = SHORT + "i"
+INPUT_HELP = "The file location of a FASTA file from which to count k-mers."
+
+# Output
+OUTPUT = "output"
+OUTPUT_LONG = LONG + OUTPUT
+OUTPUT_SHORT = SHORT + "o"
+OUTPUT_HELP = "The file location to write the k-mers."
+
+# k-mer
+KMER = "kmer"
+KMER_LONG = LONG + KMER
+KMER_SHORT = SHORT + "k"
+KMER_HELP = "The size of the k-mers."
+
+# OPTIONAL ARGUMENTS #
+
+# Organization
+ORGANIZATION = "organization"
+ORGANIZATION_LONG = LONG + ORGANIZATION
+ORGANIZATION_HELP = "The degree of k-mer organization in the output files.\
+    This exploits the four-character alphabet of nucleotides to produce \
+    several k-mer output files, with all k-mers in a file beginning with the \
+    same short sequence of nucleotides. This parameter determines the number \
+    of nucleotides to use and will produce 4^X output files, where X is the \
+    number of nucleotides specified by this parameter. The number of output \
+    files directly corresponds to the amount of parallelization in the k-mer \
+    aggregation process."
+
 """
 # =============================================================================
 
 WRITE MULTIPLE FILES
+--------------------
 
-PURPOSE:
-    Writes the k-mers to several output files. The number of output files is
-    determined by the degree of organization.
 
-    The output file names and locations are determined according to the
-    provided base name and the degree of organization.
+PURPOSE
+-------
 
-INPUT:
-    [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to several files.
-    [STRING] [outputLocation] - The base file path to write the output files.
-    [INT >= 0] [organization] - The degree of organization.
-        This will produce 4^[organization] output files.
+Writes the k-mers to several output files. The number of output files is
+determined by the degree of organization.
 
-RETURN:
-    [NONE]
+The output file names and locations are determined according to the provided
+base name and the degree of organization.
 
-POST:
-    There will be several output files written. The number of output files
-    will be 4^[organization] and they will be named according to the
-    [outputLocation] parameter.
 
-    These files will be appended with a sequence tag, determined automatically
-    based on the degree of [organization].
+INPUT
+-----
 
-    There will additionally be a file for all sequences which begin with
-    special characters.
+[(STRING, INT) ITERABLE] [kmers]
+    The k-mers to write to several files.
+
+[STRING] [outputLocation]
+    The base file path to write the output files.
+
+[INT >= 0] [organization]
+    The degree of organization. This will produce 4^[organization] output
+    files.
+
+
+RETURN
+------
+
+[NONE]
+
+POST
+----
+
+There will be several output files written. The number of output files will be
+4^[organization] and they will be named according to the [outputLocation]
+parameter.
+
+These files will be appended with a sequence tag, determined automatically
+based on the degree of [organization]. This sequence tag reveals which
+nucleotides must match in the initial sequence of all k-mers in the file.
+
+There will additionally be a file for all sequences which begin with special
+characters (e.g. N).
 
 # =============================================================================
 """
@@ -176,20 +218,36 @@ def writeMultipleFiles(kmers, outputLocation, organization):
 # =============================================================================
 
 WRITE SINGLE FILE
+-----------------
 
-PURPOSE:
-    Writes the passed k-mers to the output location.
 
-INPUT:
-    [(STRING, INT) ITERABLE] [kmers] - The k-mers to write to files.
-    [STRING] [outputFile] - A writable file-like object to write output.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Writes the passed k-mers to the output location.
 
-POST:
-    The k-mers will written to the [outputFile] in the order they are
-    iterated in their data structure.
+
+INPUT
+-----
+
+[(STRING, INT) ITERABLE] [kmers]
+    The k-mers to write to files.
+
+[STRING] [outputFile]
+    A writable file-like object to write output.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The k-mers will written to the [outputFile] in the order they are iterated in
+their [kmers] data structure.
 
 # =============================================================================
 """
@@ -204,22 +262,43 @@ def writeSingleFile(kmers, outputFile):
 # =============================================================================
 
 COUNT
+-----
 
-PURPOSE:
-    Counts the k-mers in a file and outputs the k-mer counts.
 
-INPUT:
-    [FILE LOCATION] [inputLocation] - The location of the input.
-    [FILE LOCATION] [outputLocation] - The output location.
-    [INT >= 0] [k] - The k-mer size.
-    [INT >= 0] [organization] - The degree of organization.
-        This is responsible for the number of output files.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Counts the k-mers in a file and outputs the k-mer counts.
 
-POST:
-    The k-mers located in the input will be output to the [outputLocation].
+
+INPUT
+-----
+
+[FILE LOCATION] [inputLocation]
+    The location of the input in FASTA format.
+
+[FILE LOCATION] [outputLocation]
+    The output location of the k-mer counts.
+
+[INT >= 1] [k]
+    The k-mer size.
+
+[INT >= 0] [organization]
+    The degree of organization. This is responsible for the number of output
+    files.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The k-mers located in the input will be output to the [outputLocation] in
+sorted order.
 
 # =============================================================================
 """
@@ -302,18 +381,14 @@ MAIN
 def main():
 
     # description
-    parser = argparse.ArgumentParser(
-        description='Counts k-mers in a FASTA or multi FASTA file and \
-        writes them to either one or multiple files. Only the \
-        lexicographically smaller of a k-mer and its reverse is \
-        reported. The k-mers are reported in sorted order.')
+    parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
 
     # input location
     parser.add_argument(
         INPUT_SHORT,
         INPUT_LONG,
         dest=INPUT,
-        help="input FASTA file location",
+        help=INPUT_HELP,
         type=str, required=True)
 
     # output location
@@ -321,7 +396,7 @@ def main():
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
-        help="output file location",
+        help=OUTPUT_HELP,
         type=str, required=True)
 
     # k-mer size
@@ -336,7 +411,7 @@ def main():
     parser.add_argument(
         ORGANIZATION_LONG,
         dest=ORGANIZATION,
-        help="degree of organization; produces 4^[organization] output files",
+        help=ORGANIZATION_HELP,
         type=int)
 
     args = parser.parse_args()

@@ -2,6 +2,30 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## 1.2.5 ##
+
+2017-05-03
+
+This release provides fixes for ambiguous crashes and improvements to the code
+quality.
+
+### Changed ###
+
+- We have made an effort to improve the readability of function comments in the
+source code.
+
+### Fixed ###
+
+- When running Neptune in parallel (non-DRMAA mode), runtime errors in forked
+jobs now correctly inform the calling process instead of hanging forever with
+no meaningful error message. Additionally, the runtime error message is
+reported to the user. This relates the a known error in Python 2.7
+(https://bugs.python.org/issue9400).
+- Inputs containing no A, C, G, or T characters will now cause an appropriate
+runtime error with an informative message about this problem.
+- Lowercase characters are no longer ingnored when calculating the GC content
+of inputs.
+
 ## 1.2.4 ##
 
 2017-02-27

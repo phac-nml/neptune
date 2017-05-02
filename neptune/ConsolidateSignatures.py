@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -51,61 +51,87 @@ GLOBALS
 # =============================================================================
 """
 
-# NAMES
-SIGNATURES = "signatures"
-OUTPUT = "output"
-CONSOLIDATED_DATABASE = "database"
-SEED_SIZE = "seed-size"
+PROGRAM_DESCRIPTION = 'Consolidates signatures from several Neptune signature \
+    files (FASTA format) into a single representative signature file, \
+    determined by signature score and sequence similarity.'
 
-# ARGUMENTS
+# DEFAULTS #
+
+SEED_SIZE_DEFAULT = 11
+
+# ARGUMENTS #
+
 LONG = "--"
-
-SIGNATURES_LONG = LONG + SIGNATURES
-CONSOLIDATED_DATABASE_LONG = LONG + CONSOLIDATED_DATABASE
-OUTPUT_LONG = LONG + OUTPUT
-SEED_SIZE_LONG = LONG + SEED_SIZE
-
 SHORT = "-"
 
-SIGNATURES_SHORT = SHORT + "s"
-CONSOLIDATED_DATABASE_SHORT = SHORT + CONSOLIDATED_DATABASE
-OUTPUT_SHORT = SHORT + "o"
-SEED_SIZE_SHORT = SHORT + "ss"
+# REQUIRED ARGUMENTS #
 
-# OTHER
+# Signatures
+SIGNATURES = "signatures"
+SIGNATURES_LONG = LONG + SIGNATURES
+SIGNATURES_SHORT = SHORT + "s"
+SIGNATURES_HELP = "The file locations of all signatures to consolidate."
+
+# Output
+OUTPUT = "output"
+OUTPUT_LONG = LONG + OUTPUT
+OUTPUT_SHORT = SHORT + "o"
+OUTPUT_HELP = "The output directory to place the consolidate signatures and \
+    any additional files."
+
+# OPTIONAL ARGUMENTS #
+
+# Seed Size
+SEED_SIZE = "seed-size"
+SEED_SIZE_LONG = LONG + SEED_SIZE
+SEED_SIZE_SHORT = SHORT + "ss"
+SEED_SIZE_HELP = "The seed size used during sequence alignment."
+
+# OTHER #
+
 COMPILED_SIGNATURES = "compiled.fasta"
 COMPILED_DATABASE = "compiled.db"
 COMPILED_DATABASE_QUERY = COMPILED_DATABASE + ".query"
 CONSOLIDATED_SIGNATURES = "consolidated.fasta"
 
-# DEFAULTS
-
-SEED_SIZE_DEFAULT = 11
-
 """
 # =============================================================================
 
 COMPILE SIGNATURES
+------------------
 
-PURPOSE:
-    Compiles the signatures from several Neptune signature files into a single
-    dictionary containing all signatures. This may result in repeated
-    signatures.
 
-INPUT:
-    [(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures] - An initially
-        empty dictionary that will be filled with signatures located in within
-        the [signatureLocations] files.
-    [(FILE LOCATION) LIST] [signatureLocations] - A list of signature file
-        locations.
+PURPOSE
+-------
 
-RETURN:
-    [(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures] - A dictionary
-        containing all compiled signatures. This dictionary is the same object
-        as the initially passed [compiledSignatures] dictionary.
+Compiles the signatures from several Neptune signature files (FASTA format)
+into a single dictionary containing all signatures. This may result in repeated
+signatures.
 
-POST:
-    The [compiledSignatures] dictionary will be filled with the signatures.
+
+INPUT
+-----
+
+[(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures]
+    An initially empty dictionary that will be filled with signatures located
+    in within the [signatureLocations] files.
+
+[(FILE LOCATION) LIST] [signatureLocations]
+    A list of signature file locations from which to compile signatures from.
+
+
+RETURN
+------
+
+[(STRING ID) -> (SIGNATURE) DICTIONARY] [compiledSignatures]
+    A dictionary containing all compiled signatures. This dictionary is the
+    same object as the initially passed [compiledSignatures] dictionary.
+
+
+POST
+----
+
+The [compiledSignatures] dictionary will be filled with the signatures.
 
 # =============================================================================
 """
@@ -133,24 +159,42 @@ def compileSignatures(compiledSignatures, signatureLocations):
 # =============================================================================
 
 PRODUCE SIGNATURES
+------------------
 
-PURPOSE:
-    Produces a list of consolidated signatures by outputting signatures to
-    file, while attempting to avoid outputting duplicate signatures.
 
-INPUT:
-    [SIGNATURE LIST] [sortedSignatures] - A list of signatures, sorted by their
-        corresponding Neptune signature scores. This list of signatures may
-        contain apparently-duplicate signatures.
-    [FILE] [blastOutputFile] - A readable BLASTN output file. This query is the
-        output of aligning all [sortedSignatures] against themselves.
-    [FILE] [destination] - A writable file-like object.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Produces a list of consolidated signatures by outputting signatures to a file,
+while attempting to avoid outputting duplicate signatures.
 
-POST:
-    The list of consolidated signatures will be written to the [destination].
+
+INPUT
+-----
+
+[SIGNATURE LIST] [sortedSignatures]
+    A list of signatures, sorted by their corresponding Neptune signature
+    scores. This list of signatures may contain apparently-duplicate
+    signatures.
+
+[FILE] [blastOutputFile]
+    A readable BLASTN output file. This query is the output of aligning all
+    [sortedSignatures] against themselves.
+
+[FILE] [destination]
+    A writable file-like object to write the consolidated signatures.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The list of consolidated signatures will be written to the [destination].
 
 # =============================================================================
 """
@@ -199,25 +243,49 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
 # =============================================================================
 
 CONSOLIDATE SIGNATURES
+----------------------
 
-PURPOSE:
-    Consolidates signatures from several Neptune signature files into a single
-    representative Neptune signature file, determined by the signature score
-    and sequence similarity of all the contributing signatures.
 
-INPUT:
-    [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune signature
-        file locations corresponding to files to consolidate.
-    [4 <= INT] [seedSize] - The seed size used in alignments.
-    [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory to
-        write the output files.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Consolidates signatures from several Neptune signature files into a single
+representative Neptune signature file, determined by the signature score and
+sequence similarity of all the contributing signatures.
 
-POST:
-    The signatures and associated files will be written to several locations
-    within the [outputDirectoryLocation].
+The function compiles all the signatures into a single dictionary file, sorts
+these signatures according to their Neptune signature score, and writes these
+sorted signatures to a file. It then uses BLAST to query the signatures against
+themselves and uses this information to report signatures in a greedy manner.
+The signatures are reported in an order according to their signature score and
+only if there has been no other similar signature (determined by BLAST) that
+has already been reported.
+
+
+INPUT
+-----
+
+[(FILE LOCATION) LIST] [signatureLocations]
+    A list of Neptune signature file locations corresponding to files to
+    consolidate.
+
+[4 <= INT] [seedSize]
+    The seed size used in alignments to determine similarity.
+
+[(FILE DIRECTORY) LOCATION] [outputDirectoryLocation]
+    The directory to write the output files.
+
+
+RETURN
+------
+
+[NONE]
+
+POST
+----
+
+The signatures and associated files will be written to several locations within
+the [outputDirectoryLocation].
 
 # =============================================================================
 """
@@ -302,30 +370,27 @@ MAIN
 def main():
 
     # --- Parser ---
-    parser = argparse.ArgumentParser(
-        description='Consolidates signatures from several Neptune signature \
-        files into a single representative signature file, determined by \
-        signature score and sequence similarity.')
+    parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
 
     parser.add_argument(
         SIGNATURES_SHORT,
         SIGNATURES_LONG,
         dest=SIGNATURES,
-        help="file locations of all signatures to consolidate",
+        help=SIGNATURES_HELP,
         type=str, required=True, nargs='+')
 
     parser.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
-        help="output directory",
+        help=OUTPUT_HELP,
         type=str, required=True)
 
     parser.add_argument(
         SEED_SIZE_SHORT,
         SEED_SIZE_LONG,
         dest=SEED_SIZE,
-        help="the seed size used during alignment",
+        help=SEED_SIZE_HELP,
         type=int, required=False)
 
     args = parser.parse_args()
