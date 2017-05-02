@@ -285,21 +285,35 @@ class Execution():
     # =========================================================================
 
     CALCULATE EXPECTED K-MER HITS
+    -----------------------------
 
-    PURPOSE:
-        Calculates the expected number of arbitrary k-mer matches with a
-        genome.
 
-        This is calculating P(k_x = k_y) * ((gs - k + 1) C (2)).
+    PURPOSE
+    -------
 
-    INPUT:
-        [0 <= FLOAT <= 1] [GC] - The GC content.
-        [1 <= INT] [GS] - The genome size.
-        [1 <= INT] [K] - The k-mer size.
+    Calculates the expected number of arbitrary k-mer matches with a genome.
 
-    RETURN:
-        [FLOAT >= 0] [expected] - The expected number of arbitrary k-mer
-            matches.
+    This is calculating P(k_x = k_y) * ((gs - k + 1) C (2)).
+
+
+    INPUT
+    -----
+
+    [0 <= FLOAT <= 1] [GC]
+        The GC content.
+
+    [1 <= INT] [GS]
+        The genome size.
+
+    [1 <= INT] [K]
+        The k-mer size.
+
+
+    RETURN
+    ------
+
+    [FLOAT >= 0] [expected]
+        The expected number of arbitrary k-mer matches.
 
     # =========================================================================
     """
@@ -319,20 +333,33 @@ class Execution():
     # =========================================================================
 
     ESTIMATE K-MER SIZE
+    -------------------
 
-    PURPOSE:
-        Estimates the appropriate k-mer size for Neptune.
 
-    INPUT:
-        [NONE]
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Estimates the appropriate k-mer size for Neptune.
 
-    POST:
-        The member variable [self.k] is assigned an appriorate value of k,
-        determined by the most extreme GC-content of all references and the
-        largest size of any reference.
+
+    INPUT
+    -----
+
+    [NONE]
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The member variable [self.k] is assigned an appriorate value of k,
+    determined by the most extreme GC-content of all references and the
+    largest size of any reference.
 
     # =========================================================================
     """
@@ -409,20 +436,33 @@ class Execution():
     # =========================================================================
 
     PRODUCE RECEIPT
+    ---------------
 
-    PURPOSE:
-        Produces an execution receipt. This receipt provides information about
-        the execution parameters.
 
-    INPUT:
-        [NONE]
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Produces an execution receipt. This receipt provides information about the
+    execution parameters.
 
-    POST:
-        An execution receipt is printed to the writable to a receipt file, as
-        specified by Neptune.
+
+    INPUT
+    -----
+
+    [NONE]
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    An execution receipt is printed to the writable to a receipt file, as
+    specified by the class parameters.
 
     # =========================================================================
     """
@@ -442,7 +482,6 @@ class Execution():
         self.reportCommandLine(receiptFile)
         self.reportFiles(receiptFile)
         self.reportGeneralParameters(receiptFile)
-        # self.reportDRMAAParameters(receiptFile) # TODO REPLACE?
 
         receiptFile.close()
 
@@ -450,18 +489,32 @@ class Execution():
     # =========================================================================
 
     REPORT COMMAND LINE
+    -------------------
 
-    PURPOSE:
-        Reports the command line arguments to the execution receipt.
 
-    INPUT:
-        [FILE] [receiptFile] - The open and writable receipt file.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Reports the command line arguments to the execution receipt.
 
-    POST:
-        The command line arguments will be reported to the execution receipt.
+
+    INPUT
+    -----
+
+    [FILE] [receiptFile]
+        The open and writable receipt file.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The command line arguments will be reported to the execution receipt.
 
     # =========================================================================
     """
@@ -551,18 +604,31 @@ class Execution():
     # =========================================================================
 
     REPORT FILES
+    ------------
 
-    PURPOSE:
-        Reports the files used by Neptune.
 
-    INPUT:
-        [FILE] [receiptFile] - The open and writable receipt file.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Reports the files used by Neptune.
 
-    POST:
-        The files used by Neptune will be reported to the execution receipt.
+
+    INPUT
+    -----
+
+    [FILE] [receiptFile] - The open and writable receipt file.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The files used by Neptune will be reported to the execution receipt.
 
     # =========================================================================
     """
@@ -602,19 +668,32 @@ class Execution():
     # =========================================================================
 
     REPORT DRMAA PARAMETERS
+    -----------------------
 
-    PURPOSE:
-        Reports the DRMAA parameters used by Neptune.
 
-    INPUT:
-        [FILE] [receiptFile] - The open and writable receipt file.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Reports the DRMAA parameters used by Neptune.
 
-    POST:
-        The DRMAA parameters used by Neptune will be reported to the execution
-        receipt.
+
+    INPUT
+    -----
+
+    [FILE] [receiptFile] - The open and writable receipt file.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The DRMAA parameters used by Neptune will be reported to the execution
+    receipt.
 
     # =========================================================================
     """

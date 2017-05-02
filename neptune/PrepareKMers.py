@@ -72,36 +72,53 @@ GLOBALS
 # =============================================================================
 """
 
-# NAMES
-INPUT = "input"
-OUTPUT = "output"
+PROGRAM_DESCRIPTION = "Produces a sorted list of distinct k-mers. Only the \
+    lexicographically first of a k-mer and its reverse complement is reported."
 
-# ARGUMENTS
+# ARGUMENTS #
 LONG = "--"
-
-INPUT_LONG = LONG + INPUT
-OUTPUT_LONG = LONG + OUTPUT
-
 SHORT = "-"
 
+# REQUIRED #
+
+# Input
+INPUT = "input"
+INPUT_LONG = LONG + INPUT
 INPUT_SHORT = SHORT + "i"
+INPUT_HELP = "The file location of the k-mers to prepare for processing."
+
+# Output
+OUTPUT = "output"
+OUTPUT_LONG = LONG + OUTPUT
 OUTPUT_SHORT = SHORT + "o"
+OUTPUT_HELP = "The file location to write prepared k-mers."
 
 """
 # =============================================================================
 
 CONVERT
+-------
 
-PURPOSE:
-    Converts a k-mer or k-mer line to the lexicographically smaller of:
-    [kmer] and [reverseComplement(kmer)].
 
-INPUT:
-    kmer - The k-mer to convert.
+PURPOSE
+-------
 
-RETURN:
-    kmer - The lexicographically smaller of:
-        [kmer] and [reverseComplement(kmer)].
+Converts a k-mer or k-mer line to the lexicographically smaller of [kmer] and
+its [reverseComplement(kmer)].
+
+
+INPUT
+-----
+
+[STRING] [kmer]
+    The k-mer to convert in nucleotide characters.
+
+
+RETURN
+------
+
+[STRING] [kmer]
+    The lexicographically smaller of [kmer] and [reverseComplement(kmer)].
 
 # =============================================================================
 """
@@ -147,21 +164,20 @@ PARSING
 """
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(
-        description='Produces a sorted list of distinct k-mers. \
-        Only the lexicographically first of a k-mer and its reverse \
-        complement is reported.')
+    parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
 
     parser.add_argument(
         INPUT_SHORT,
         INPUT_LONG,
-        dest=INPUT, help="input k-mers",
+        dest=INPUT,
+        help=INPUT_HELP,
         type=str, required=True)
 
     parser.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
-        dest=OUTPUT, help="output k-mers",
+        dest=OUTPUT,
+        help=OUTPUT_HELP,
         type=str, required=True)
 
     args = parser.parse_args()

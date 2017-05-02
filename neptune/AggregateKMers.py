@@ -82,56 +82,87 @@ GLOBALS
 # =============================================================================
 """
 
-# NAMES
-INCLUSION = "inclusion"
-EXCLUSION = "exclusion"
-OUTPUT = "output"
-DELETE = "delete"
-
-# ARGUMENTS
-LONG = "--"
-
-INCLUSION_LONG = LONG + INCLUSION
-EXCLUSION_LONG = LONG + EXCLUSION
-OUTPUT_LONG = LONG + OUTPUT
-DELETE_LONG = LONG + DELETE
-
-SHORT = "-"
-
-INCLUSION_SHORT = SHORT + "i"
-EXCLUSION_SHORT = SHORT + "e"
-OUTPUT_SHORT = SHORT + "o"
-
-# DEFAULTS
+# DEFAULTS #
 
 DELETE_DEFAULT = False
+
+# ARGUMENTS #
+
+PROGRAM_DESCRIPTION = 'This script aggregates one or more inclusion k-mer \
+    files with one or more exclusion files. The number of distinct inclusion \
+    and exclusion k-mer observations per file will be reported immediately \
+    following each k-mer in the output.'
+
+LONG = "--"
+SHORT = "-"
+
+# REQUIRED ARGUMENTS #
+
+# Inclusion
+INCLUSION = "inclusion"
+INCLUSION_LONG = LONG + INCLUSION
+INCLUSION_SHORT = SHORT + "i"
+INCLUSION_HELP = "The inclusion k-mer files containing k-mers."
+
+# Exclusion
+EXCLUSION = "exclusion"
+EXCLUSION_LONG = LONG + EXCLUSION
+EXCLUSION_SHORT = SHORT + "e"
+EXCLUSION_HELP = "The exclusion k-mer files containing k-mers."
+
+# Output
+OUTPUT = "output"
+OUTPUT_LONG = LONG + OUTPUT
+OUTPUT_SHORT = SHORT + "o"
+OUTPUT_HELP = "The location of the aggregated k-mer output."
+
+# Delete
+DELETE = "delete"
+DELETE_LONG = LONG + DELETE
+DELETE_HELP = "Specifying this flag will cause the input files to be deleted \
+    after execution."
+
 
 """
 # =============================================================================
 
 FIND SMALLEST
+-------------
 
-PURPOSE:
-    Locates the lexicographically smallest element in a list of strings.
 
-    The function ignores empty strings and uses a sentinel value to determine
-    if all the strings are empty. This sentinel value must always be
-    lexicographically larger than all string values.
+PURPOSE
+-------
 
-INPUT:
-    [STRING ITERABLE] [strings] - An iterable strings object.
-    [STRING] [SENTINEL] - A sentinel value, which must be lexicographically
-        larger than all [strings].
+Locates the lexicographically smallest element in a list of strings.
 
-RETURN:
-    [STRING] [smallest] - The lexicographically smallest value of all the
-        strings or SENTINEL if all strings are empty.
+The function ignores empty strings and uses a sentinel value to determine if
+all the strings are empty. This sentinel value must always be
+lexicographically larger than all string values.
+
+
+INPUT
+-----
+
+[STRING ITERABLE] [strings]
+    An iterable strings object from which to locate the smallest element.
+
+[STRING] [SENTINEL]
+    A sentinel value, which must be lexicographically larger than all
+    [strings].
+
+
+RETURN
+------
+
+[STRING] [smallest]
+    The lexicographically smallest value of all the strings or SENTINEL if all
+    strings are empty.
 
 # =============================================================================
 """
 def findSmallest(strings, SENTINEL):
 
-    smallest = SENTINEL     # the lexicographically smallest observed string
+    smallest = SENTINEL     # The lexicographically smallest observed string.
 
     for string in strings:
         if string != "" and string < smallest:
@@ -144,33 +175,62 @@ def findSmallest(strings, SENTINEL):
 # =============================================================================
 
 AGGREGATE KMER
+--------------
 
-PURPOSE:
-    Computes the counts of the k-mer, determined by the number of observations
-    across all files.
 
-    This function assumes: len([kmers]) == len([files])
+PURPOSE
+-------
 
-    The function observes all the k-mers and compares them with the k-mer
-    parameter. When there is a match, the function increases the count and
-    advances the file associated with the k-mer.
+Reports the number of files that contain a specified k-mer at their current
+position and then advances these files. This function operates on a list of
+files and a corresponding list containing "pointers" to the next k-mer in the
+file.
 
-    The [kmers] parameter corresponds to the heads of all the k-mer files. The
-    files MUST necessarily be read and advanced when there is a k-mer match
-    found in a corresponding [kmers] array. This is because each k-mer in each
-    file is only ever observed once.
+The function observes all the k-mers in [kmers] and compares them with the
+[kmer] parameter. When there is a match, the function increases the observation
+count and advances the [files] associated with the k-mer.
 
-INPUT:
-    [STRING] [kmer] - The k-mer to compare against all other k-mers and count
-        when observed.
-    [STRING LIST] [kmers] - A list of strings, which should understood as the
-        head k-mer of files.
-    [FILE LIST] [files] - A list of open files associated with the [kmers]
-        list. It is assumed: len([kmers]) == len([files])
+The [kmers] parameter corresponds to the heads of all the k-mer files. The
+files MUST be read and advanced when there is a k-mer match found in a
+corresponding [kmers] array. This is because each k-mer in each file is only
+ever observed once.
 
-RETURN:
-    [INT >= 0] [count] - The number of exact [kmer] matches found in the list
-        of [kmers].
+This function assumes: len([kmers]) == len([files])
+
+
+INPUT
+-----
+
+[STRING] [kmer]
+    The k-mer to compare against all other k-mers in [kmers] and count when
+    observed.
+
+[STRING LIST] [kmers]
+    A list of k-mers as string objects, which should understood as "pointers"
+    to the first next k-mer in each of the [files]. When a position in [kmers]
+    is empty, then it should be understood that the corresponding k-mer file in
+    [files] is empty.
+
+[FILE LIST] [files]
+    A list of open files associated with the [kmers] list. It is assumed:
+    len([kmers]) == len([files])
+
+
+RETURN
+------
+
+[INT >= 0] [count]
+    The number of exact [kmer] matches found in the list of [kmers].
+
+
+POST
+----
+
+The positions in [kmers] and their corresponding positions in [files] will be
+modified when there is a match in [kmers] with [kmer]. The matching k-mers in
+[kmers] will be replaced with the next k-mer in their corresponding file in
+[files], which is obtained by reading one line of the file. This has the effect
+of advancing the files in [files] when there is a k-mer match.
 
 # =============================================================================
 """
@@ -199,30 +259,46 @@ def aggregateKMer(kmer, kmers, files):
 # =============================================================================
 
 AGGREGATE
+---------
 
-PURPOSE:
-    Aggregates the k-mers in the inclusion and exclusion files and produces a
-    file containing the k-mers and their inclusion and exclusion counts. The
-    input inclusion and exclusion files must contain only distinct and
-    lexicographically sorted k-mers.
 
-INPUT:
-    [FILE LIST] [inclusionLocations] - The list of openable inclusion k-mer
-        files locations.
-    [FILE LIST] [exclusionLocations] - The list of openable exclusion k-mer
-        files locations.
-    [FILE] [outputLocation] - The file location to write the aggregated k-mers.
-    [BOOL] [delete] - Whether or not to delete the [inclusionLocations] and
-        [exclusionLocations] after aggregation is complete.
+PURPOSE
+-------
 
-    NOTE: The input files must contain only distinct and lexicographically
-    sorted k-mers. These k-mers must appear first on every line and be
-    preceded by no spaces or special characters. Any characters following
-    the k-mers, including k-mer counts, will be ignored.
+Aggregates the k-mers in the inclusion and exclusion files and produces a file
+containing the k-mers and their inclusion and exclusion counts. The input
+inclusion and exclusion files must contain only distinct and lexicographically
+sorted k-mers.
 
-POST:
-    The k-mers and their aggregate counts value will be written to a file at
-    the [outputLocation].
+
+INPUT
+-----
+
+[FILE LIST] [inclusionLocations]
+    The list of openable inclusion k-mer files locations.
+
+[FILE LIST] [exclusionLocations]
+    The list of openable exclusion k-mer files locations.
+
+[FILE] [outputLocation]
+    The file location to write the aggregated k-mers.
+
+[BOOL] [delete]
+    Whether or not to delete the [inclusionLocations] and [exclusionLocations]
+    after aggregation is complete.
+
+
+NOTE: The input files must contain only distinct and lexicographically sorted
+k-mers. These k-mers must appear first on every line and be preceded by no
+spaces or special characters. Any characters following the k-mers, including
+k-mer counts, will be ignored.
+
+
+POST
+----
+
+The k-mers and their aggregate counts value will be written to a file at the
+[outputLocation].
 
 # =============================================================================
 """
@@ -287,7 +363,7 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
         # exclusion aggregation:
         excounts = aggregateKMer(kmer, exclusionKMers, exclusionFiles)
 
-        # are all files at end of file?
+        # are all files at end of the file?
         if kmer == SENTINEL:
             break
 
@@ -344,42 +420,37 @@ MAIN
 """
 def main():
 
-    # description
-    parser = argparse.ArgumentParser(
-        description='Aggregates one or more inclusion k-mer files \
-        with one or more exclusion files. The number of distinct \
-        inclusion and exclusion k-mer observations per file will be \
-        reported immediately following each k-mer in the output.')
+    parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
 
-    # inclusion k-mers
+    # REQUIRED #
+
     parser.add_argument(
         INCLUSION_SHORT,
         INCLUSION_LONG,
         dest=INCLUSION,
-        help="inclusion k-mer file(s)",
+        help=INCLUSION_HELP,
         type=str, required=True, nargs='+')
 
-    # exclusion k-mers
     parser.add_argument(
         EXCLUSION_SHORT,
         EXCLUSION_LONG,
         dest=EXCLUSION,
-        help="exclusion k-mer file(s)",
+        help=EXCLUSION_HELP,
         type=str, required=True, nargs='+')
 
-    # output k-mers
     parser.add_argument(
         OUTPUT_SHORT,
         OUTPUT_LONG,
         dest=OUTPUT,
-        help="output file path", type=str,
-        required=True)
+        help=OUTPUT_HELP,
+        type=str, required=True)
 
-    # delete input files
+    # OPTIONAL #
+
     parser.add_argument(
         DELETE_LONG,
         dest=DELETE,
-        help="delete input flag",
+        help=DELETE_HELP,
         action='store_true')
 
     args = parser.parse_args()

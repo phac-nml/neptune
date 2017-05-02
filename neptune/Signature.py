@@ -28,6 +28,14 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 
 SIGNATURE
+---------
+
+
+PURPOSE
+-------
+
+This class represents a signature object and all the associated information
+that Neptune needs for signature discovery.
 
 # =============================================================================
 """
@@ -50,18 +58,29 @@ class Signature():
 # =========================================================================
 
 READ SIGNATURES
+---------------
 
-PURPOSE:
-    Reads a signature file and places the signatures into a new signature
-    dictionary. This function is designed to be symmetric with the write
-    signatures function.
 
-INPUT:
-    [FILE LOCATION] [fileLocation] - The file location of the signatures.
+PURPOSE
+-------
 
-RETURN:
-    [(STRING ID) -> (SIGNATURE) DICTIONARY] - A dictionary mapping string
-        IDs to signature objects.
+Reads a signature file and places the signatures into a new signature
+dictionary. This function is designed to be symmetric with the
+writeSignatures function.
+
+
+INPUT
+-----
+
+[FILE LOCATION] [fileLocation]
+    The file location of the signatures to read and build into objects.
+
+
+RETURN
+------
+
+[(STRING ID) -> (SIGNATURE) DICTIONARY]
+    A dictionary mapping string IDs to signature objects.
 
 # =========================================================================
 """
@@ -104,20 +123,36 @@ def readSignatures(fileLocation):
 # =============================================================================
 
 WRITE SIGNATURES
+----------------
 
-PURPOSE:
-    Writes several signatures to the destination. This function is designed to
-    be symmetric with the read signatures function.
 
-INPUT:
-    [SIGNATURE LIST] [signatures] - A list of Signature objects.
-    [FILE] [destination] - An open and writable file-like object.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Writes signatures to the destination. This function is designed to be
+symmetric with the read signatures function.
 
-POST:
-    The [signatures] will be written to the [destination]
+
+INPUT
+-----
+
+[SIGNATURE LIST] [signatures]
+    A list of Signature objects.
+
+[FILE] [destination]
+    An open and writable file-like object.
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The [signatures] will be written to the [destination].
 
 # =============================================================================
 """
@@ -132,20 +167,36 @@ def writeSignatures(signatures, destination):
 # =========================================================================
 
 WRITE SIGNATURE
+---------------
 
-PURPOSE:
-    Writes the signature to the destination. This function is designed to
-    be symmetric with the read signatures function.
 
-INPUT:
-    [SIGNATURE] [signature] - The signature to write.
-    [FILE] [destination] - An open and writable file-like object.
+PURPOSE
+-------
 
-RETURN:
-    [NONE]
+Writes the signature to the destination. This function is designed to be
+symmetric with the read signatures function.
 
-POST:
-    The passed signature will be written to the [destination].
+
+INPUT
+-----
+
+[SIGNATURE] [signature]
+    The signature to write to the [destination].
+
+[FILE] [destination]
+    An open and writable file-like object to write the [signature].
+
+
+RETURN
+------
+
+[NONE]
+
+
+POST
+----
+
+The passed signature will be written to the [destination].
 
 # =========================================================================
 """
@@ -167,19 +218,34 @@ def writeSignature(signature, destination):
 # =============================================================================
 
 SORT SIGNATURES
+---------------
 
-PURPOSE:
-    Sorts the signatures by their corresponding score in descending order.
 
-INPUT:
-    [(STRING ID) -> (SIGNATURE) DICTIONARY] [signatures] - A dictionary mapping
-        signature IDs to their corresponding signature.
+PURPOSE
+-------
 
-RETURN:
-    [SIGNATURE LIST] [sortedSignatures] - A list of sorted Signature objects.
+Sorts signatures by their corresponding (Neptune) signature score in
+descending order.
 
-POST:
-    [NONE]
+
+INPUT
+-----
+
+[(STRING ID) -> (SIGNATURE) DICTIONARY] [signatures]
+    A dictionary mapping signature IDs to their corresponding signature.
+
+
+RETURN
+------
+
+[SIGNATURE LIST] [sortedSignatures]
+    A list of sorted Signature objects.
+
+
+POST
+----
+
+[NONE]
 
 # =============================================================================
 """
