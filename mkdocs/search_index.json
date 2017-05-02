@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Neptune\n\n\nA genomic signature is a genomic locus that is sufficiently represented in an inclusion group, and sufficiently absent from a background, or exclusion group. A signature might correlate genomic features with phenotypic traits, such as the presence of a gene with increased organism pathogenicity.\n\n\nNeptune locates genomic signatures using an exact \nk\n-mer matching strategy while accommodating \nk\n-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.\n\n\nRelease\n\n\nNeptune 1.2.4\n\n\nThis release makes several small improvements, including: reducing the standard output clutter, adding timings to stages, and updating the documentation.\n\n\nResources\n\n\n\n\nInstallation\n: \nhttps://phac-nml.github.io/neptune/install/\n\n\nWalkthrough\n: \nhttps://phac-nml.github.io/neptune/walkthrough/\n\n\n\n\nContact\n\n\n\n\nEric Marinier\n: eric.marinier@phac-aspc.gc.ca\n\n\nGary van Domselaar\n: gary.vandomselaar@phac-aspc.gc.ca", 
+            "text": "Neptune\n\n\nA genomic signature is a genomic locus that is sufficiently represented in an inclusion group, and sufficiently absent from a background, or exclusion group. A signature might correlate genomic features with phenotypic traits, such as the presence of a gene with increased organism pathogenicity.\n\n\nNeptune locates genomic signatures using an exact \nk\n-mer matching strategy while accommodating \nk\n-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.\n\n\nRelease\n\n\nNeptune 1.2.5\n\n\nThis release provides fixes for ambiguous crashes as a consequence of inputs containing no A, C, G, or T characters, and also makes improvements to the code quality.\n\n\nResources\n\n\n\n\nSource\n: \nhttps://github.com/phac-nml/neptune\n\n\nInstallation\n: \nhttps://phac-nml.github.io/neptune/install/\n\n\nWalkthrough\n: \nhttps://phac-nml.github.io/neptune/walkthrough/\n\n\n\n\nContact\n\n\n\n\nEric Marinier\n: eric.marinier@phac-aspc.gc.ca\n\n\nGary van Domselaar\n: gary.vandomselaar@phac-aspc.gc.ca", 
             "title": "Home"
         }, 
         {
@@ -12,12 +12,12 @@
         }, 
         {
             "location": "/#release", 
-            "text": "Neptune 1.2.4  This release makes several small improvements, including: reducing the standard output clutter, adding timings to stages, and updating the documentation.", 
+            "text": "Neptune 1.2.5  This release provides fixes for ambiguous crashes as a consequence of inputs containing no A, C, G, or T characters, and also makes improvements to the code quality.", 
             "title": "Release"
         }, 
         {
             "location": "/#resources", 
-            "text": "Installation :  https://phac-nml.github.io/neptune/install/  Walkthrough :  https://phac-nml.github.io/neptune/walkthrough/", 
+            "text": "Source :  https://github.com/phac-nml/neptune  Installation :  https://phac-nml.github.io/neptune/install/  Walkthrough :  https://phac-nml.github.io/neptune/walkthrough/", 
             "title": "Resources"
         }, 
         {
@@ -42,13 +42,28 @@
         }, 
         {
             "location": "/CHANGELOG/", 
-            "text": "Change Log\n\n\nAll notable changes to Neptune will be documented in this file.\n\n\n1.2.4\n\n\n2017-02-27\n\n\nThis release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.\n\n\nAdded\n\n\n\n\nLinks in the README to the manual.\n\n\nWalkthrough to the manual.\n\n\nExample data to test the software.\n\n\nTimings for stages.\n\n\n\n\nChanged\n\n\n\n\nImproved clarity in manual.\n\n\nCodeblocks in the manual.\n\n\n\n\nRemoved\n\n\n\n\nConsiderable clutter has been removed from standard output.\n\n\n\n\n1.2.3\n\n\n2016-07-11\n\n\nThis release simplifies the installation process.\n\n\nAdded\n\n\n\n\nA script for automatically installing Debian dependencies.\n\n\n\n\nChanged\n\n\n\n\nThe dependencies have changed. Several are now installed as part of Neptune.\n\n\nThe Neptune installation no longer requires security privilages.\n\n\nNeptune may be installed multiple times in multiple locations.\n\n\nNumPy and SciPy are now installed using pip.\n\n\n\n\n1.2.2\n\n\n2016-04-06\n\n\nThis release includes some Galaxy improvements and fixes a signature scoring problem.\n\n\nChanged\n\n\n\n\nGalaxy XML files have been updated to use different packages of Python.\n\n\n\n\nFixed\n\n\n\n\nA bug confusing inclusion and exclusion has been fixed.\n\n\n\n\n1.2.1\n\n\n2016-03-23\n\n\nThis release of Neptune adds support for Galaxy.\n\n\nAdded\n\n\n\n\nGalaxy-related files: capsules, XML files.\n\n\n\n\nChanged\n\n\n\n\nNeptune.py and Execution.py are now compatible with Galaxy.\n\n\n\n\n1.2.0\n\n\n2016-03-18\n\n\nThis release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.\n\n\nAdded\n\n\n\n\nNeptune may be run in parallel on a single machine without DRMAA.\n\n\n\"--version\" command line option.\n\n\n\n\nChanged\n\n\n\n\nSeveral command-line parameters have been changed.\n\n\nThe \"--parallelization\" / \"-p\" parameter effects all parallelization.\n\n\nThe exclusion score is now displayed as a positive number.\n\n\n\n\n1.1.1\n\n\n2016-02-24\n\n\nThis release of Neptune updates the installation instructions to be more\ninformative.\n\n\nChanged\n\n\n\n\nUpdated README and manual installation instructions.\n\n\nModified the style of code examples in the manual.\n\n\n\n\n1.1.0\n\n\n2016-01-19\n\n\nThis release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.\n\n\nAdded\n\n\n\n\nNeptune now automatically consolidates signatures into a single file.\n\n\nDRMAA job names.\n\n\nNeptune now maintains DRMAA log files.\n\n\nAdded the ability to specify the BLAST seed size.\n\n\n\n\nChanged\n\n\n\n\nThe run receipt has been reorganized.\n\n\nRemoved some unneeded output files.\n\n\nRemoved some unneeded print statements.\n\n\nRemoved the --verbose parameter. There was no functionality.\n\n\n\n\nFixed\n\n\n\n\nNeptune is now compatible with the Slurm scheduler.\n\n\nUpdated PEP8/Flake8 code compliance (W503).\n\n\n\n\n1.0.0\n\n\n2015-11-18\n\n\nThis is the initial release of Neptune.", 
+            "text": "Change Log\n\n\nAll notable changes to Neptune will be documented in this file.\n\n\n1.2.5\n\n\n2017-05-03\n\n\nThis release provides fixes for ambiguous crashes and improvements to the code\nquality.\n\n\nChanged\n\n\n\n\nWe have made an effort to improve the readability of function comments in the\nsource code.\n\n\n\n\nFixed\n\n\n\n\nWhen running Neptune in parallel (non-DRMAA mode), runtime errors in forked\njobs now correctly inform the calling process instead of hanging forever with\nno meaningful error message. Additionally, the runtime error message is\nreported to the user. This relates the a known error in Python 2.7\n(https://bugs.python.org/issue9400).\n\n\nInputs containing no A, C, G, or T characters will now cause an appropriate\nruntime error with an informative message about this problem.\n\n\nLowercase characters are no longer ingnored when calculating the GC content\nof inputs.\n\n\n\n\n1.2.4\n\n\n2017-02-27\n\n\nThis release makes several small improvements, including: reducing the standard\noutput clutter, adding timings to stages, and updating the documentation.\n\n\nAdded\n\n\n\n\nLinks in the README to the manual.\n\n\nWalkthrough to the manual.\n\n\nExample data to test the software.\n\n\nTimings for stages.\n\n\n\n\nChanged\n\n\n\n\nImproved clarity in manual.\n\n\nCodeblocks in the manual.\n\n\n\n\nRemoved\n\n\n\n\nConsiderable clutter has been removed from standard output.\n\n\n\n\n1.2.3\n\n\n2016-07-11\n\n\nThis release simplifies the installation process.\n\n\nAdded\n\n\n\n\nA script for automatically installing Debian dependencies.\n\n\n\n\nChanged\n\n\n\n\nThe dependencies have changed. Several are now installed as part of Neptune.\n\n\nThe Neptune installation no longer requires security privilages.\n\n\nNeptune may be installed multiple times in multiple locations.\n\n\nNumPy and SciPy are now installed using pip.\n\n\n\n\n1.2.2\n\n\n2016-04-06\n\n\nThis release includes some Galaxy improvements and fixes a signature scoring problem.\n\n\nChanged\n\n\n\n\nGalaxy XML files have been updated to use different packages of Python.\n\n\n\n\nFixed\n\n\n\n\nA bug confusing inclusion and exclusion has been fixed.\n\n\n\n\n1.2.1\n\n\n2016-03-23\n\n\nThis release of Neptune adds support for Galaxy.\n\n\nAdded\n\n\n\n\nGalaxy-related files: capsules, XML files.\n\n\n\n\nChanged\n\n\n\n\nNeptune.py and Execution.py are now compatible with Galaxy.\n\n\n\n\n1.2.0\n\n\n2016-03-18\n\n\nThis release of Neptune allows for execution on a single machine without\nrequiring DRMAA. Furthermore, several command line parameters have been\nmodified.\n\n\nAdded\n\n\n\n\nNeptune may be run in parallel on a single machine without DRMAA.\n\n\n\"--version\" command line option.\n\n\n\n\nChanged\n\n\n\n\nSeveral command-line parameters have been changed.\n\n\nThe \"--parallelization\" / \"-p\" parameter effects all parallelization.\n\n\nThe exclusion score is now displayed as a positive number.\n\n\n\n\n1.1.1\n\n\n2016-02-24\n\n\nThis release of Neptune updates the installation instructions to be more\ninformative.\n\n\nChanged\n\n\n\n\nUpdated README and manual installation instructions.\n\n\nModified the style of code examples in the manual.\n\n\n\n\n1.1.0\n\n\n2016-01-19\n\n\nThis release of Neptune introduces a simple signature consolidation step, which\nconsolidates signatures produced from multiple files into a single file.\nFurthermore, the software has been updated to be compatible with the Slurm\nscheduler.\n\n\nAdded\n\n\n\n\nNeptune now automatically consolidates signatures into a single file.\n\n\nDRMAA job names.\n\n\nNeptune now maintains DRMAA log files.\n\n\nAdded the ability to specify the BLAST seed size.\n\n\n\n\nChanged\n\n\n\n\nThe run receipt has been reorganized.\n\n\nRemoved some unneeded output files.\n\n\nRemoved some unneeded print statements.\n\n\nRemoved the --verbose parameter. There was no functionality.\n\n\n\n\nFixed\n\n\n\n\nNeptune is now compatible with the Slurm scheduler.\n\n\nUpdated PEP8/Flake8 code compliance (W503).\n\n\n\n\n1.0.0\n\n\n2015-11-18\n\n\nThis is the initial release of Neptune.", 
             "title": "CHANGELOG"
         }, 
         {
             "location": "/CHANGELOG/#change-log", 
             "text": "All notable changes to Neptune will be documented in this file.", 
             "title": "Change Log"
+        }, 
+        {
+            "location": "/CHANGELOG/#125", 
+            "text": "2017-05-03  This release provides fixes for ambiguous crashes and improvements to the code\nquality.", 
+            "title": "1.2.5"
+        }, 
+        {
+            "location": "/CHANGELOG/#changed", 
+            "text": "We have made an effort to improve the readability of function comments in the\nsource code.", 
+            "title": "Changed"
+        }, 
+        {
+            "location": "/CHANGELOG/#fixed", 
+            "text": "When running Neptune in parallel (non-DRMAA mode), runtime errors in forked\njobs now correctly inform the calling process instead of hanging forever with\nno meaningful error message. Additionally, the runtime error message is\nreported to the user. This relates the a known error in Python 2.7\n(https://bugs.python.org/issue9400).  Inputs containing no A, C, G, or T characters will now cause an appropriate\nruntime error with an informative message about this problem.  Lowercase characters are no longer ingnored when calculating the GC content\nof inputs.", 
+            "title": "Fixed"
         }, 
         {
             "location": "/CHANGELOG/#124", 
@@ -61,7 +76,7 @@
             "title": "Added"
         }, 
         {
-            "location": "/CHANGELOG/#changed", 
+            "location": "/CHANGELOG/#changed_1", 
             "text": "Improved clarity in manual.  Codeblocks in the manual.", 
             "title": "Changed"
         }, 
@@ -81,7 +96,7 @@
             "title": "Added"
         }, 
         {
-            "location": "/CHANGELOG/#changed_1", 
+            "location": "/CHANGELOG/#changed_2", 
             "text": "The dependencies have changed. Several are now installed as part of Neptune.  The Neptune installation no longer requires security privilages.  Neptune may be installed multiple times in multiple locations.  NumPy and SciPy are now installed using pip.", 
             "title": "Changed"
         }, 
@@ -91,12 +106,12 @@
             "title": "1.2.2"
         }, 
         {
-            "location": "/CHANGELOG/#changed_2", 
+            "location": "/CHANGELOG/#changed_3", 
             "text": "Galaxy XML files have been updated to use different packages of Python.", 
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#fixed", 
+            "location": "/CHANGELOG/#fixed_1", 
             "text": "A bug confusing inclusion and exclusion has been fixed.", 
             "title": "Fixed"
         }, 
@@ -111,7 +126,7 @@
             "title": "Added"
         }, 
         {
-            "location": "/CHANGELOG/#changed_3", 
+            "location": "/CHANGELOG/#changed_4", 
             "text": "Neptune.py and Execution.py are now compatible with Galaxy.", 
             "title": "Changed"
         }, 
@@ -126,7 +141,7 @@
             "title": "Added"
         }, 
         {
-            "location": "/CHANGELOG/#changed_4", 
+            "location": "/CHANGELOG/#changed_5", 
             "text": "Several command-line parameters have been changed.  The \"--parallelization\" / \"-p\" parameter effects all parallelization.  The exclusion score is now displayed as a positive number.", 
             "title": "Changed"
         }, 
@@ -136,7 +151,7 @@
             "title": "1.1.1"
         }, 
         {
-            "location": "/CHANGELOG/#changed_5", 
+            "location": "/CHANGELOG/#changed_6", 
             "text": "Updated README and manual installation instructions.  Modified the style of code examples in the manual.", 
             "title": "Changed"
         }, 
@@ -151,12 +166,12 @@
             "title": "Added"
         }, 
         {
-            "location": "/CHANGELOG/#changed_6", 
+            "location": "/CHANGELOG/#changed_7", 
             "text": "The run receipt has been reorganized.  Removed some unneeded output files.  Removed some unneeded print statements.  Removed the --verbose parameter. There was no functionality.", 
             "title": "Changed"
         }, 
         {
-            "location": "/CHANGELOG/#fixed_1", 
+            "location": "/CHANGELOG/#fixed_2", 
             "text": "Neptune is now compatible with the Slurm scheduler.  Updated PEP8/Flake8 code compliance (W503).", 
             "title": "Fixed"
         }, 
