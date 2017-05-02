@@ -22,10 +22,11 @@ unrelated sporadic or environmental microbes.
 
 # Release #
 
-**Neptune 1.2.4**
+**Neptune 1.2.5**
 
-This release makes several small improvements, including: reducing the standard
-output clutter, adding timings to stages, and updating the documentation.
+This release provides fixes for ambiguous crashes as a consequence of inputs
+containing no A, C, G, or T characters, and also makes improvements to the
+code quality.
 
 # Installation #
 
