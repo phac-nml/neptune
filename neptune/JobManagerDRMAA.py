@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2017
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -61,15 +61,24 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CONSTRUCTOR
+    -----------
 
-    INPUT:
-        [FILE LOCATION] [outputDirectoryLocation] - The directory location to
-            write DRMAA output.
-        [FILE LOCATION] [logDirectoryLocation] - The directory location to
-            write DRMAA output logs and error logs.
-        [DRMAA SESSION] [session] - The DRMAA session.
-        [STRING - OPTIONAL] [defaultSpecification] - Implementation specific
-            command line options.
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [outputDirectoryLocation]
+        The directory location to write DRMAA output.
+
+    [FILE LOCATION] [logDirectoryLocation]
+        The directory location to write DRMAA output logs and error logs.
+
+    [DRMAA SESSION] [session]
+        The DRMAA session object.
+
+    [STRING - OPTIONAL] [defaultSpecification]
+        Implementation specific scheduling command-line options. Slurm
+        Example: "-n 1 --nodes=1 --ntasks-per-node=1 --mem=10240".
 
     # =========================================================================
     """
@@ -173,20 +182,34 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     RUN JOBS
+    --------
 
-    PURPOSE:
-        Runs all the DRMAA jobs provided to the function. The jobs are
-        synchronized and execution problems are reported if possible.
 
-    INPUT:
-        [DRMAA JOB TEMPLATE ITERATOR] [jobs] - The DRMAA jobs to run in
-            parallel.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Runs all the DRMAA jobs provided to the function. The jobs are
+    synchronized and execution problems are reported if appropriate and
+    possible.
 
-    POST:
-        Job submission message and errors are printed to standard output.
+
+    INPUT
+    -----
+
+    [(DRMAA JOB TEMPLATE) ITERATOR] [jobs]
+        The DRMAA jobs to run in parallel.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    Job submission message and errors are printed to standard output.
 
     # =========================================================================
     """
@@ -206,22 +229,34 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     SYNCHRONIZE
+    -----------
 
-    PURPOSE:
-        Synchronizes all the jobs associated with the passed IDs. Will output
-        an error message if a job returned with an error-associated exit
-        status.
 
-    INPUT:
-        [STRING ITERATOR] [jobIDs] - The unique IDs associated with every job.
+    PURPOSE
+    -------
 
-    RETURN:
-        [NONE]
+    Synchronizes all the jobs associated with the passed IDs. Will output an
+    error message if a job returned with an error-associated exit status.
 
-    POST:
-        The function will return when all jobs have completed. Any error
-        messages will be written if there was an error-associated exit-status
-        with a job.
+
+    INPUT
+    -----
+
+    [(STRING) ITERATOR] [jobIDs]
+        The unique IDs associated with every job.
+
+
+    RETURN
+    ------
+
+    [NONE]
+
+
+    POST
+    ----
+
+    The function will return when all jobs have completed. Any error messages
+    will be written if there was an error-associated exit-status with a job.
 
     # =========================================================================
     """
@@ -251,16 +286,26 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE JOB
+    ----------
 
-    PURPOSE:
-        Creates and returns a generic DRMAA job.
 
-    INPUT:
-        [NONE]
+    PURPOSE
+    -------
 
-    RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A distributable DRMAA job which may be
-            run.
+    Creates and returns a generic DRMAA job.
+
+
+    INPUT
+    -----
+
+    [NONE]
+
+
+    RETURN
+    ------
+
+    [DRMAA JOB TEMPLATE] [job]
+        A distributable DRMAA job template object, which may be run.
 
     # =========================================================================
     """
@@ -279,16 +324,26 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE PYTHON JOB
+    -----------------
 
-    PURPOSE:
-        Creates and returns a generic Python DRMAA job.
 
-    INPUT:
-        [NONE]
+    PURPOSE
+    -------
 
-    RETURN:
-        [DRMAA JOB TEMPLATE] [job] - A distributable Python DRMAA job which may
-            be run.
+    Creates and returns a generic Python DRMAA job.
+
+
+    INPUT
+    -----
+
+    [NONE]
+
+
+    RETURN
+    ------
+
+    [DRMAA JOB TEMPLATE] [job]
+        A distributable Python DRMAA job which may be run.
 
     # =========================================================================
     """
@@ -303,18 +358,36 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE COUNT JOB
+    ----------------
 
-    PURPOSE:
-        Creates a CountKMers job.
 
-    INPUT:
-        [FILE LOCATION] [inputLocation] - The location of the input file.
-        [FILE LOCATION] [outputLocation] - The location of the output file.
-        [1 <= INT] [k] - The size of the k-mers.
-        [0 <= INT] [organization] - The degree of organization.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - A CountKMers job that may be passed to RunJobs(...).
+    Creates a CountKMers job.
+
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [inputLocation]
+        The location of the input file.
+
+    [FILE LOCATION] [outputLocation]
+        The location of the output file.
+
+    [1 <= INT] [k]
+        The size of the k-mers.
+
+    [0 <= INT] [organization]
+        The degree of organization.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        A CountKMers job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -347,21 +420,37 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE AGGREGATE JOB
+    --------------------
 
-    PURPOSE:
-        Creates an AggregateKMers job.
 
-    INPUT:
-        [STRING ITERATOR] [inclusionLocations] - An iterable object of all
-            inclusion file locations.
-        [STRING ITERATOR] [exclusionLocations] - An iterable object of all
-            exclusion file locations.
-        [FILE LOCATION] [outputLocation] - The output file location.
-        [STRING -- OPTIONAL] [tag] - The organization tag; used to generate
-            appropriate file names from the inclusion and exclusion iterators.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - An AggregateKMers job that may be passed to RunJobs(...).
+    Creates an AggregateKMers job.
+
+
+    INPUT
+    -----
+
+    [STRING ITERATOR] [inclusionLocations]
+        An iterable object of all inclusion file locations.
+
+    [STRING ITERATOR] [exclusionLocations]
+        An iterable object of all exclusion file locations.
+
+    [FILE LOCATION] [outputLocation]
+        The output file location.
+
+    [STRING -- OPTIONAL] [tag]
+        The organization tag; used to generate appropriate file names from the
+        inclusion and exclusion iterators.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        An AggregateKMers job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -417,34 +506,64 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE EXTRACT JOB
+    ------------------
 
-    PURPOSE:
-        Creates an ExtractSignatures job.
 
-    INPUT:
-        [FILE LOCATION] [referenceLocation] - The location of the reference to
-            extract candidates.
-        [1 <= INT -- OPTIONAL] [referenceSize] - The size of the reference.
-        [0 <= FLOAT <= 1 -- OPTIONAL] [rate] - The SNV rate.
-        [1 <= INT -- OPTIONAL] [inclusion] - The number of inclusion genome
-            files.
-        [0 <= INT -- OPTIONAL] [inhits] - The minimum number of inclusion k-mer
-            hits.
-        [1 <= INT -- OPTIONAL] [exclusion] - The number of exclusion genome
-            files.
-        [0 <= INT -- OPTIONAL] [exhits] - The maximum number of exclusion k-mer
-            hits.
-        [1 <= INT -- OPTIONAL] [gap] - The maximum inclusion k-mer gap size.
-        [1 <= INT -- OPTIONAL] [size] - The minimum size of any candidate.
-        [0 <= FLOAT <= 1 -- OPTIONAL] [GC] - The GC-content of the environment.
-        [0 < FLOAT < 1 -- OPTIONAL] [confidence] - The statistical confidence.
-        [FILE LOCATION] [aggregateLocation] - The location of the aggregation
-            file.
-        [FILE LOCATION] [outputLocation] - The location of the output file.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - An ExtractSignatures job that may be passed to
-            RunJobs(...).
+    Creates an ExtractSignatures job.
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [referenceLocation]
+        The location of the reference to extract candidates.
+
+    [1 <= INT -- OPTIONAL] [referenceSize]
+        The size of the reference.
+
+    [0 <= FLOAT <= 1 -- OPTIONAL] [rate]
+        The SNV and error rate. This is the likelihood a base differs from
+        its ancestor, whether through mutation or error.
+
+    [1 <= INT -- OPTIONAL] [inclusion]
+        The number of inclusion targets.
+
+    [0 <= INT -- OPTIONAL] [inhits]
+        The minimum number of inclusion k-mer hits.
+
+    [1 <= INT -- OPTIONAL] [exclusion]
+        The number of exclusion targets.
+
+    [0 <= INT -- OPTIONAL] [exhits]
+        The maximum number of exclusion k-mer hits.
+
+    [1 <= INT -- OPTIONAL] [gap]
+        The maximum inclusion k-mer gap size. While related, this is not the
+        same as the nucleotide gap.
+
+    [1 <= INT -- OPTIONAL] [size]
+        The minimum size of any candidate.
+
+    [0 <= FLOAT <= 1 -- OPTIONAL] [GC]
+        The GC-content of the environment.
+
+    [0 < FLOAT < 1 -- OPTIONAL] [confidence]
+        The statistical confidence when making decisions.
+
+    [FILE LOCATION] [aggregateLocation]
+        The location of the aggregation file.
+
+    [FILE LOCATION] [outputLocation]
+        The location of the output file.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        An ExtractSignatures job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -540,19 +659,34 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE DATABASE JOB
+    -------------------
 
-    PURPOSE:
-        Creates a BuildDatabase job.
 
-    INPUT:
-        [(FILE LOCATION) ITERATOR] [inputLocations] - The input locations of
-            the entries (FASTA) in the database.
-        [FILE LOCATION] [aggregatedLocation] - The location to write a single
-            database file corresponding to information from the input files.
-        [FILE LOCATION] [outputLocation] - The output location of the database.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - An BuildDatabase job that may be passed to RunJobs(...).
+    Creates a BuildDatabase job.
+
+
+    INPUT
+    -----
+
+    [(FILE LOCATION) ITERATOR] [inputLocations]
+        The input locations of the entries (FASTA) to be put in the database.
+
+    [FILE LOCATION] [aggregatedLocation]
+        The location to write a single database file corresponding to
+        information from the input files.
+
+    [FILE LOCATION] [outputLocation]
+        The output location to write the database.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        A BuildDatabase job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -630,30 +764,58 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE FILTER JOB
+    -----------------
 
-    PURPOSE:
-        Creates a FilterSignatures job.
 
-    INPUT:
-        [FILE LOCATION] [inclusionDatabaseLocation] - The location of the
-            inclusion database to compare signatures against.
-        [FILE LOCATION] [exclusionDatabaseLocation] - The location of the
-            exclusion database to compare signatures against.
-        [(FILE LOCATION) LIST] [inclusion] - The list of inclusion files.
-        [(FILE LOCATION) LIST] [exclusion] - The list of exclusion files.
-        [FILE LOCATION] [inputLocation] - The candidate signatures to filter.
-        [FILE LOCATION] [filteredOutputLocation] - The filtered output
-            location.
-        [FILE LOCATION] [sortedOutputLocation] - The sorted output location.
-        [0 <= FLOAT <= 1] [filterLength] - The maximum percent length of an
-            exclusion hit with a candidate.
-        [0 <= FLOAT <= 1] [filterPercent] - The maximum percent identity of an
-            exclusion hit with a candidate.
-        [4 <= INT] [seedSize] - The seed size used in alignments.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - A FilterSignatures job that may be passed to
-            RunJobs(...).
+    Creates a FilterSignatures job.
+
+
+    INPUT
+    -----
+
+    [FILE LOCATION] [inclusionDatabaseLocation]
+        The location of the inclusion database to compare signatures against.
+
+    [FILE LOCATION] [exclusionDatabaseLocation]
+        The location of the exclusion database to compare signatures against.
+
+    [(FILE LOCATION) LIST] [inclusion]
+        The list of file locations for the inclusion files.
+
+    [(FILE LOCATION) LIST] [exclusion]
+        The list of file locations for the exclusion files.
+
+    [FILE LOCATION] [inputLocation]
+        The candidate signatures (Neptune FASTA) to filter.
+
+    [FILE LOCATION] [filteredOutputLocation]
+        The file location to write the filtered output.
+
+    [FILE LOCATION] [sortedOutputLocation]
+        The file location to write the sorted output.
+
+    [0 <= FLOAT <= 1] [filterLength]
+        The maximum percent length of an exclusion hit with a candidate.
+        When both the [filterLength] and [filterPercent] are exceeded, a
+        candidate signature will be filtered (discarded).
+
+    [0 <= FLOAT <= 1] [filterPercent]
+        The maximum percent identity of an exclusion hit with a candidate.
+        When both the [filterLength] and [filterPercent] are exceeded, a
+        candidate signature will be filtered (discarded).
+
+    [4 <= INT] [seedSize]
+        The seed size used in alignments.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        A FilterSignatures job that may be passed to RunJobs(...).
 
     # =========================================================================
     """
@@ -732,20 +894,34 @@ class JobManagerDRMAA(JobManager.JobManager):
     # =========================================================================
 
     CREATE CONSOLIDATE JOB
+    ----------------------
 
-    PURPOSE:
-        Creates a ConsolidateSignatures job.
 
-    INPUT:
-        [(FILE LOCATION) LIST] [signatureLocations] - A list of Neptune
-            signature file locations corresponding to files to consolidate.
-        [4 <= INT] [seedSize] - The seed size used in alignments.
-        [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation] - The directory
-            to write the output files.
+    PURPOSE
+    -------
 
-    RETURN:
-        [JOB] [job] - A ConsolidateSignatures job that may be passed to
-            RunJobs(...).
+    Creates a ConsolidateSignatures job.
+
+
+    INPUT
+    -----
+
+    [(FILE LOCATION) LIST] [signatureLocations]
+        A list of Neptune signature file locations corresponding to files to
+        consolidate.
+
+    [4 <= INT] [seedSize]
+        The seed size used in sequence alignments.
+
+    [(FILE DIRECTORY) LOCATION] [outputDirectoryLocation]
+        The directory to write the output files.
+
+
+    RETURN
+    ------
+
+    [JOB] [job]
+        A ConsolidateSignatures job that may be passed to RunJobs(...).
 
     # =========================================================================
     """

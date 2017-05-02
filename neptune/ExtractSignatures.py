@@ -93,15 +93,15 @@ GLOBALS
 # =============================================================================
 """
 
+PROGRAM_DESCRIPTION = 'This script extracts signatures from reference targets \
+    using k-mer information.'
+
 # DEFAULTS #
 
 RATE_DEFAULT = 0.01
 CONFIDENCE_DEFAULT = 0.95
 
 # ARGUMENTS #
-
-PROGRAM_DESCRIPTION = 'This script extracts signatures from reference targets \
-    using k-mer information.'
 
 LONG = "--"
 SHORT = "-"
@@ -424,21 +424,33 @@ def calculateProbHBMM(GC):
 # =============================================================================
 
 CALCULATE PROBABILITY THAT HOMOLOGOUS BASES MATCH
+-------------------------------------------------
 
 P(X = Y)_H
 
-PURPOSE:
-    Calculates the probability that homologous bases match, given a certain
-    mutation rate and a GC-content environment.
 
-INPUT:
-    [0 <= FLOAT <= 1] [mutationRate] - The probability of an arbitrary base
-        mutating.
-    [0 <= FLOAT <= 1] [GC] - The GC content of the environment.
+PURPOSE
+-------
 
-RETURN:
-    [0 <= FLOAT <= 1] [P(X = Y)_H] - The probability that homologous bases
-        match.
+Calculates the probability that homologous bases match, given a certain
+mutation rate and a GC-content environment.
+
+
+INPUT
+-----
+
+[0 <= FLOAT <= 1] [mutationRate]
+    The probability of an arbitrary base mutating.
+
+[0 <= FLOAT <= 1] [GC]
+    The GC content of the environment (or genomes).
+
+
+RETURN
+------
+
+[0 <= FLOAT <= 1] [P(X = Y)_H]
+    The probability that homologous bases match.
 
 # =============================================================================
 """

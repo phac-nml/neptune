@@ -259,30 +259,46 @@ def aggregateKMer(kmer, kmers, files):
 # =============================================================================
 
 AGGREGATE
+---------
 
-PURPOSE:
-    Aggregates the k-mers in the inclusion and exclusion files and produces a
-    file containing the k-mers and their inclusion and exclusion counts. The
-    input inclusion and exclusion files must contain only distinct and
-    lexicographically sorted k-mers.
 
-INPUT:
-    [FILE LIST] [inclusionLocations] - The list of openable inclusion k-mer
-        files locations.
-    [FILE LIST] [exclusionLocations] - The list of openable exclusion k-mer
-        files locations.
-    [FILE] [outputLocation] - The file location to write the aggregated k-mers.
-    [BOOL] [delete] - Whether or not to delete the [inclusionLocations] and
-        [exclusionLocations] after aggregation is complete.
+PURPOSE
+-------
 
-    NOTE: The input files must contain only distinct and lexicographically
-    sorted k-mers. These k-mers must appear first on every line and be
-    preceded by no spaces or special characters. Any characters following
-    the k-mers, including k-mer counts, will be ignored.
+Aggregates the k-mers in the inclusion and exclusion files and produces a file
+containing the k-mers and their inclusion and exclusion counts. The input
+inclusion and exclusion files must contain only distinct and lexicographically
+sorted k-mers.
 
-POST:
-    The k-mers and their aggregate counts value will be written to a file at
-    the [outputLocation].
+
+INPUT
+-----
+
+[FILE LIST] [inclusionLocations]
+    The list of openable inclusion k-mer files locations.
+
+[FILE LIST] [exclusionLocations]
+    The list of openable exclusion k-mer files locations.
+
+[FILE] [outputLocation]
+    The file location to write the aggregated k-mers.
+
+[BOOL] [delete]
+    Whether or not to delete the [inclusionLocations] and [exclusionLocations]
+    after aggregation is complete.
+
+
+NOTE: The input files must contain only distinct and lexicographically sorted
+k-mers. These k-mers must appear first on every line and be preceded by no
+spaces or special characters. Any characters following the k-mers, including
+k-mer counts, will be ignored.
+
+
+POST
+----
+
+The k-mers and their aggregate counts value will be written to a file at the
+[outputLocation].
 
 # =============================================================================
 """
@@ -347,7 +363,7 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
         # exclusion aggregation:
         excounts = aggregateKMer(kmer, exclusionKMers, exclusionFiles)
 
-        # are all files at end of file?
+        # are all files at end of the file?
         if kmer == SENTINEL:
             break
 
