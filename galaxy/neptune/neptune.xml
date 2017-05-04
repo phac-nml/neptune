@@ -1,5 +1,5 @@
-<tool id="neptune" name="Neptune: Signature Discovery" version="1.2.5.1">
-  <description>Neptune identifies genomic signatures using an exact k-mer matching strategy while accommodating k-mer mismatches.</description>
+<tool id="neptune" name="Neptune: Signature Discovery" version="1.2.5.2">
+  <description>identifies discriminatory sequences between two groups of sequences</description>
 
   <requirements>
     <requirement type="package" version="1.2.5">neptune</requirement>
@@ -63,9 +63,9 @@
       </when>
       <when value="advanced">
         <param name="kmer" type="integer" label="k" help="The size of the k-mers. This value is automatically calculated if left blank." optional="true"/>
-        <param name="size" type="integer" label="Size" help="The minimum size of reported signatures. The default size is 4k." optional="true"/>
+        <param name="size" type="integer" label="Size" help="  The minimum size of all reported candidate signatures. Identified candidate signatures shorter than this value will be discard. The default size is 4k." optional="true"/>
         <param name="rate" type="float" label="Rate" help="The probability of a mutation or error at an arbitrary position. The default value is 0.01." optional="true" value="0.01"/>
-        <param name="exhits" type="integer" label="Minimum Exclusion" help="The minimum number of inclusion targets that must contain a k-mer observed in the reference to begin or continue building candidate signatures. This will be calculated if not specified." optional="true"  value="1"/>
+        <param name="exhits" type="integer" label="Maximum Exclusion" help="The maximum allowable number of exclusion targets that may contain a k-mer observed in the reference before terminating the construction of a candidate signature." optional="true"  value="1"/>
       </when>
     </conditional>
   </inputs>
