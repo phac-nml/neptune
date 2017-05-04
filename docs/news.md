@@ -1,5 +1,17 @@
 # News #
 
+## Version 1.2.5 ##
+
+2017-05-04
+
+Neptune version 1.2.5 has been released to GitHub, Bioconda, and Galaxy:
+
+* **GitHub**: [https://github.com/phac-nml/neptune](https://github.com/phac-nml/neptune)
+* **Bioconda**: [https://bioconda.github.io/recipes/neptune/README.html](https://bioconda.github.io/recipes/neptune/README.html)
+* **Galaxy**: [Toolshed](https://toolshed.g2.bx.psu.edu/repository?repository_id=a8304940589f4e95&changeset_revision=e2725e0b0113)
+
+Please see the [Change Log](CHANGELOG) for additional information.
+
 ## Bioconda Installation ##
 
 2017-04-07
