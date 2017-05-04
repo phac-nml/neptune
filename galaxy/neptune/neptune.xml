@@ -77,7 +77,7 @@
 
   <tests>
     <test>
-      <output/>
+      <output name="receipt"/>
     </test>
   </tests>
 
