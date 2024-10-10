@@ -78,11 +78,11 @@ import math
 import argparse
 import os
 
-from Utility import reverseComplement
-from Utility import buildReferences
-from Utility import estimateReferenceParameters
+from neptune.Utility import reverseComplement
+from neptune.Utility import buildReferences
+from neptune.Utility import estimateReferenceParameters
 
-import Signature
+import neptune.Signature as Signature
 
 from scipy.stats import norm
 

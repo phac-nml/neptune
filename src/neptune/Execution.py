@@ -31,12 +31,12 @@ import sys
 import math
 from scipy.special import comb
 
-import Neptune
-import CountKMers
-import ExtractSignatures
-import FilterSignatures
-import ConsolidateSignatures
-import Utility
+import neptune.Neptune as Neptune
+import neptune.CountKMers as CountKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
+import neptune.ConsolidateSignatures as ConsolidateSignatures
+import neptune.Utility as Utility
 
 """
 # =============================================================================

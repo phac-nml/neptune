@@ -60,8 +60,8 @@ script.py -d ex.db -i in1.can -o in1.fil -fp 0.70 -fl 0.50
 import argparse
 import operator
 
-import Database
-import Signature
+import neptune.Database as Database
+import neptune.Signature as Signature
 
 """
 # =============================================================================

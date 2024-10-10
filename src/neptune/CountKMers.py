@@ -71,7 +71,7 @@ import argparse
 import os
 import operator
 
-import Utility
+import neptune.Utility as Utility
 
 """
 # =============================================================================

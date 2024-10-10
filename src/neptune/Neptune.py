@@ -35,11 +35,11 @@ import argparse
 import sys
 import shutil
 
-import Execution
-import Utility
-import CountKMers
-import ExtractSignatures
-import FilterSignatures
+import neptune.Execution as Execution
+import neptune.Utility as Utility
+import neptune.CountKMers as CountKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
 
 """
 # =============================================================================
@@ -708,7 +708,7 @@ EXECUTE DRMAA
 def executeDRMAA(parameters):
 
     import drmaa
-    import JobManagerDRMAA
+    import neptune.JobManagerDRMAA as JobManagerDRMAA
 
     with drmaa.Session() as session:
 
@@ -734,7 +734,7 @@ EXECUTE PARALLEL
 """
 def executeParallel(parameters):
 
-    import JobManagerParallel
+    import neptune.JobManagerParallel as JobManagerParallel
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
     logDirectoryLocation = os.path.abspath(

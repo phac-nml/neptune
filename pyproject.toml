@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neptune"
+version = "1.2.5A"
+description= "Neptune signature discovery"
+dependencies = [
+  "drmaa",
+  "numpy",
+  "scipy",
+  "biopython",
+]
+requires-python = ">= 3.8"
+
+[project.scripts]
+neptune = "neptune.Neptune:main"

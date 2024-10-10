@@ -40,13 +40,13 @@ node.
 import multiprocessing
 import subprocess
 
-import JobManager
-import CountKMers
-import AggregateKMers
-import ExtractSignatures
-import FilterSignatures
-import ConsolidateSignatures
-import Database
+import neptune.JobManager as JobManager
+import neptune.CountKMers as CountKMers
+import neptune.AggregateKMers as AggregateKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
+import neptune.ConsolidateSignatures as ConsolidateSignatures
+import neptune.Database as Database
 
 # DEFAULTS
 

@@ -39,9 +39,9 @@ attempts to avoid overlapping signatures. However, this is not guaranteed.
 import argparse
 import os
 
-import Signature
-import Database
-import Utility
+import neptune.Signature as Signature
+import neptune.Database as Database
+import neptune.Utility as Utility
 
 """
 # =============================================================================
