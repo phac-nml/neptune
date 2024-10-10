@@ -33,10 +33,17 @@ code quality.
 It is strongly recommended you refer to the
 [documentation](https://phac-nml.github.io/neptune/install/) for full 
 installation instructions. Neptune may be installed on any 64-bit Linux system
-using Bioconda:
+using Bioconda, preferably with [Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) or with the Mamba resolver under Conda:
 
  1. Install [Bioconda](https://bioconda.github.io/)
- 2. Install the "neptune" Bioconda package (conda install neptune).
+ 2. Create an environment for Neptune and install within it: `mamba create -n neptune bioconda::neptune -c conda-forge`
+ 3. Activate the environment: `mamba activate neptune`
+ 4. Test the install: `neptune --version`
+
+If you run into problems installing Neptune with Conda / Mamba, you can try the following:
+
+ - Modify your `~/.condarc` file to have `channel_priority: flexible`
+ - Modify your conda solver within `~/.condarc` to use Mamba: `solver: libmamba`
 
 Neptune may also be installed directly and instructions are available in the
 [documentation](https://phac-nml.github.io/neptune/install/).
