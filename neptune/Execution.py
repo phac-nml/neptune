@@ -29,7 +29,7 @@ specific language governing permissions and limitations under the License.
 import os
 import sys
 import math
-from scipy.misc import comb
+from scipy.special import comb
 
 import Neptune
 import CountKMers
@@ -162,7 +162,7 @@ class Execution():
             parameters.get(ExtractSignatures.INCLUSION),
             self.inclusionLocations)
 
-        if len(parameters.get(ExtractSignatures.INCLUSION)) is 0:
+        if len(parameters.get(ExtractSignatures.INCLUSION)) == 0:
             raise RuntimeError("Inclusion sequence(s) are missing.")
 
         # -- exclusion locations --
@@ -175,7 +175,7 @@ class Execution():
             parameters.get(ExtractSignatures.EXCLUSION),
             self.exclusionLocations)
 
-        if len(parameters.get(ExtractSignatures.EXCLUSION)) is 0:
+        if len(parameters.get(ExtractSignatures.EXCLUSION)) == 0:
             raise RuntimeError("exclusion sequence(s) are missing.")
 
         # -- reference locations --
@@ -324,7 +324,7 @@ class Execution():
         a = 2.0 * math.pow((1.0 - gc) / 2.0, 2.0)
         b = 2.0 * math.pow(gc / 2.0, 2.0)
         c = math.pow(a + b, k)
-        d = comb((gs - k + 1), (2), False)
+        d = comb((gs - k + 1), (2))
         expected = c * d
 
         return expected
@@ -365,7 +365,7 @@ class Execution():
     """
     def estimateKMerSize(self):
 
-        print "Estimating k-mer size ..."
+        print("Estimating k-mer size ...")
 
         maxGenomeSize = 1
         maxGCContent = 0.5  # least extreme GC-content
@@ -426,7 +426,7 @@ class Execution():
             if expected < EXPECTED_HITS_THRESHOLD:
 
                 self.k = k
-                print "k = " + str(self.k) + "\n"
+                print("k = " + str(self.k) + "\n")
                 return
 
         # No suitable k estimated.

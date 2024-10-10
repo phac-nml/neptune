@@ -275,7 +275,7 @@ class TestMain(unittest.TestCase):
             ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
             CountKMers.KMER_LONG, str(parameters[CountKMers.KMER])]
 
-        print sys.argv[1:]
+        print(sys.argv[1:])
 
         with self.assertRaises(RuntimeError):
             main()

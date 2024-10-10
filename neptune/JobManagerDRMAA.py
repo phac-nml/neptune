@@ -222,7 +222,7 @@ class JobManagerDRMAA(JobManager.JobManager):
             jobID = self.session.runJob(job)
             jobIDs.append(jobID)
 
-        print "Submitted " + str(len(jobIDs)) + " jobs."
+        print("Submitted " + str(len(jobIDs)) + " jobs.")
         self.synchronize(jobIDs)
 
     """
@@ -276,9 +276,9 @@ class JobManagerDRMAA(JobManager.JobManager):
             # Problem:
             if status:
 
-                print "ERROR: Job did not complete successfully."
-                print "JOB: " + str(jobID)
-                print "STATUS: " + str(status)
+                print("ERROR: Job did not complete successfully.")
+                print("JOB: " + str(jobID))
+                print("STATUS: " + str(status))
 
                 exit(1)
 

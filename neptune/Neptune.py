@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.5'
+__version__ = '1.2.5-python3'
 
 import time
 
@@ -651,30 +651,30 @@ def execute(execution):
 
     # --- K-MER COUNTING ---
     print("k-mer Counting...")
-    start = time.clock()
+    start = time.perf_counter()
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- K-MER AGGREGATION ---
     print("k-mer Aggregation...")
-    start = time.clock()
+    start = time.perf_counter()
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE EXTRACTION ---
     print("Signature Extraction...")
-    start = time.clock()
+    start = time.perf_counter()
     candidateLocations = extractSignatures(execution)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE FILTERING ---
     print("Signature Filtering...")
-    start = time.clock()
+    start = time.perf_counter()
     sortedLocations = filterSignatures(execution, candidateLocations)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # Are all the signature files empty?
@@ -688,9 +688,9 @@ def execute(execution):
 
         # --- CONSOLIDATE SIGNATURES ---
         print("Consolidate Signatures...")
-        start = time.clock()
+        start = time.perf_counter()
         consolidateSignatures(execution, sortedLocations)
-        end = time.clock()
+        end = time.perf_counter()
         print(str(end - start) + " seconds\n")
 
     execution.produceReceipt()

@@ -32,7 +32,7 @@ import sys
 def prepareSystemPath():
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print root
+    print(root)
 
     if root not in sys.path:
          sys.path.insert(0, root)

@@ -134,7 +134,7 @@ class JobManagerParallel(JobManager.JobManager):
     """
     def runJobs(self, jobs):
 
-        print "Submitted " + str(len(jobs)) + " jobs."
+        print("Submitted " + str(len(jobs)) + " jobs.")
         self.synchronize(jobs)
 
     """
@@ -478,7 +478,7 @@ class JobManagerParallel(JobManager.JobManager):
 
             for line in inputFile:
 
-                if line[0] is ">":
+                if line[0] == ">":
                     aggregatedFile.write(">" + str(ID) + "\n")
 
                 else:

@@ -252,7 +252,7 @@ POST
 def sortSignatures(signatures):
 
     sortedSignatures = sorted(
-        signatures.iteritems(),
-        key=lambda (k, v): v.score, reverse=True)
+        signatures.items(),
+        key=lambda x: x[1].score, reverse=True)
 
     return [item[1] for item in sortedSignatures]
