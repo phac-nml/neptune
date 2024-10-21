@@ -70,20 +70,4 @@ The following parameters relate to the parallelization of Neptune:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -p | --parallelization | integer | The number of parallel working processes to create when Neptune is operating in a non-DRMAA mode (default). This parameter will directly increase the speed of many stages of the software, provided there are sufficient resources available to run the worker process simultaneously. This value must be a positive integer. The default value is 8. |
-
-### DRMAA ###
-
-It may be necessary to specify job submission parameters that are required by your cluster-computing environment. If you require DRM-specific command line arguments, they may be provided to Neptune using one of several arguments. The --default-specification parameter will provide the DRM-specific arguments to all jobs which are created. Additional command line arguments allow precise specifications for each type of job.
-
-| Option | Alternative | Parameter | Description |
-|--------|-------------|-----------|-------------|
-|  | --drmaa | flag | This flag enables DRMAA-based Neptune execution. This will require a DRMAA-compatible cluster computing environment to be installed and configured. However, Neptune will likely operate significantly faster in this environment. |
-|  | --default-specification | string | DRMAA-specific command line arguments for all jobs. These arguments must be provided as a quoted string. The default specification will be applied to all job types and overwritten when specified. |
-|  | --count-specification | string | DRMAA-specific command line arguments for \textit{k}-mer counting. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-|  | --aggregate-specification | string | DRMAA-specific command line arguments for \textit{k}-mer aggregation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-|  | --extract-specification | string | DRMAA-specific command line arguments for signature extraction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-|  | --database-specification | string | DRMAA-specific command line arguments for database construction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-|  | --filter-specification | string | DRMAA-specific command line arguments for candidate signature filtering. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-|  | --consolidate-specification | string | DRMAA-specific command line arguments for signature consolidation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type. |
-
+| -p | --parallelization | integer | The number of parallel working processes to create. This parameter will directly increase the speed of many stages of the software, provided there are sufficient resources available to run the worker process simultaneously. This value must be a positive integer. The default value is 8. |

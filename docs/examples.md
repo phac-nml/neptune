@@ -41,16 +41,3 @@ neptune
     --reference in1.fasta in2.fasta
     --output output/
 ```
-
-## DRMAA Parameters ##
-
-It may be necessary to specify DRMAA native specification parameters to accommodate Neptune job scheduling. This example specifies the resources required by all jobs (--default-specification) and further specifies that *k*-mer aggregation jobs (--aggregate-specification) will require more memory. The remaining Neptune parameters are automatically calculated.
-
-```bash
-neptune
-    --inclusion inclusion/
-    --exclusion exclusion/
-    --output output/
-    --default-specification "-l h_vmem=6G -pe smp 4"
-    --aggregate-specification "-l h_vmem=10G -pe smp 4"
-```

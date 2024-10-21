@@ -256,30 +256,6 @@ class Execution():
         # -- job manager --
         self.jobManager = jobManager
 
-        # -- job specifications --
-        if parameters.get(Neptune.COUNT_SPECIFICATION):
-            self.jobManager.setCountSpecification(
-                parameters.get(Neptune.COUNT_SPECIFICATION))
-
-        if parameters.get(Neptune.AGGREGATE_SPECIFICATION):
-            self.jobManager.setAggregateSpecification(
-                parameters.get(Neptune.AGGREGATE_SPECIFICATION))
-
-        if parameters.get(Neptune.EXTRACT_SPECIFICATION):
-            self.jobManager.setExtractSpecification(
-                parameters.get(Neptune.EXTRACT_SPECIFICATION))
-
-        if parameters.get(Neptune.DATABASE_SPECIFICATION):
-            self.jobManager.setDatabaseSpecification(
-                parameters.get(Neptune.DATABASE_SPECIFICATION))
-
-        if parameters.get(Neptune.FILTER_SPECIFICATION):
-            self.jobManager.setFilterSpecification(
-                parameters.get(Neptune.FILTER_SPECIFICATION))
-
-        if parameters.get(Neptune.CONSOLIDATE_SPECIFICATION):
-            self.jobManager.setConsolidateSpecification(
-                parameters.get(Neptune.CONSOLIDATE_SPECIFICATION))
 
     """
     # =========================================================================
@@ -661,69 +637,5 @@ class Execution():
         receiptFile.write(
             "Output = \n" +
             str("\t" + self.outputDirectoryLocation) + "\n")
-
-        receiptFile.write("\n")
-
-    """
-    # =========================================================================
-
-    REPORT DRMAA PARAMETERS
-    -----------------------
-
-
-    PURPOSE
-    -------
-
-    Reports the DRMAA parameters used by Neptune.
-
-
-    INPUT
-    -----
-
-    [FILE] [receiptFile] - The open and writable receipt file.
-
-
-    RETURN
-    ------
-
-    [NONE]
-
-
-    POST
-    ----
-
-    The DRMAA parameters used by Neptune will be reported to the execution
-    receipt.
-
-    # =========================================================================
-    """
-    def reportDRMAAParameters(self, receiptFile):
-
-        receiptFile.write("-- DRMAA -- \n")
-        receiptFile.write("\n")
-
-        receiptFile.write(
-            "CountKMers Specification = " +
-            str(self.jobManager.countSpecification) + "\n")
-
-        receiptFile.write(
-            "AggregateKMers Specification = " +
-            str(self.jobManager.aggregateSpecification) + "\n")
-
-        receiptFile.write(
-            "ExtractSignatures Specification = " +
-            str(self.jobManager.extractSpecification) + "\n")
-
-        receiptFile.write(
-            "CreateDatabase Specification = " +
-            str(self.jobManager.databaseSpecification) + "\n")
-
-        receiptFile.write(
-            "FilterSignatures Specification = " +
-            str(self.jobManager.filterSpecification) + "\n")
-
-        receiptFile.write(
-            "ConsolidateSignatures Specification = " +
-            str(self.jobManager.consolidateSpecification) + "\n")
 
         receiptFile.write("\n")

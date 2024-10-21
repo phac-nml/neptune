@@ -1,6 +1,6 @@
 # Installation #
 
-This installation guide assumes the use of the [BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a [Bioconda](https://bioconda.github.io/) package. Neptune may either be run on a single machine or a computing cluster. Neptune achieves maximum parallelization when submitting jobs through a DRMAA-compliant cluster computing scheduler. The installation and configuration of a DRMAA-compliant scheduler will require a significant understanding of Unix. However, it is possible to run Neptune in parallel on a single machine without DRMAA. Neptune is known to be compatible with the [SGE](http://gridscheduler.sourceforge.net/) and [Slurm](http://slurm.schedmd.com/) schedulers.
+This installation guide assumes the use of the [BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a [Bioconda](https://bioconda.github.io/) package.
 
 ## Bioconda ##
 
