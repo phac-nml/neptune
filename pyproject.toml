@@ -15,3 +15,8 @@ requires-python = ">= 3.8"
 
 [project.scripts]
 neptune = "neptune.Neptune:main"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "src"
+]

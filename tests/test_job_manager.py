@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.JobManager import *
 from neptune.JobManagerParallel import JobManagerParallel
@@ -54,8 +53,8 @@ class TestParallelConstructor(unittest.TestCase):
 
         jobManager = JobManagerParallel(outputDirectoryLocation, logDirectoryLocation)
 
-        self.assertEquals(jobManager.outputDirectoryLocation, outputDirectoryLocation)
-        self.assertEquals(jobManager.logDirectoryLocation, logDirectoryLocation)
+        self.assertEqual(jobManager.outputDirectoryLocation, outputDirectoryLocation)
+        self.assertEqual(jobManager.logDirectoryLocation, logDirectoryLocation)
 
 class TestRunJobs(unittest.TestCase):
 
@@ -79,7 +78,7 @@ class TestRunJobs(unittest.TestCase):
 
         expected = "ACGTACG 4\nGTACGTA 2\n"
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 

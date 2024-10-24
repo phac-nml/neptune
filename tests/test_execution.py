@@ -30,11 +30,10 @@ import unittest
 
 import os
 import sys
-import StringIO
+import io
 import shutil
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Execution import *
 
@@ -73,14 +72,6 @@ class DefaultArgs():
             parameters[FilterSignatures.SEED_SIZE] = 9
 
             parameters[Neptune.OUTPUT] = getPath("tests/output/execution/temp.dir")
-
-            parameters[Neptune.DEFAULT_SPECIFICATION] = None
-            parameters[Neptune.COUNT_SPECIFICATION] = None
-            parameters[Neptune.AGGREGATE_SPECIFICATION] = None
-            parameters[Neptune.EXTRACT_SPECIFICATION] = None
-            parameters[Neptune.DATABASE_SPECIFICATION] = None
-            parameters[Neptune.FILTER_SPECIFICATION] = None
-            parameters[Neptune.CONSOLIDATE_SPECIFICATION] = None
 
             self.parameters = parameters
 
