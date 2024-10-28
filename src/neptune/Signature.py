@@ -203,13 +203,13 @@ The passed signature will be written to the [destination].
 def writeSignature(signature, destination):
 
     destination.write(
-        ">" + str(signature.ID) + " " +
-        str("score=") + "{0:.4f}".format(signature.score) + " " +
-        str("in=") + "{0:.4f}".format(abs(signature.inscore)) + " " +
-        str("ex=") + "{0:.4f}".format(abs(signature.exscore)) + " " +
-        str("len=") + str(signature.length) + " " +
-        str("ref=") + str(signature.reference) + " " +
-        str("pos=") + str(signature.position) + "\n")
+        ">" + str(signature.ID) + " "
+        + str("score=") + "{0:.4f}".format(signature.score) + " "
+        + str("in=") + "{0:.4f}".format(abs(signature.inscore)) + " "
+        + str("ex=") + "{0:.4f}".format(abs(signature.exscore)) + " "
+        + str("len=") + str(signature.length) + " "
+        + str("ref=") + str(signature.reference) + " "
+        + str("pos=") + str(signature.position) + "\n")
 
     destination.write(str(signature.sequence) + "\n")
 

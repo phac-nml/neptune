@@ -413,10 +413,10 @@ def calculateProbHBMM(GC):
 
     # P(X_M = Y_M)_H
     probHBMM = (
-        2 * math.pow(GC / (GC + 1), 2) +
-        math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) +\
-        (2 * math.pow((1 - GC) / (2 - GC), 2) +
-            math.pow(GC / (2 - GC), 2)) * (GC)
+        2 * math.pow(GC / (GC + 1), 2)
+        + math.pow((1 - GC) / (GC + 1), 2)) * (1 - GC) \
+        + (2 * math.pow((1 - GC) / (2 - GC), 2)
+           + math.pow(GC / (2 - GC), 2)) * (GC)
 
     return probHBMM
 
@@ -1013,7 +1013,7 @@ def parse(parameters):
 
     # --- k-mer Size ---
     if not os.path.isfile(parameters[KMERS]):
-            raise RuntimeError("ERROR: Could not open k-mer file.\n")
+        raise RuntimeError("ERROR: Could not open k-mer file.\n")
 
     kmerLocation = parameters[KMERS]
     kmerFile = open(kmerLocation, 'r')

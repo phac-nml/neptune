@@ -311,16 +311,16 @@ class FilterSignatures():
         if key not in dictionary:
 
             hit.neptuneScore = (
-                (float(hit.alignmentLength) / float(hit.length)) *
-                (float(hit.percentIdentity) / float(100)))
+                (float(hit.alignmentLength) / float(hit.length))
+                * (float(hit.percentIdentity) / float(100)))
 
             dictionary[key] = hit
 
         elif hit.alignmentScore > dictionary[key].alignmentScore:
 
             hit.neptuneScore = (
-                (float(hit.alignmentLength) / float(hit.length)) *
-                (float(hit.percentIdentity) / float(100)))
+                (float(hit.alignmentLength) / float(hit.length))
+                * (float(hit.percentIdentity) / float(100)))
 
             dictionary[key] = hit
 
@@ -475,8 +475,8 @@ class FilterSignatures():
 
                 hit = dictionary[ID]
 
-                if (float(hit.alignmentLength) / float(signature.length) <
-                        float(self.filterLength)):
+                if (float(hit.alignmentLength) / float(signature.length)
+                        < float(self.filterLength)):
                     Signature.writeSignature(signature, outputFile)
 
             else:

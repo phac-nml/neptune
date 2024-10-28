@@ -61,93 +61,93 @@ class Execution():
 
         # -- rate --
         # 0.0 <= q <= 1.0
-        if (parameters.get(ExtractSignatures.RATE) is not None and
-                (float(parameters.get(ExtractSignatures.RATE)) < 0.0 or
-                    float(parameters.get(ExtractSignatures.RATE)) > 1.0)):
+        if (parameters.get(ExtractSignatures.RATE) is not None
+                and (float(parameters.get(ExtractSignatures.RATE)) < 0.0
+                     or float(parameters.get(ExtractSignatures.RATE)) > 1.0)):
             raise RuntimeError("The rate is out of range.")
 
         self.rate = parameters.get(ExtractSignatures.RATE)
 
         # -- minimum inclusion hits --
         # 1 <= inhits
-        if (parameters.get(ExtractSignatures.INHITS) is not None and
-                (int(parameters.get(ExtractSignatures.INHITS)) < 1)):
+        if (parameters.get(ExtractSignatures.INHITS) is not None
+                and (int(parameters.get(ExtractSignatures.INHITS)) < 1)):
             raise RuntimeError("The inclusion hits is out of range.")
 
         self.inhits = parameters.get(ExtractSignatures.INHITS)
 
         # -- minimum exclusion hits --
         # 1 <= exhits
-        if (parameters.get(ExtractSignatures.EXHITS) is not None and
-                (int(parameters.get(ExtractSignatures.EXHITS)) < 1)):
+        if (parameters.get(ExtractSignatures.EXHITS) is not None
+                and (int(parameters.get(ExtractSignatures.EXHITS)) < 1)):
             raise RuntimeError("The exclusion hits is out of range.")
 
         self.exhits = parameters.get(ExtractSignatures.EXHITS)
 
         # -- maximum gap size --
         # 1 <= gap
-        if (parameters.get(ExtractSignatures.GAP) is not None and
-                (int(parameters.get(ExtractSignatures.GAP)) < 1)):
+        if (parameters.get(ExtractSignatures.GAP) is not None
+                and (int(parameters.get(ExtractSignatures.GAP)) < 1)):
             raise RuntimeError("The gap size is out of range.")
 
         self.gap = parameters.get(ExtractSignatures.GAP)
 
         # -- minimum signature size --
         # 1 <= size
-        if (parameters.get(ExtractSignatures.SIZE) is not None and
-                (int(parameters.get(ExtractSignatures.SIZE)) < 1)):
+        if (parameters.get(ExtractSignatures.SIZE) is not None
+                and (int(parameters.get(ExtractSignatures.SIZE)) < 1)):
             raise RuntimeError("The signature size is out of range.")
 
         self.size = parameters.get(ExtractSignatures.SIZE)
 
         # -- GC-content --
         # 0.0 <= gc <= 1.0
-        if (parameters.get(ExtractSignatures.GC_CONTENT) is not None and
-            (float(parameters.get(ExtractSignatures.GC_CONTENT)) < 0.0 or
-                float(parameters.get(ExtractSignatures.GC_CONTENT)) > 1.0)):
+        if (parameters.get(ExtractSignatures.GC_CONTENT) is not None
+            and (float(parameters.get(ExtractSignatures.GC_CONTENT)) < 0.0
+                 or float(parameters.get(ExtractSignatures.GC_CONTENT)) > 1.0)):
             raise RuntimeError("The GC-content is out of range.")
 
         self.gcContent = parameters.get(ExtractSignatures.GC_CONTENT)
 
         # -- statistical confidence --
         # 0.0 < confidence < 1.0
-        if (parameters.get(ExtractSignatures.CONFIDENCE) is not None and
-            (float(parameters.get(ExtractSignatures.CONFIDENCE)) <= 0.0 or
-                float(parameters.get(ExtractSignatures.CONFIDENCE)) >= 1.0)):
+        if (parameters.get(ExtractSignatures.CONFIDENCE) is not None
+            and (float(parameters.get(ExtractSignatures.CONFIDENCE)) <= 0.0
+                 or float(parameters.get(ExtractSignatures.CONFIDENCE)) >= 1.0)):
             raise RuntimeError("The statistical confidence is out of range.")
 
         self.confidence = parameters.get(ExtractSignatures.CONFIDENCE)
 
         # -- filter length --
         # 0.0 <= filterLength <= 1.0
-        if (parameters.get(FilterSignatures.FILTER_LENGTH) is not None and
-            (float(parameters.get(FilterSignatures.FILTER_LENGTH)) < 0.0 or
-                float(parameters.get(FilterSignatures.FILTER_LENGTH)) > 1.0)):
+        if (parameters.get(FilterSignatures.FILTER_LENGTH) is not None
+            and (float(parameters.get(FilterSignatures.FILTER_LENGTH)) < 0.0
+                 or float(parameters.get(FilterSignatures.FILTER_LENGTH)) > 1.0)):
             raise RuntimeError("The filter length is out of range.")
 
         self.filterLength = parameters.get(FilterSignatures.FILTER_LENGTH)
 
         # -- filter percent --
         # 0.0 <= filterPercent <= 1.0
-        if (parameters.get(FilterSignatures.FILTER_PERCENT) is not None and
-            (float(parameters.get(FilterSignatures.FILTER_PERCENT)) < 0.0 or
-                float(parameters.get(FilterSignatures.FILTER_PERCENT)) > 1.0)):
+        if (parameters.get(FilterSignatures.FILTER_PERCENT) is not None
+            and (float(parameters.get(FilterSignatures.FILTER_PERCENT)) < 0.0
+                 or float(parameters.get(FilterSignatures.FILTER_PERCENT)) > 1.0)):
             raise RuntimeError("The filter percent is out of range.")
 
         self.filterPercent = parameters.get(FilterSignatures.FILTER_PERCENT)
 
         # -- seed size --
         # 4 <= seedSize
-        if (parameters.get(FilterSignatures.SEED_SIZE) is not None and
-                (int(parameters.get(FilterSignatures.SEED_SIZE)) < 4)):
+        if (parameters.get(FilterSignatures.SEED_SIZE) is not None
+                and (int(parameters.get(FilterSignatures.SEED_SIZE)) < 4)):
             raise RuntimeError("The seed size is out of range.")
 
         self.seedSize = parameters.get(FilterSignatures.SEED_SIZE)
 
         # -- k-mer organization --
         # 1 <= organization
-        if (parameters.get(CountKMers.ORGANIZATION) is not None and
-                (int(parameters.get(CountKMers.ORGANIZATION)) < 0)):
+        if (parameters.get(CountKMers.ORGANIZATION) is not None
+                and (int(parameters.get(CountKMers.ORGANIZATION)) < 0)):
             raise RuntimeError("The organization is out of range.")
 
         self.organization = parameters.get(CountKMers.ORGANIZATION)
@@ -191,8 +191,8 @@ class Execution():
 
         # -- k-mer --
         # 1 <= k
-        if (parameters.get(CountKMers.KMER) is not None and
-                (int(parameters.get(CountKMers.KMER)) < 1)):
+        if (parameters.get(CountKMers.KMER) is not None
+                and (int(parameters.get(CountKMers.KMER)) < 1)):
             raise RuntimeError("The k-mer size is out of range.")
 
         elif parameters.get(CountKMers.KMER) is not None:
@@ -255,7 +255,6 @@ class Execution():
 
         # -- job manager --
         self.jobManager = jobManager
-
 
     """
     # =========================================================================
@@ -366,8 +365,8 @@ class Execution():
 
             if (sumGC + sumAT) == 0:
                 raise RuntimeError(
-                    "There are no A, C, G, or T characters in file: " +
-                    str(inclusionLocation) + "\n")
+                    "There are no A, C, G, or T characters in file: "
+                    + str(inclusionLocation) + "\n")
 
             gcContent = float(sumGC) / float(sumGC + sumAT)
 
@@ -531,48 +530,48 @@ class Execution():
         receiptFile.write("\n")
 
         receiptFile.write(
-            "k = " +
-            str(self.k) + "\n")
+            "k = "
+            + str(self.k) + "\n")
 
         receiptFile.write(
-            "SNV Rate = " +
-            str(self.rate) + "\n")
+            "SNV Rate = "
+            + str(self.rate) + "\n")
 
         receiptFile.write(
-            "Minimum Inclusion Observations = " +
-            str(self.inhits) + "\n")
+            "Minimum Inclusion Observations = "
+            + str(self.inhits) + "\n")
 
         receiptFile.write(
-            "Minimum Exclusion Observations = " +
-            str(self.exhits) + "\n")
+            "Minimum Exclusion Observations = "
+            + str(self.exhits) + "\n")
 
         receiptFile.write(
-            "Maximum Gap Size = " +
-            str(self.gap) + "\n")
+            "Maximum Gap Size = "
+            + str(self.gap) + "\n")
 
         receiptFile.write(
-            "Minimum Signature Size = " +
-            str(self.size) + "\n")
+            "Minimum Signature Size = "
+            + str(self.size) + "\n")
 
         receiptFile.write(
-            "GC-Content = " +
-            str(self.gcContent) + "\n")
+            "GC-Content = "
+            + str(self.gcContent) + "\n")
 
         receiptFile.write(
-            "Filter Length = " +
-            str(self.filterLength) + "\n")
+            "Filter Length = "
+            + str(self.filterLength) + "\n")
 
         receiptFile.write(
-            "Filter Percent = " +
-            str(self.filterPercent) + "\n")
+            "Filter Percent = "
+            + str(self.filterPercent) + "\n")
 
         receiptFile.write(
-            "k-mer Organization = " +
-            str(self.organization) + "\n")
+            "k-mer Organization = "
+            + str(self.organization) + "\n")
 
         receiptFile.write(
-            "Reference Size = " +
-            str(self.referenceSize) + "\n")
+            "Reference Size = "
+            + str(self.referenceSize) + "\n")
 
         receiptFile.write("\n")
 
@@ -635,7 +634,7 @@ class Execution():
             receiptFile.write("Reference = " + str(self.reference) + "\n")
 
         receiptFile.write(
-            "Output = \n" +
-            str("\t" + self.outputDirectoryLocation) + "\n")
+            "Output = \n"
+            + str("\t" + self.outputDirectoryLocation) + "\n")
 
         receiptFile.write("\n")

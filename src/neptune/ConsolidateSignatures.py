@@ -231,7 +231,7 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
     for signature in sortedSignatures:
 
         # Is the signature close to anything already written to output?
-        if(all((ID not in outputSignatures) for ID in hits[signature.ID])):
+        if (all((ID not in outputSignatures) for ID in hits[signature.ID])):
 
             # The signature appears to be sufficiently unique.
             # Write the signature to output and update outputed signatures.

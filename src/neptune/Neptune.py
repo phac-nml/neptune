@@ -32,7 +32,6 @@ import time
 
 import os
 import argparse
-import sys
 import shutil
 
 import neptune.Execution as Execution

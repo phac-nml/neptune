@@ -289,8 +289,8 @@ def estimateReferenceParameters(references):
 
     if (sumGC + sumAT) == 0:
         raise RuntimeError(
-            "There are no A, C, G, or T characters in reference: " +
-            str(reference) + "\n")
+            "There are no A, C, G, or T characters in reference: "
+            + str(reference) + "\n")
 
     gcContent = float(sumGC) / float(sumGC + sumAT)
 
