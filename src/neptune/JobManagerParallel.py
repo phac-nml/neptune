@@ -478,7 +478,7 @@ class JobManagerParallel(JobManager.JobManager):
 
             for line in inputFile:
 
-                if line[0] == ">":
+                if line.startswith(">"):
                     aggregatedFile.write(">" + str(ID) + "\n")
 
                 else:
