@@ -21,7 +21,9 @@ This release provides fixes for ambiguous crashes as a consequence of inputs con
 
 It is strongly recommended you refer to the
 [documentation](https://phac-nml.github.io/neptune/install/) for full 
-installation instructions. Neptune may be installed on any 64-bit Linux system using Bioconda, preferably with [Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) or with the Mamba resolver under Conda:
+installation instructions. Neptune may be installed on any 64-bit Linux system:
+
+1. Ensure your version of Python is compatible (Python>=3.10): `
 
  1. Install [Bioconda](https://bioconda.github.io/)
  2. Create an environment for Neptune and install within it: `mamba create -n neptune bioconda::neptune -c conda-forge`
