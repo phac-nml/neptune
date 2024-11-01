@@ -1,5 +1,11 @@
 # News #
 
+## 2.0.0 ##
+
+2024-10-21
+
+This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
+
 ## Version 1.2.5 ##
 
 2017-05-04
