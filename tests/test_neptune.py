@@ -721,6 +721,78 @@ class TestMain(unittest.TestCase):
             self.assertEquals(result, expected)
 
         shutil.rmtree(outputDirectoryLocation)
+    
+    """
+    # =========================================================================
+
+    test_ambiguous_signature
+
+    PURPOSE:
+        Tests that Neptune does not crash when attempting to consolidate a
+        candidate signature with many ambiguous sequence characters.
+
+        Specifically, the issue is that in previous versions of Neptune
+        (<=1.2.5), Neptune makes an assumption during the consolidate
+        signatures step that every signature will at least align with itself.
+        Normally, this is reasonable because a sequence should align perfectly
+        with itself, but when such a sequence contains ambiguous sequence
+        characters (N, etc.), BLAST will not (normally) produce an alignment.
+        This was causing a crash because Neptune attempted a dictionary look-up
+        for signatures alignments, but there were no alignments associated with
+        the candidate signature ID. This would look like: "KeyError: '0.0'"
+
+    INPUT:
+        inclusion = "tests/data/ambiguous/inclusion.fasta"
+        exclusion = "tests/data/ambiguous/exclusion.fasta"
+        output = "tests/output/neptune/temp.dir"
+
+    EXPECT:
+        >0.1 score=1.0000 in=1.0000 ex=0.0000 len=640 ref=inclusion1 pos=3497
+        CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTT..
+        >0.2 score=1.0000 in=1.0000 ex=0.0000 len=102 ref=inclusion1 pos=5205
+        CATGGCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTT..
+        >0.0 score=0.2039 in=0.2039 ex=0.0000 len=103 ref=inclusion1 pos=99
+        TAGTCTCCAGGATTCCCGGGGNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN..
+
+    # =========================================================================
+    """
+    def test_ambiguous_signature(self):
+
+        inclusion = getPath("tests/data/ambiguous/inclusion.fasta")
+        exclusion = getPath("tests/data/ambiguous/exclusion.fasta")
+        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
+        consolidatedDirectoryLocation = os.path.join(outputDirectoryLocation, "consolidated")
+
+        sys.argv[1:] = [
+            ExtractSignatures.INCLUSION_LONG, str(inclusion),
+            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
+            OUTPUT_LONG, str(outputDirectoryLocation)]
+
+        main()
+
+        # Normally, opening a consolidated file might cause problems because of
+        # race conditions, but with one inclusion and exclusion file, there
+        # will be no problem.
+        with open (os.path.join(consolidatedDirectoryLocation, "consolidated.fasta"), "r") as myfile:
+
+            contents = myfile.read()
+
+            expected = ">0.1 score=1.0000 in=1.0000 ex=0.0000 len=640 ref=inclusion1 pos=3497"
+            self.assertTrue(expected in contents)
+            expected = "CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAG" # trimming this one
+            self.assertTrue(expected in contents)
+
+            expected = ">0.2 score=1.0000 in=1.0000 ex=0.0000 len=102 ref=inclusion1 pos=5205"
+            self.assertTrue(expected in contents)
+            expected = "CATGGCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC"
+            self.assertTrue(expected in contents)
+
+            expected = ">0.0 score=0.2039 in=0.2039 ex=0.0000 len=103 ref=inclusion1 pos=99"
+            self.assertTrue(expected in contents)
+            expected = "TAGTCTCCAGGATTCCCGGGGNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAGCAGTGATGTAAGAAAA"
+            self.assertTrue(expected in contents)
+
+        shutil.rmtree(outputDirectoryLocation)
 
 if __name__ == '__main__':
     
