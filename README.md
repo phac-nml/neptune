@@ -2,8 +2,7 @@
 
 A genomic signature is a genomic locus that is sufficiently represented in an inclusion group, and sufficiently absent from a background, or exclusion group. A signature might correlate genomic features with phenotypic traits, such as the presence of a gene with increased organism pathogenicity.
 
-Neptune locates genomic signatures using an exact k-mer matching strategy while accommodating k-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of 
-organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.
+Neptune locates genomic signatures using an exact k-mer matching strategy while accommodating k-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.
 
 # Resources #
 
@@ -13,31 +12,64 @@ organisms, such as isolates associated with a disease cluster or event, from unr
 
 # Release #
 
-## Neptune 2.0.0 ##
-
-2024-10-21
+**Neptune 2.0.0 - 2024-10-21**
 
 This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
 
 # Installation #
 
-It is strongly recommended you refer to the
-[documentation](https://phac-nml.github.io/neptune/install/) for full 
-installation instructions. Neptune may be installed on any 64-bit Linux system:
+## Python 3
 
-1. Ensure your version of Python is compatible (Python>=3.10): `
+Ensure your version of Python is compatible (python>=3.10):
 
- 1. Install [Bioconda](https://bioconda.github.io/)
- 2. Create an environment for Neptune and install within it: `mamba create -n neptune bioconda::neptune -c conda-forge`
- 3. Activate the environment: `mamba activate neptune`
- 4. Test the install: `neptune --version`
+`python --version`
 
-If you run into problems installing Neptune with Conda / Mamba, you can try the following:
+You may wish to use [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html) to create an environment specifically for this purpose:
 
- - Modify your `~/.condarc` file to have `channel_priority: flexible`
- - Modify your conda solver within `~/.condarc` to use Mamba: `solver: libmamba`
+`conda create --name neptune 'python>=3.10'`  
+`conda activate neptune`
 
-Neptune may also be installed directly and instructions are available in the [documentation](https://phac-nml.github.io/neptune/install/).
+## pip
+
+Ensure you can run pip:
+
+`pip --version` or `python -m pip --version`
+
+If pip is unavailable, please refer to [these instructions](https://packaging.python.org/en/latest/tutorials/installing-packages/) on how to install pip.
+
+## BLAST
+
+Neptune requires BLAST to be manually installed and made available as a command-line program:
+
+`sudo apt-get install ncbi-blast+`
+
+You can verify BLAST was installed by ensuring the follow commands are available:
+
+`makeblastdb -h`  
+`blastn -h`
+
+## Neptune and Dependencies
+
+After downloading Neptune's source files, you can install Neptune and all of its pip dependencies with the following:
+
+`pip install /path/to/neptune_directory/` or `pip install .`
+
+**CAUTION**: If you attempt `pip install neptune` (not interpreted as a file path), then you'll download a different package that's also named "neptune" that's available directly from pip.
+
+The following packages and their dependencies will be installed:
+
+- numpy
+- scipy
+- biopython
+- neptune
+
+You can verify the installation was successful with the following:
+
+`neptune --version`
+
+And you can test the installation with simple test inputs with the following:
+
+`neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output`
 
 # Running Neptune #
 
