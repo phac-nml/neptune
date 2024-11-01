@@ -203,6 +203,10 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
     hits = {}  # [SIGNATURE ID] -> [(SIGNATURE ID) LIST] // (alignments)
     outputSignatures = {}  # Collection of already-output signatures.
 
+    # Pre-populate hits map with empty lists:
+    for signature in sortedSignatures:
+        hits[signature.ID] = []
+
     # Build a list of all query hits.
     # This creates a dictionary mapping signatures that align to each other.
     # [SIGNATURE ID] -> [(SIGNATURE ID) LIST]
@@ -212,17 +216,9 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
 
         # We only keep the hit if the ratio of the signature-to-alignment
         # length is sufficiently long.
-        if (float(hit.alignmentLength) / float(hit.length) < float(0.50)):
-            continue
-
-        # Append the signature ID to the existing list of IDs.
-        if hit.ID in hits:
+        if (float(hit.alignmentLength) / float(hit.length) >= float(0.50)):
+            # Append the signature ID to the existing list of IDs.
             hits[hit.ID].append(hit.reference)
-
-        # Create a new list of signature IDs associated with specific
-        # signature ID.
-        else:
-            hits[hit.ID] = [hit.reference]
 
     # Write the signatures to output, while maintaining a dictionary of
     # signatures that were previously written to output. This attempts to
