@@ -13,9 +13,11 @@ organisms, such as isolates associated with a disease cluster or event, from unr
 
 # Release #
 
-**Neptune 1.2.5**
+## Neptune 2.0.0 ##
 
-This release provides fixes for ambiguous crashes as a consequence of inputs containing no A, C, G, or T characters, and also makes improvements to the code quality.
+2024-10-21
+
+This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
 
 # Installation #
 
@@ -35,8 +37,7 @@ If you run into problems installing Neptune with Conda / Mamba, you can try the 
  - Modify your `~/.condarc` file to have `channel_priority: flexible`
  - Modify your conda solver within `~/.condarc` to use Mamba: `solver: libmamba`
 
-Neptune may also be installed directly and instructions are available in the
-[documentation](https://phac-nml.github.io/neptune/install/).
+Neptune may also be installed directly and instructions are available in the [documentation](https://phac-nml.github.io/neptune/install/).
 
 # Running Neptune #
 
@@ -49,8 +50,7 @@ A simple example of running Neptune:
     neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
             --output /path/to/output/
 
-Please refer to the 
-[documentation](https://phac-nml.github.io/neptune/parameters/) for more details.
+Please refer to the [documentation](https://phac-nml.github.io/neptune/parameters/) for more details.
 
 # Contact #
 
@@ -62,8 +62,7 @@ Neptune
 
 Copyright Government of Canada 2015-2024
 
-Written by: Eric Marinier, Public Health Agency of Canada,
-    National Microbiology Laboratory
+Written by: Eric Marinier, Public Health Agency of Canada, National Microbiology Laboratory
 
 Funded by the National Micriobiology Laboratory and the Genome Canada / Alberta Innovates Bio Solutions project "Listeria Detection and Surveillance using Next Generation Genomics"
 
