@@ -13,9 +13,11 @@ organisms, such as isolates associated with a disease cluster or event, from unr
 
 # Release #
 
-**Neptune 1.2.5**
+## Neptune 2.0.0 ##
 
-This release provides fixes for ambiguous crashes as a consequence of inputs containing no A, C, G, or T characters, and also makes improvements to the code quality.
+2024-10-21
+
+This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
 
 # Installation #
 
