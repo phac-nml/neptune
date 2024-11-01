@@ -2,36 +2,46 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## 2.0.0 ##
+
+2024-10-21
+
+This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
+
+### Changed ###
+
+- Python3 has replaced Python2.
+- Improved and updated the installation process.
+
+### Fixed ###
+
+- Fixed a crash that occurred when candidate signatures were of such low quality (as a consequence of ambiguous sequence characters) that these regions could not be aligned with themselves using BLAST.
+
+### Removed ###
+
+- DRMAA support.
+
 ## 1.2.5 ##
 
 2017-05-03
 
-This release provides fixes for ambiguous crashes and improvements to the code
-quality.
+This release provides fixes for ambiguous crashes and improvements to the code quality.
 
 ### Changed ###
 
-- We have made an effort to improve the readability of function comments in the
-source code.
+- We have made an effort to improve the readability of function comments in the source code.
 
 ### Fixed ###
 
-- When running Neptune in parallel (non-DRMAA mode), runtime errors in forked
-jobs now correctly inform the calling process instead of hanging forever with
-no meaningful error message. Additionally, the runtime error message is
-reported to the user. This relates the a known error in Python 2.7
-(https://bugs.python.org/issue9400).
-- Inputs containing no A, C, G, or T characters will now cause an appropriate
-runtime error with an informative message about this problem.
-- Lowercase characters are no longer ingnored when calculating the GC content
-of inputs.
+- When running Neptune in parallel (non-DRMAA mode), runtime errors in forked jobs now correctly inform the calling process instead of hanging forever with no meaningful error message. Additionally, the runtime error message is reported to the user. This relates the a known error in Python 2.7 (https://bugs.python.org/issue9400).
+- Inputs containing no A, C, G, or T characters will now cause an appropriate runtime error with an informative message about this problem.
+- Lowercase characters are no longer ingnored when calculating the GC content of inputs.
 
 ## 1.2.4 ##
 
 2017-02-27
 
-This release makes several small improvements, including: reducing the standard
-output clutter, adding timings to stages, and updating the documentation.
+This release makes several small improvements, including: reducing the standard output clutter, adding timings to stages, and updating the documentation.
 
 ### Added ###
 
@@ -98,9 +108,7 @@ This release of Neptune adds support for Galaxy.
 
 2016-03-18
 
-This release of Neptune allows for execution on a single machine without
-requiring DRMAA. Furthermore, several command line parameters have been
-modified.
+This release of Neptune allows for execution on a single machine without requiring DRMAA. Furthermore, several command line parameters have been modified.
 
 ### Added ###
 
@@ -117,8 +125,7 @@ modified.
 
 2016-02-24
 
-This release of Neptune updates the installation instructions to be more
-informative.
+This release of Neptune updates the installation instructions to be more informative.
 
 ### Changed ###
 
@@ -129,10 +136,7 @@ informative.
 
 2016-01-19
 
-This release of Neptune introduces a simple signature consolidation step, which
-consolidates signatures produced from multiple files into a single file.
-Furthermore, the software has been updated to be compatible with the Slurm
-scheduler.
+This release of Neptune introduces a simple signature consolidation step, which consolidates signatures produced from multiple files into a single file. Furthermore, the software has been updated to be compatible with the Slurm scheduler.
 
 ### Added ###
 

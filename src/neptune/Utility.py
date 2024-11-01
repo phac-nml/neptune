@@ -38,7 +38,6 @@ import math
 import os
 
 from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna
 
 AGGREGATE_OTHER = "__OTHER__"
 
@@ -162,7 +161,7 @@ def generateSequence(integer, length):
         elif base == 3:
             sequence = "T" + sequence
 
-        current = current / 4
+        current = current // 4
 
     return sequence
 
@@ -197,7 +196,7 @@ RETURN
 """
 def reverseComplement(sequence):
 
-    reverse = str(Seq(sequence, generic_dna).reverse_complement())
+    reverse = str(Seq(sequence).reverse_complement())
     return reverse
 
 
@@ -290,8 +289,8 @@ def estimateReferenceParameters(references):
 
     if (sumGC + sumAT) == 0:
         raise RuntimeError(
-            "There are no A, C, G, or T characters in reference: " +
-            str(reference) + "\n")
+            "There are no A, C, G, or T characters in reference: "
+            + str(reference) + "\n")
 
     gcContent = float(sumGC) / float(sumGC + sumAT)
 

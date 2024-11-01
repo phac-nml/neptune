@@ -28,11 +28,10 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 import shutil
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Neptune import *
 
@@ -71,14 +70,6 @@ class DefaultArgs():
             parameters[FilterSignatures.SEED_SIZE] = 9
 
             parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
-
-            parameters[DEFAULT_SPECIFICATION] = None
-            parameters[COUNT_SPECIFICATION] = None
-            parameters[AGGREGATE_SPECIFICATION] = None
-            parameters[EXTRACT_SPECIFICATION] = None
-            parameters[DATABASE_SPECIFICATION] = None
-            parameters[FILTER_SPECIFICATION] = None
-            parameters[CONSOLIDATE_SPECIFICATION] = None
 
             self.parameters = parameters
 
@@ -160,7 +151,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -198,7 +189,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -275,7 +266,7 @@ class TestMain(unittest.TestCase):
             ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
             CountKMers.KMER_LONG, str(parameters[CountKMers.KMER])]
 
-        print sys.argv[1:]
+        print(sys.argv[1:])
 
         with self.assertRaises(RuntimeError):
             main()
@@ -312,7 +303,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -347,7 +338,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -714,11 +705,11 @@ class TestMain(unittest.TestCase):
 
             result = myfile.readline()
             expected = ">0 score=0.8889 in=1.0000 ex=0.1111 len=99 ref=inclusion0 pos=999\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
             result = myfile.readline()
             expected = "CGGTTTCTTCATATATAACCCCGTCGGCGCTTCAGAAAACAGGGATGTATAGAATCTCTGCGTCAGAACGGCATCTAAAATCAAAACGGTATTGATGAC\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(outputDirectoryLocation)
     

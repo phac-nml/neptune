@@ -12,7 +12,6 @@ pages:
         - CHANGELOG.md
     - Install:
         - Neptune: install.md
-        - DRMAA Configuration: install-drmaa.md
     - Parameters: parameters.md
     - Examples:
         - Simple: examples.md

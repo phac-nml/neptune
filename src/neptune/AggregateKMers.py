@@ -318,8 +318,8 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
 
         if not os.path.isfile(location):
             raise RuntimeError(
-                "ERROR: Could not open inclusion file: " +
-                str(location) + "\n")
+                "ERROR: Could not open inclusion file: "
+                + str(location) + "\n")
 
         inclusionFiles.append(open(location, 'r'))
 
@@ -328,8 +328,8 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
 
         if not os.path.isfile(location):
             raise RuntimeError(
-                "ERROR: Could not open exclusion file: " +
-                str(location) + "\n")
+                "ERROR: Could not open exclusion file: "
+                + str(location) + "\n")
 
         exclusionFiles.append(open(location, 'r'))
 
@@ -353,7 +353,7 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
         exclusionKMers.append(kmer)
 
     # aggregate values:
-    while(1):
+    while (1):
 
         kmer = findSmallest((inclusionKMers + exclusionKMers), SENTINEL)
 
@@ -388,7 +388,7 @@ def aggregate(inclusionLocations, exclusionLocations, outputLocation, delete):
         for filename in inclusionLocations + exclusionLocations:
 
             if os.path.exists(filename):
-                    os.remove(filename)
+                os.remove(filename)
 
 
 """

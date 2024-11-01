@@ -26,20 +26,19 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.5'
+__version__ = '1.2.5-python3'
 
 import time
 
 import os
 import argparse
-import sys
 import shutil
 
-import Execution
-import Utility
-import CountKMers
-import ExtractSignatures
-import FilterSignatures
+import neptune.Execution as Execution
+import neptune.Utility as Utility
+import neptune.CountKMers as CountKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
 
 """
 # =============================================================================
@@ -93,13 +92,6 @@ OUTPUT_HELP = "The directory to place all output."
 
 # OPTIONAL ARGUMENTS #
 
-# DRMAA mode switch
-DRMAA = "drmaa"
-DRMAA_LONG = LONG + DRMAA
-DRMAA_HELP = "Whether or not to run Neptune in DRMAA-mode and attempt to \
-    schedule jobs through DRMAA. This will require setting up DRMAA in \
-    advance."
-
 # Version number
 VERSION = "version"
 VERSION_LONG = LONG + VERSION
@@ -109,49 +101,7 @@ VERSION_SHORT = SHORT + "V"
 PARALLELIZATION = "parallelization"
 PARALLELIZATION_LONG = LONG + PARALLELIZATION
 PARALLELIZATION_SHORT = SHORT + "p"
-PARALLELIZATION_HELP = "The number of processes to run simultaneously. Note \
-    that this is only applicable when running Neptune in non-DRMAA mode \
-    (default)."
-
-# DRMAA default specification
-DEFAULT_SPECIFICATION = "default-specification"
-DEFAULT_SPECIFICATION_LONG = LONG + DEFAULT_SPECIFICATION
-DEFAULT_SPECIFICATION_HELP = "The default DRMAA parameters."
-
-# DRMAA specification for CountKMers.py
-COUNT_SPECIFICATION = "count-specification"
-COUNT_SPECIFICATION_LONG = LONG + COUNT_SPECIFICATION
-COUNT_SPECIFICATION_HELP = "The DRMAA parameters specific to k-mer counting."
-
-# DRMAA specification for AggregateKMers.py
-AGGREGATE_SPECIFICATION = "aggregate-specification"
-AGGREGATE_SPECIFICATION_LONG = LONG + AGGREGATE_SPECIFICATION
-AGGREGATE_SPECIFICATION_HELP = "The DRMAA specific parameters specific to \
-    k-mer aggregation."
-
-# DRMAA specification for ExtractSignatures.py
-EXTRACT_SPECIFICATION = "extract-specification"
-EXTRACT_SPECIFICATION_LONG = LONG + EXTRACT_SPECIFICATION
-EXTRACT_SPECIFICATION_HELP = "The DRMAA parameters specific to candidate \
-    signature extraction."
-
-# DRMAA specification for Database.py
-DATABASE_SPECIFICATION = "database-specification"
-DATABASE_SPECIFICATION_LONG = LONG + DATABASE_SPECIFICATION
-DATABASE_SPECIFICATION_HELP = "The DRMAA parameters specific to database \
-    construction and querying."
-
-# DRMAA specification for FilterSignatures.py
-FILTER_SPECIFICATION = "filter-specification"
-FILTER_SPECIFICATION_LONG = LONG + FILTER_SPECIFICATION
-FILTER_SPECIFICATION_HELP = "The DRMAA parameters specific to candidate \
-    signature filtering."
-
-# DRMAA specification for ConsolidateSignatures.py
-CONSOLIDATE_SPECIFICATION = "consolidate-specification"
-CONSOLIDATE_SPECIFICATION_LONG = LONG + CONSOLIDATE_SPECIFICATION
-CONSOLIDATE_SPECIFICATION_HELP = "The DRMAA parameters specific to filtered \
-    signature consolidation."
+PARALLELIZATION_HELP = "The number of processes to run simultaneously."
 
 """
 # =============================================================================
@@ -164,7 +114,7 @@ PURPOSE
 -------
 
 This function prepares and runs a CountKMers.py job for every inclusion and
-exclusion file. These jobs are run using the DRMAA framework.
+exclusion file.
 
 
 INPUT
@@ -181,13 +131,6 @@ RETURN
 [(inclusionKMerLocations, exclusionKMerLocations)]
     The returned tuple will contain two lists of the locations of the
     written inclusion and exclusion k-mers.
-
-
-POST
-----
-
-A DRMAA job is submitted for each inclusion and exclusion file. The execution
-will be halted until all the jobs are completed.
 
 # =============================================================================
 """
@@ -271,13 +214,6 @@ RETURN
 ------
 
 [NONE]
-
-
-POST
-----
-
-A DRMAA job is submitted that aggregates the prepared inclusion and exclusion
-k-mers. The execution of the script will be halted until the job has finished.
 
 # =============================================================================
 """
@@ -429,8 +365,8 @@ EXTRACT SIGNATURES
 PURPOSE
 -------
 
-Prepares and runs an extract k-mers job using DRMAA. This, in turn, extracts
-signatures from a reference genome.
+Prepares and runs an extract k-mers. This, in turn, extracts signatures from
+a reference genome.
 
 
 INPUT
@@ -451,7 +387,7 @@ RETURN
 POST
 ----
 
-A DRMAA job is submitted that extracts signatures from a reference genome
+A job is submitted that extracts signatures from a reference genome
 using information from aggregated k-mer information from inclusion and
 exclusion genomes. The execution of the script will be halted until the job
 has finished.
@@ -651,30 +587,30 @@ def execute(execution):
 
     # --- K-MER COUNTING ---
     print("k-mer Counting...")
-    start = time.clock()
+    start = time.perf_counter()
     inclusionKMerLocations, exclusionKMerLocations = countKMers(execution)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- K-MER AGGREGATION ---
     print("k-mer Aggregation...")
-    start = time.clock()
+    start = time.perf_counter()
     aggregateKMers(execution, inclusionKMerLocations, exclusionKMerLocations)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE EXTRACTION ---
     print("Signature Extraction...")
-    start = time.clock()
+    start = time.perf_counter()
     candidateLocations = extractSignatures(execution)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # --- SIGNATURE FILTERING ---
     print("Signature Filtering...")
-    start = time.clock()
+    start = time.perf_counter()
     sortedLocations = filterSignatures(execution, candidateLocations)
-    end = time.clock()
+    end = time.perf_counter()
     print(str(end - start) + " seconds\n")
 
     # Are all the signature files empty?
@@ -688,41 +624,14 @@ def execute(execution):
 
         # --- CONSOLIDATE SIGNATURES ---
         print("Consolidate Signatures...")
-        start = time.clock()
+        start = time.perf_counter()
         consolidateSignatures(execution, sortedLocations)
-        end = time.clock()
+        end = time.perf_counter()
         print(str(end - start) + " seconds\n")
 
     execution.produceReceipt()
 
     print("Complete!")
-
-
-"""
-# =============================================================================
-
-EXECUTE DRMAA
-
-# =============================================================================
-"""
-def executeDRMAA(parameters):
-
-    import drmaa
-    import JobManagerDRMAA
-
-    with drmaa.Session() as session:
-
-        outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
-
-        logDirectoryLocation = os.path.abspath(
-            os.path.join(outputDirectoryLocation, LOG))
-
-        jobManager = JobManagerDRMAA.JobManagerDRMAA(
-            outputDirectoryLocation, logDirectoryLocation,
-            session, parameters[DEFAULT_SPECIFICATION])
-
-        execution = Execution.Execution(jobManager, parameters)
-        execute(execution)
 
 
 """
@@ -734,7 +643,7 @@ EXECUTE PARALLEL
 """
 def executeParallel(parameters):
 
-    import JobManagerParallel
+    import neptune.JobManagerParallel as JobManagerParallel
 
     outputDirectoryLocation = os.path.abspath(parameters[OUTPUT])
     logDirectoryLocation = os.path.abspath(
@@ -758,11 +667,7 @@ PARSE
 """
 def parse(parameters):
 
-    if parameters.get(DRMAA):
-        executeDRMAA(parameters)
-
-    else:
-        executeParallel(parameters)
+    executeParallel(parameters)
 
 
 """
@@ -914,70 +819,6 @@ def main():
         dest=PARALLELIZATION,
         help=PARALLELIZATION_HELP,
         type=int, default=8)
-
-    # --- DRMAA --- #
-    drmaa = parser.add_argument_group("DRMAA")
-
-    drmaa.add_argument(
-        DRMAA_LONG,
-        dest=DRMAA,
-        help=DRMAA_HELP,
-        action='store_true')
-
-    drmaa.add_argument(
-        DEFAULT_SPECIFICATION_LONG,
-        dest=DEFAULT_SPECIFICATION,
-        help=DEFAULT_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        COUNT_SPECIFICATION_LONG,
-        dest=COUNT_SPECIFICATION,
-        help=COUNT_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        AGGREGATE_SPECIFICATION_LONG,
-        dest=AGGREGATE_SPECIFICATION,
-        help=AGGREGATE_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        EXTRACT_SPECIFICATION_LONG,
-        dest=EXTRACT_SPECIFICATION,
-        help=EXTRACT_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        DATABASE_SPECIFICATION_LONG,
-        dest=DATABASE_SPECIFICATION,
-        help=DATABASE_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        FILTER_SPECIFICATION_LONG,
-        dest=FILTER_SPECIFICATION,
-        help=FILTER_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    drmaa.add_argument(
-        CONSOLIDATE_SPECIFICATION_LONG,
-        dest=CONSOLIDATE_SPECIFICATION,
-        help=CONSOLIDATE_SPECIFICATION_HELP,
-        type=str, required=False)
-
-    # --- ArgParse Work-Around --- #
-    for i in range(len(sys.argv)):
-        if ((sys.argv[i] == DEFAULT_SPECIFICATION_LONG or
-                sys.argv[i] == COUNT_SPECIFICATION_LONG or
-                sys.argv[i] == AGGREGATE_SPECIFICATION_LONG or
-                sys.argv[i] == DATABASE_SPECIFICATION_LONG or
-                sys.argv[i] == FILTER_SPECIFICATION_LONG or
-                sys.argv[i] == CONSOLIDATE_SPECIFICATION_LONG)):
-
-            sys.argv[i + 1] = (
-                str(sys.argv[i + 1])[:0] + " " +
-                str(sys.argv[i + 1])[0:])
 
     args = parser.parse_args()
     parameters = vars(args)
