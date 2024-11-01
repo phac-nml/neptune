@@ -19,9 +19,7 @@ This release provides fixes for ambiguous crashes as a consequence of inputs con
 
 # Installation #
 
-It is strongly recommended you refer to the
-[documentation](https://phac-nml.github.io/neptune/install/) for full 
-installation instructions. Neptune may be installed on any 64-bit Linux system using Bioconda, preferably with [Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) or with the Mamba resolver under Conda:
+It is strongly recommended you refer to the [documentation](https://phac-nml.github.io/neptune/install/) for full installation instructions. Neptune may be installed on any 64-bit Linux system using Bioconda, preferably with [Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) or with the Mamba resolver under Conda:
 
  1. Install [Bioconda](https://bioconda.github.io/)
  2. Create an environment for Neptune and install within it: `mamba create -n neptune bioconda::neptune -c conda-forge`
@@ -33,8 +31,7 @@ If you run into problems installing Neptune with Conda / Mamba, you can try the 
  - Modify your `~/.condarc` file to have `channel_priority: flexible`
  - Modify your conda solver within `~/.condarc` to use Mamba: `solver: libmamba`
 
-Neptune may also be installed directly and instructions are available in the
-[documentation](https://phac-nml.github.io/neptune/install/).
+Neptune may also be installed directly and instructions are available in the [documentation](https://phac-nml.github.io/neptune/install/).
 
 # Running Neptune #
 
@@ -47,8 +44,7 @@ A simple example of running Neptune:
     neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
             --output /path/to/output/
 
-Please refer to the 
-[documentation](https://phac-nml.github.io/neptune/parameters/) for more details.
+Please refer to the [documentation](https://phac-nml.github.io/neptune/parameters/) for more details.
 
 # Contact #
 
@@ -60,8 +56,7 @@ Neptune
 
 Copyright Government of Canada 2015-2024
 
-Written by: Eric Marinier, Public Health Agency of Canada,
-    National Microbiology Laboratory
+Written by: Eric Marinier, Public Health Agency of Canada, National Microbiology Laboratory
 
 Funded by the National Micriobiology Laboratory and the Genome Canada / Alberta Innovates Bio Solutions project "Listeria Detection and Surveillance using Next Generation Genomics"
 
