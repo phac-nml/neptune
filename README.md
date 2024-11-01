@@ -58,13 +58,12 @@ Please refer to the
 
 Neptune
 
-Copyright Government of Canada 2015-2017
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
 
-Funded by the National Micriobiology Laboratory and the Genome Canada / Alberta
-    Innovates Bio Solutions project "Listeria Detection and Surveillance using Next Generation Genomics"
+Funded by the National Micriobiology Laboratory and the Genome Canada / Alberta Innovates Bio Solutions project "Listeria Detection and Surveillance using Next Generation Genomics"
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License at:
 

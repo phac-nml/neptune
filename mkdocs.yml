@@ -3,7 +3,7 @@ site_name: Neptune
 theme: cinder
 repo_url: "https://github.com/phac-nml/neptune"
 site_favicon: neptune.ico
-copyright: "Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2017"
+copyright: "Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2024"
 
 pages:
     - Home: index.md
