@@ -1,147 +1,79 @@
-# Installation #
+# Installation
 
-This installation guide assumes the use of the [BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) Unix shell and a 64-bit Linux system. Neptune may either be installed directly or as a [Bioconda](https://bioconda.github.io/) package.
+This installation guide assumes the use of the [BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) Unix shell and a 64-bit Linux system.
 
-## Bioconda ##
+## Direct
 
-The simpliest way to install Neptune is using the [Bioconda](https://bioconda.github.io/) channel for the [conda](https://conda.io/docs/intro.html) package management system. We recommend installing conda with the [Miniconda](https://conda.io/miniconda.html) package. There are two variants of the Miniconda installer: Python 2.7 and Python 3.6. However, the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 2.7 64-bit Linux [installer](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh). Otherwise, you will need to explicitly use Neptune within a [conda environment](https://conda.io/docs/using/envs.html).
+The following instructions describe how to install Neptune directly. These instructions may require administrative privilages. Directly installing Neptune from the source files involves the following:
 
-### Overview ###
+ 1. Installing Python>=3.10
+ 2. Installing pip
+ 3. Installing BLAST (aptitude: `sudo apt-get install ncbi-blast+`)
+ 4. Installing Neptune (`pip install .`)
 
-The Bioconda-based Neptune installation involves the following:
+More detailed instructions are provided below.
 
- 1. Installing [Bioconda](https://bioconda.github.io/)
- 2. Installing the "neptune" Bioconda package (`conda install neptune`).
+### Python 3
 
-We provide detailed instructions below.
+Ensure your version of Python is compatible (python>=3.10):
 
-### Miniconda (Python 2.7) ###
+`python --version`
 
-[Bioconda](https://bioconda.github.io/) requires conda to be installed and we recommend using the [Miniconda](https://conda.io/miniconda.html) package. Miniconda may be installed with the follow instructions:
+You may wish to use [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html) to create an environment specifically for this purpose:
 
-```bash
-wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
-chmod 755 Miniconda2-latest-Linux-x86_64.sh
-./Miniconda2-latest-Linux-x86_64.sh
-```
+`conda create --name neptune 'python>=3.10'`  
+`conda activate neptune`
 
-You will likely want Miniconda to append the install location to your PATH and will need to select this option during the installation process. After installation, you will then need to either open a new terminal or source your bashrc file in the current terminal for Miniconda to become available on the PATH:
+### pip
 
-```bash
-source ~/.bashrc
-```
+Ensure you can run pip:
 
-You can check if your Miniconda installation was successful with the following:
+`pip --version` or `python -m pip --version`
 
-```bash
-conda --version
-```
+If pip is unavailable, please refer to [these instructions](https://packaging.python.org/en/latest/tutorials/installing-packages/) on how to install pip.
 
-### Bioconda ###
+### BLAST
 
-You will need to add the following channels to conda. They must be added in this order so that priority is set correctly.
+Neptune requires BLAST to be manually installed and made available as a command-line program:
 
-```bash
-conda config --add channels conda-forge
-conda config --add channels defaults
-conda config --add channels r
-conda config --add channels bioconda
-```
+`sudo apt-get install ncbi-blast+`
 
-### Neptune (Miniconda 2.7) ###
+You can verify BLAST was installed by ensuring the follow commands are available:
 
-The following instructions assume you are using Miniconda with Python 2.7, as described above. After enabling Bioconda, Neptune may be installed as a Bioconda package with the following:
+`makeblastdb -h`  
+`blastn -h`
 
-```bash
-conda install neptune
-```
+### Neptune and Dependencies
 
-You can check if Neptune was installed correctly with the following:
+After downloading Neptune's source files, you can install Neptune and all of its pip dependencies with the following:
 
-```bash
-neptune --version
-```
+`pip install /path/to/neptune_directory/` or `pip install .`
 
-### Neptune (Miniconda 3.6) ###
+**CAUTION**: If you attempt `pip install neptune` (not interpreted as a file path), then you'll download a different package that's also named "neptune" that's available directly from pip.
 
-The follwing instructions assume you are using the Python 3.6 version of Miniconda. In this circumstance, we need to install Neptune within a Python 2.7 environment:
+The following packages and their dependencies will be installed:
 
-```bash
-conda create --name neptune python=2.7 neptune
-```
+- numpy
+- scipy
+- biopython
+- neptune
 
-This Neptune environment can be activated with the following:
+You can verify the installation was successful with the following:
+
+`neptune --version`
+
+And you can test the installation with simple test inputs with the following:
+
+`neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output`
+
+## Bioconda
+
+Currently, there is no [Bioconda](https://bioconda.github.io/) package for Neptune v2.0.0. If you wish to install Neptune v1.2.5 with Bioconda, please use the following command to create an environment with Neptune installed:
 
 ```bash
-source activate neptune
+conda create -n neptune bioconda::neptune -c conda-forge -c default
 ```
 
-You can check if Neptune was installed correctly with the following:
+Please note that specifying `bioconda::neptune` is necessary, because otherwise Conda is likely to resolve the name to different software that's also named `neptune`.
 
-```bash
-neptune --version
-```
-
-The current environment may be deactivated with the following:
-
-```bash
-source deactivate
-```
-
-It is important to note that this Neptune Bioconda environment will need to be activated in order to run the Neptune application. However, the benefit is that your system will be shielded from the Python 2.7 installation required by Neptune.
-
-## Direct ##
-
-The following instructions describe how to install Neptune directly. These instructions will likely require administrative privilages.
-
-### Overview ###
-
-The direct Neptune installation involves the following:
-
- 1. Installing Python 2.7
- 2. Installing dependencies (Ubuntu: `sudo neptune/install/debian_dependencies.sh`)
- 3. Installing Neptune (`neptune/INSTALL.sh`)
-
-We provide more detailed instructions below.
-
-### Python ###
-
-Neptune requires Python 2.7. Note that Python 2.7 is provided with many major distributions of Linux. The following may check your Python version:
-
-```bash
-python --version
-```
-
-### Dependencies ###
-
-#### Debian-Based Installation ####
-
-This section assumes the user has the [APT](https://help.ubuntu.com/community/AptGet/Howto) package manager. This is common to the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu_(operating_system)) operating system. However, this section should be compatible with any 64-bit Debian distribution. The following operation will automatically install Neptune's dependencies and require security privileges (sudo) to install the dependencies:
-
-```bash
-sudo neptune/install/debian_dependencies.sh
-```
-
-#### Manual Installation ####
-
-If you cannot install the dependencies using the above script, the following dependencies must be manually installed, if necessary, by the user:
-
-* pip
-* virtualenv
-* build-essential
-* python-dev
-* NCBI BLAST+
-
-### Neptune ###
-
-Neptune will be installed using pip into its own Python virtual environment. The following will install Neptune locally into the source directory and will not require security privileges:
-
-```bash
-neptune/INSTALL.sh
-```
-
-Alternatively, you may specify an install location, PREFIX, such as /usr/local/. Neptune will create the directories PREFIX/lib and PREFIX/bin. This may require security privileges:
-
-```bash
-neptune/INSTALL.sh PREFIX
-```
+You may also wish to review an [older version](https://github.com/phac-nml/neptune/blob/release/1.2/docs/install.md) of these installation instructions for installing Neptune v1.2.5.
