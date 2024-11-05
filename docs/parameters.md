@@ -1,4 +1,4 @@
-# Parameters #
+# Parameters
 
 A help message may be viewed by running:
 
@@ -7,7 +7,7 @@ A help message may be viewed by running:
 neptune --help
 ```
 
-## Mandatory ##
+## Mandatory
 
 Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:
 
@@ -26,11 +26,11 @@ The following parameters are required by Neptune:
 | -e | --exclusion | FASTA | A list of exclusion targets in FASTA format. You may list multiple file or directory locations following the parameter. Neptune will automatically include all files within directories. However, Neptune will not recurse into additional directories. |
 | -o | --output | directory | The location of the output directory. If this directory exists, any files produced with existing names will be overwritten. If this directory does not exist, then it will be created. |
 
-## Optional ##
+## Optional
 
 The optional parameters will either be automatically calculated or be assigned default values.
 
-### *k*-mer ###
+### *k*-mer
 
 The following parameters relate to *k*-mer generation and aggregation:
 
@@ -39,7 +39,7 @@ The following parameters relate to *k*-mer generation and aggregation:
 | -k | --kmer | integer | The size of the *k*-mers. This must be a positive integer and should be large enough such that random intra-genome *k*-mer matches, within the largest genome, are unexpected. The size of *k*-mers cannot be larger than the smallest sequence record. This will be automatically calculated if not specified. |
 | | --organization | integer | The degree of organization of *k*-mer counting and aggregation. This parameter determines the number nucleotide bases used in parallelized *k*-mer counting and, in turn, the number of parallel instances of *k*-mer aggregation. The number of parallel instances is determined by 4^n, where n is the specified organization parameter. This value must be a non-negative integer smaller than *k*. If the parameter is not specified, then n = 0 and there will be no parallel *k*-mer aggregation. This will likely require a much longer computation time to complete *k*-mer aggregation. |
 
-### Filtering ###
+### Filtering
 
 The following command-line parameters relate to signature filtering:
 
@@ -49,7 +49,7 @@ The following command-line parameters relate to signature filtering:
 | | --filter-percent | float | The minimum percent identity of a signature candidate against a exclusion target required to filter out the candidate. The percent identity is calculated as identities divided by the alignment length. This value is a percentage expressed as a floating point number [0.0, 1.0]. If the any exclusion hit exceeds the percent length **and** percent identity of any candidate, the candidate is removed. The default value is 0.5. |
 | | --seed-size | integer | The seed size used for alignments. This value must be no smaller than 4. The default value is 11. |
   
-### Extraction ###
+### Extraction
 
 The following command-line parameters relate to signature extraction:
 
@@ -64,7 +64,7 @@ The following command-line parameters relate to signature extraction:
 | | --gap | int | The maximum allowable number of base positions shifted before seeing an exact *k*-mer match. If this value is not specified, it will be automatically calculated using the rate, GC-content, and the *k*-mer size. The calculation can be found in the *Mathematics* documentation. This value must be a positive integer. |
 | | --size | int | The minimum size for a signature. Signatures which are shorter than this length will not be reported. If this value is not specified, the minimum signature size will be four times the length of the *k*-mer size. It is not recommended to locate signatures smaller than this size, unless application-specific. This value must be a positive integer. |
   
-### Parallelization ###
+### Parallelization
 
 The following parameters relate to the parallelization of Neptune:
 

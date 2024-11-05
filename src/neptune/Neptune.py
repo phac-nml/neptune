@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2017
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 # =============================================================================
 """
 
-__version__ = '1.2.5-python3'
+__version__ = '2.0.0'
 
 import time
 

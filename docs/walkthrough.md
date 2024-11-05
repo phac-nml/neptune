@@ -1,10 +1,10 @@
-# Walkthrough #
+# Walkthrough
 
-## Overview ##
+## Overview
 
 The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.
 
-## Input Data ##
+## Input Data
 
 We will be using very small, artificial genomes for this walkthrough. However, these small genomes will be sufficient to illustrate the operation of Neptune. The artificial genome sequence content is derived from *Escherichia coli* and has been modified to introduce simple variation between genomes.
 
@@ -22,7 +22,7 @@ neptune/tests/data/example/exclusion/
 
 The inclusion and exclusion directories each contain three FASTA format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes primarily differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.
 
-## Running Neptune ##
+## Running Neptune
 
 Neptune will automatically calculate many of the parameters that might otherwise be specified by the user, such as the minimum number of targets signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires the user specify the inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA file genomes located within directories. The following command will run Neptune on the example data and output to the specified directory:
 
@@ -33,9 +33,9 @@ neptune
     --output output/
 ```
 
-## Output ##
+## Output
 
-### Standard Output ###
+### Standard Output
 
 After running Neptune, very similar output will be printed to standard output, indicating that Neptune is starting and completing different stages of operation:
 
@@ -69,7 +69,7 @@ Submitted 1 jobs.
 Complete!
 ```
 
-### Consolidated Signatures ###
+### Consolidated Signatures
 
 As we did not specify references from which to extract signatures, Neptune will automatically investigate all inclusion genomes for signatures and consolidate those signatures into a single consolidated signature file. The `output/consolidated/consolidated.fasta` file contains these consolidated signatures. This file may be understood as the final output of the application. The following FASTA output is from the consolidated signatures file produced from this example:
 
@@ -86,7 +86,7 @@ The FASTA header contains information relavent to the identified signature. A de
 
 In this example, Neptune identified three signatures: 1.0, 1.1, and 1.2 of lengths 103, 640, and 98, respectively. We see that all of these signatures originated from the inclusion1 reference. These signatures were located at positions 99, 3497, and 5209 within the inclusion1 reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969, within the possible range of score values from -1.00 to +1.00.
 
-### Sorted Signatures ###
+### Sorted Signatures
 
 If we're interested in looking at the signatures produced from each individual inclusion target, we need to investigate the output in the `output/sorted` directory. The following are the signatures extracted exclusively from the inclusion1.fasta target:
 
