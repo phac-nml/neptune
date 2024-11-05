@@ -1,244 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
-    <link rel="shortcut icon" href="../neptune.ico">
-
-    <title>Parameters - Neptune</title>
-
-    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
-    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href="../css/base.css" rel="stylesheet">
-    <link href="../css/cinder.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/highlight.css">
-
-
-    <link href="../extra.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-    <script>
-    WebFont.load({
-        google: {
-            families: ['Open Sans', 'PT Sans']
-        }
-    });
-    </script>
-
-    
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Parameters - Neptune</title>
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Parameters";
+    var mkdocs_page_input_path = "parameters.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
 </head>
 
-<body>
+<body class="wy-body-for-nav" role="document">
 
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+  <div class="wy-grid-for-nav">
 
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            
-
-            <!-- Main title -->
-            <a class="navbar-brand" href="..">Neptune</a>
-        </div>
-
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-            
-                <!-- Main navigation -->
-                <ul class="nav navbar-nav">
-                
-                
-                    <li >
-                        <a href="..">Home</a>
-                    </li>
-                
-                
-                
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                        
-                            
-<li >
-    <a href="../news/">News</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../CHANGELOG/">CHANGELOG</a>
-</li>
-
-                        
-                        </ul>
-                    </li>
-                
-                
-                
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                        
-                            
-<li >
-    <a href="../install/">Neptune</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../install-drmaa/">DRMAA Configuration</a>
-</li>
-
-                        
-                        </ul>
-                    </li>
-                
-                
-                
-                    <li class="active">
-                        <a href="./">Parameters</a>
-                    </li>
-                
-                
-                
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                        
-                            
-<li >
-    <a href="../examples/">Simple</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../walkthrough/">Walkthrough</a>
-</li>
-
-                        
-                        </ul>
-                    </li>
-                
-                
-                
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Output <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                        
-                            
-<li >
-    <a href="../output/">Neptune</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../format/">Signature Format</a>
-</li>
-
-                        
-                        </ul>
-                    </li>
-                
-                
-                </ul>
-            
-
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                        <i class="fa fa-search"></i> Search
-                    </a>
-                </li>
-                
-                    <li >
-                        <a rel="next" href="../install-drmaa/">
-                            <i class="fa fa-arrow-left"></i> Previous
-                        </a>
-                    </li>
-                    <li >
-                        <a rel="prev" href="../examples/">
-                            Next <i class="fa fa-arrow-right"></i>
-                        </a>
-                    </li>
-                
-                
-                    <li>
-                        <a href="https://github.com/phac-nml/neptune">
-                            
-                                <i class="fa fa-github"></i>
-                            
-                            GitHub
-                        </a>
-                    </li>
-                
-            </ul>
-        </div>
-    </div>
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Neptune</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
 </div>
+      </div>
 
-    <div class="container">
-        
-        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-    
-        <li class="first-level active"><a href="#parameters">Parameters</a></li>
-        
-            <li class="second-level"><a href="#mandatory">Mandatory</a></li>
-            
-        
-            <li class="second-level"><a href="#optional">Optional</a></li>
-            
-                <li class="third-level"><a href="#k-mer">k-mer</a></li>
-            
-                <li class="third-level"><a href="#filtering">Filtering</a></li>
-            
-                <li class="third-level"><a href="#extraction">Extraction</a></li>
-            
-                <li class="third-level"><a href="#parallelization">Parallelization</a></li>
-            
-                <li class="third-level"><a href="#drmaa">DRMAA</a></li>
-            
-        
-    
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">News</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../news/">News</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Change Log</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Install</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../install/">Neptune</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Parameters</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#mandatory">Mandatory</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optional">Optional</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#k-mer">k-mer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#filtering">Filtering</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extraction">Extraction</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#parallelization">Parallelization</a>
+    </li>
+        </ul>
+    </li>
     </ul>
-</div></div>
-        <div class="col-md-9" role="main">
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Examples</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../examples/">Simple</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../walkthrough/">Walkthrough</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Output</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../output/">Neptune</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../format/">Signature Format</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
 
-<h1 id="parameters">Parameters</h1>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Neptune</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Parameters</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/phac-nml/neptune/edit/master/docs/parameters.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="parameters">Parameters</h1>
 <p>A help message may be viewed by running:</p>
-<pre><code class="bash">neptune --help
+<pre><code class="language-bash">neptune --help
 </code></pre>
-
 <h2 id="mandatory">Mandatory</h2>
 <p>Neptune requires the location of the inclusion, exclusion, and output directories. The remaining parameters will be estimated based on the input sequence or revert to default settings. The following is the minimum number of command line parameters required to run Neptune:</p>
-<pre><code class="bash">neptune
+<pre><code class="language-bash">neptune
     --inclusion /path/to/inclusion/directory/
     --exclusion /path/to/exclusion/directory/
     --output /path/to/output/directory/
 </code></pre>
-
 <p>The following parameters are required by Neptune:</p>
 <table>
 <thead>
@@ -408,120 +310,65 @@
 <td>-p</td>
 <td>--parallelization</td>
 <td>integer</td>
-<td>The number of parallel working processes to create when Neptune is operating in a non-DRMAA mode (default). This parameter will directly increase the speed of many stages of the software, provided there are sufficient resources available to run the worker process simultaneously. This value must be a positive integer. The default value is 8.</td>
+<td>The number of parallel working processes to create. This parameter will directly increase the speed of many stages of the software, provided there are sufficient resources available to run the worker process simultaneously. This value must be a positive integer. The default value is 8.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="drmaa">DRMAA</h3>
-<p>It may be necessary to specify job submission parameters that are required by your cluster-computing environment. If you require DRM-specific command line arguments, they may be provided to Neptune using one of several arguments. The --default-specification parameter will provide the DRM-specific arguments to all jobs which are created. Additional command line arguments allow precise specifications for each type of job.</p>
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Alternative</th>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>--drmaa</td>
-<td>flag</td>
-<td>This flag enables DRMAA-based Neptune execution. This will require a DRMAA-compatible cluster computing environment to be installed and configured. However, Neptune will likely operate significantly faster in this environment.</td>
-</tr>
-<tr>
-<td></td>
-<td>--default-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for all jobs. These arguments must be provided as a quoted string. The default specification will be applied to all job types and overwritten when specified.</td>
-</tr>
-<tr>
-<td></td>
-<td>--count-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for \textit{k}-mer counting. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-<tr>
-<td></td>
-<td>--aggregate-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for \textit{k}-mer aggregation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-<tr>
-<td></td>
-<td>--extract-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for signature extraction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-<tr>
-<td></td>
-<td>--database-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for database construction. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-<tr>
-<td></td>
-<td>--filter-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for candidate signature filtering. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-<tr>
-<td></td>
-<td>--consolidate-specification</td>
-<td>string</td>
-<td>DRMAA-specific command line arguments for signature consolidation. These arguments must be provided as a quoted string. These arguments will overwrite the default specification, if specified, for this job type.</td>
-</tr>
-</tbody>
-</table></div>
-        
-    </div>
-
-    <footer class="col-md-12 text-center">
-        <hr>
-        <p>
-        <small>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2017<br></small>
-        
-        <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
-    </footer>
-
-    <script src="../js/jquery-1.10.2.min.js"></script>
-    <script src="../js/bootstrap-3.0.3.min.js"></script>
-    <script src="../js/highlight.pack.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script>
-    var base_url = '..';
-    </script>
-    <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
-    <script src="../js/base.js"></script>
-
-    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        From here you can search these documents. Enter your search terms below.
-                    </p>
-                    <form role="form">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
-                        </div>
-                    </form>
-                    <div id="mkdocs-search-results"></div>
-                </div>
-                <div class="modal-footer">
-                </div>
+              
             </div>
-        </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../examples/" class="btn btn-neutral float-right" title="Simple">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../install/" class="btn btn-neutral" title="Neptune"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
     </div>
+  
 
-    </body>
+  <hr/>
 
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Neptune is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2015-2024</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/phac-nml/neptune/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../install/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../examples/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
 </html>
