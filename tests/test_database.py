@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Database import *
 from neptune.Utility import *
@@ -83,7 +82,7 @@ class TestQueryDatabase(unittest.TestCase):
         with open (queryOutputLocation, "r") as myfile:
 
             result = myfile.read()
-            expected = "long.query\t33\tlong\t33\t100.00\t33\n"
+            expected = "long.query\t33\tlong\t33\t100.000\t33"
             self.assertTrue(expected in result)
 
         os.remove(queryOutputLocation)
@@ -124,7 +123,7 @@ class TestQueryDatabase(unittest.TestCase):
 
             result = myfile.read()
             expected = ""
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(queryOutputLocation)
 

@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Utility import *
 
@@ -194,22 +193,22 @@ class TestGenerateSequence(unittest.TestCase):
         # 0: integer = 0, length = 1
         result = generateSequence(0, 1)
         expected = "A"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         # 1: integer = 1, length = 1
         result = generateSequence(1, 1)
         expected = "C"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         # 2: integer = 2, length = 1
         result = generateSequence(2, 1)
         expected = "G"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         # 3: integer = 3, length = 1
         result = generateSequence(3, 1)
         expected = "T"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -244,17 +243,17 @@ class TestGenerateSequence(unittest.TestCase):
         # 0: integer = 0, length = 3
         result = generateSequence(0, 3)
         expected = "AAA"
-        self.assertEquals(result, expected)   
+        self.assertEqual(result, expected)   
 
         # 1: integer = 32, length = 3
         result = generateSequence(32, 3)
         expected = "GAA"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         # 2: integer = 0, length = 10
         result = generateSequence(0, 10)
         expected = "AAAAAAAAAA"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -289,7 +288,7 @@ class TestGenerateSequence(unittest.TestCase):
         # 0: integer = 0, length = 0
         result = generateSequence(0, 0)
         expected = ""
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         # 1: integer = 0, length = -1
         with self.assertRaises(RuntimeError):
@@ -329,7 +328,7 @@ class TestReverseComplement(unittest.TestCase):
         # 0: sequence = "A"
         result = reverseComplement("A")
         expected = "T"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -352,7 +351,7 @@ class TestReverseComplement(unittest.TestCase):
         # 0: sequence = "ACGTACGTACGTA"
         result = reverseComplement("ACGTACGTACGTA")
         expected = "TACGTACGTACGT"
-        self.assertEquals(result, expected)  
+        self.assertEqual(result, expected)  
 
     """ 
     # =============================================================================
@@ -375,7 +374,7 @@ class TestReverseComplement(unittest.TestCase):
         # 0: sequence = "GATATAG"
         result = reverseComplement("GATATAG")
         expected = "CTATATC"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """ 
 # =============================================================================
@@ -407,7 +406,7 @@ class TestBuildReferences(unittest.TestCase):
     def test_simple(self):
 
         # 0:
-        referenceFile = StringIO.StringIO()
+        referenceFile = io.StringIO()
         referenceFile.write(">0\n")
         referenceFile.write("ACGTACGTACGT")
 
@@ -442,7 +441,7 @@ class TestBuildReferences(unittest.TestCase):
     def test_multiline_fasta(self):
 
         # 0:
-        referenceFile = StringIO.StringIO()
+        referenceFile = io.StringIO()
         referenceFile.write(">0\n")
         referenceFile.write("ACGTACGTACGT\n")
         referenceFile.write("TTTTTTTTTTTT")
@@ -479,7 +478,7 @@ class TestBuildReferences(unittest.TestCase):
     def test_multirecord_fasta(self):
 
         # 0:
-        referenceFile = StringIO.StringIO()
+        referenceFile = io.StringIO()
         referenceFile.write(">0\n")
         referenceFile.write("ACGTACGTACGT\n")
         referenceFile.write(">1\n")
@@ -530,8 +529,8 @@ class TestEstimateReferenceParameters(unittest.TestCase):
         expectedSize = 12
         expectedGCContent = 0.5
 
-        self.assertEquals(size, expectedSize)
-        self.assertAlmostEquals(gcContent, expectedGCContent, 5)
+        self.assertEqual(size, expectedSize)
+        self.assertAlmostEqual(gcContent, expectedGCContent, 5)
 
     """ 
     # =============================================================================
@@ -559,8 +558,8 @@ class TestEstimateReferenceParameters(unittest.TestCase):
         expectedSize = 12
         expectedGCContent = 0
 
-        self.assertEquals(size, expectedSize)
-        self.assertAlmostEquals(gcContent, expectedGCContent, 5)
+        self.assertEqual(size, expectedSize)
+        self.assertAlmostEqual(gcContent, expectedGCContent, 5)
 
     """ 
     # =============================================================================
@@ -588,8 +587,8 @@ class TestEstimateReferenceParameters(unittest.TestCase):
         expectedSize = 12
         expectedGCContent = 1.0
 
-        self.assertEquals(size, expectedSize)
-        self.assertAlmostEquals(gcContent, expectedGCContent, 5)
+        self.assertEqual(size, expectedSize)
+        self.assertAlmostEqual(gcContent, expectedGCContent, 5)
 
     """ 
     # =============================================================================
@@ -617,8 +616,8 @@ class TestEstimateReferenceParameters(unittest.TestCase):
         expectedSize = 16
         expectedGCContent = 0.5
 
-        self.assertEquals(size, expectedSize)
-        self.assertAlmostEquals(gcContent, expectedGCContent, 5)
+        self.assertEqual(size, expectedSize)
+        self.assertAlmostEqual(gcContent, expectedGCContent, 5)
 
     """ 
     # =============================================================================

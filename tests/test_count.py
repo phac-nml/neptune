@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.CountKMers import *
 from neptune.Utility import *
@@ -72,13 +71,13 @@ class TestWriteSingleFile(unittest.TestCase):
 
         kmers = [["AAA", 1], ["CAA", 2], ["GAA", 1], ["TAA", 3]]
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         writeSingleFile(kmers, buff)
 
         result = buff.getvalue()
         expected = "AAA 1\nCAA 2\nGAA 1\nTAA 3\n"
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """ 
 # =============================================================================
@@ -126,7 +125,7 @@ class TestCount(unittest.TestCase):
 
             result = myfile.read()
             expected = "ACGTACG 4\nGTACGTA 2\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -169,13 +168,13 @@ class TestCount(unittest.TestCase):
 
             result = myfile.read()
             expected = "ACGTACG 4\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         with open (getPath("tests/output/count/count1.kmers.G"), "r") as myfile:
 
             result = myfile.read()
             expected = "GTACGTA 2\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         tags = Utility.getAggregationTags(parallelization)
 
@@ -246,23 +245,23 @@ class TestWriteMultiple(unittest.TestCase):
         # check output
         result = outputFiles["A"].read()
         expected = "AAA 1\nACA 1\n"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         result = outputFiles["C"].read()
         expected = "CAA 2\nCCA 3\n"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         result = outputFiles["G"].read()
         expected = ""
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         result = outputFiles["T"].read()
         expected = ""
-        self.assertEquals(result, expected)        
+        self.assertEqual(result, expected)        
 
         result = outputFiles[Utility.AGGREGATE_OTHER].read()
         expected = "RCA 3\n"
-        self.assertEquals(result, expected) 
+        self.assertEqual(result, expected) 
 
         for tag in tags:
 
@@ -317,7 +316,7 @@ class TestMain(unittest.TestCase):
 
             result = myfile.read()
             expected = "ACGTACG 4\nGTACGTA 2\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 

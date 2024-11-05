@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.FilterSignatures import *
 from neptune.Utility import *
@@ -547,7 +546,7 @@ class TestReportCandidates(unittest.TestCase):
 
             result = myfile.read()
             expected = ">long score=0.0000 in=0.0000 ex=0.0000 len=84 ref=reference pos=0\nACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(filterSignatures.filteredLocation)
 
@@ -584,7 +583,7 @@ class TestReportCandidates(unittest.TestCase):
 
             result = myfile.read()
             expected = ""
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(filterSignatures.filteredLocation)
 
@@ -650,7 +649,7 @@ class TestReportSorted(unittest.TestCase):
                 ">long score=0.1500 in=0.1500 ex=0.0000 len=84 ref=reference pos=0\n"
                 + "ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n")
 
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(filterSignatures.sortedLocation)
 
@@ -718,7 +717,7 @@ class TestReportSorted(unittest.TestCase):
                 + "ACTGAACCTTGGAAACCCTTTGGGAAAACCCCTTTTGGGGAAAAACCCCCTTTTTGGGGGAAAAAACCCCCCTTTTTTGGGGGG\n"
                 + ">long2 score=0.3500 in=0.3500 ex=0.0000 len=84 ref=reference3 pos=100\n"
                 + "ATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATATAT\n")
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(filterSignatures.sortedLocation)
 

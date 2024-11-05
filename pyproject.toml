@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neptune"
+version = "2.0.0"
+description= "Neptune signature discovery"
+dependencies = [
+  "numpy",
+  "scipy",
+  "biopython",
+]
+requires-python = ">= 3.10"
+
+[project.scripts]
+neptune = "neptune.Neptune:main"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "src"
+]

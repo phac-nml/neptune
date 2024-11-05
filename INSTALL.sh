@@ -34,9 +34,6 @@ pip install scipy
 # BIOPYTHON
 pip install biopython
 
-# DRMAA
-pip install drmaa
-
 # NEPTUNE
 pip install $DIR/
 

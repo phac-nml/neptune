@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2017
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -40,13 +40,13 @@ node.
 import multiprocessing
 import subprocess
 
-import JobManager
-import CountKMers
-import AggregateKMers
-import ExtractSignatures
-import FilterSignatures
-import ConsolidateSignatures
-import Database
+import neptune.JobManager as JobManager
+import neptune.CountKMers as CountKMers
+import neptune.AggregateKMers as AggregateKMers
+import neptune.ExtractSignatures as ExtractSignatures
+import neptune.FilterSignatures as FilterSignatures
+import neptune.ConsolidateSignatures as ConsolidateSignatures
+import neptune.Database as Database
 
 # DEFAULTS
 
@@ -134,7 +134,7 @@ class JobManagerParallel(JobManager.JobManager):
     """
     def runJobs(self, jobs):
 
-        print "Submitted " + str(len(jobs)) + " jobs."
+        print("Submitted " + str(len(jobs)) + " jobs.")
         self.synchronize(jobs)
 
     """
@@ -478,7 +478,7 @@ class JobManagerParallel(JobManager.JobManager):
 
             for line in inputFile:
 
-                if line[0] is ">":
+                if line.startswith(">"):
                     aggregatedFile.write(">" + str(ID) + "\n")
 
                 else:

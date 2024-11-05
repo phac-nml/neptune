@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,11 +28,10 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 import shutil
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Neptune import *
 
@@ -71,14 +70,6 @@ class DefaultArgs():
             parameters[FilterSignatures.SEED_SIZE] = 9
 
             parameters[OUTPUT] = getPath("tests/output/neptune/temp.dir")
-
-            parameters[DEFAULT_SPECIFICATION] = None
-            parameters[COUNT_SPECIFICATION] = None
-            parameters[AGGREGATE_SPECIFICATION] = None
-            parameters[EXTRACT_SPECIFICATION] = None
-            parameters[DATABASE_SPECIFICATION] = None
-            parameters[FILTER_SPECIFICATION] = None
-            parameters[CONSOLIDATE_SPECIFICATION] = None
 
             self.parameters = parameters
 
@@ -160,7 +151,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -198,7 +189,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -275,7 +266,7 @@ class TestMain(unittest.TestCase):
             ExtractSignatures.GC_LONG, str(parameters[ExtractSignatures.GC_CONTENT]),
             CountKMers.KMER_LONG, str(parameters[CountKMers.KMER])]
 
-        print sys.argv[1:]
+        print(sys.argv[1:])
 
         with self.assertRaises(RuntimeError):
             main()
@@ -312,7 +303,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -347,7 +338,7 @@ class TestMain(unittest.TestCase):
             myfile.readline()
             result = myfile.readline()
             expected = "ACGTACGTACGTACGTACGTACGTACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         shutil.rmtree(parameters[OUTPUT])
 
@@ -714,11 +705,83 @@ class TestMain(unittest.TestCase):
 
             result = myfile.readline()
             expected = ">0 score=0.8889 in=1.0000 ex=0.1111 len=99 ref=inclusion0 pos=999\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
             result = myfile.readline()
             expected = "CGGTTTCTTCATATATAACCCCGTCGGCGCTTCAGAAAACAGGGATGTATAGAATCTCTGCGTCAGAACGGCATCTAAAATCAAAACGGTATTGATGAC\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
+
+        shutil.rmtree(outputDirectoryLocation)
+    
+    """
+    # =========================================================================
+
+    test_ambiguous_signature
+
+    PURPOSE:
+        Tests that Neptune does not crash when attempting to consolidate a
+        candidate signature with many ambiguous sequence characters.
+
+        Specifically, the issue is that in previous versions of Neptune
+        (<=1.2.5), Neptune makes an assumption during the consolidate
+        signatures step that every signature will at least align with itself.
+        Normally, this is reasonable because a sequence should align perfectly
+        with itself, but when such a sequence contains ambiguous sequence
+        characters (N, etc.), BLAST will not (normally) produce an alignment.
+        This was causing a crash because Neptune attempted a dictionary look-up
+        for signatures alignments, but there were no alignments associated with
+        the candidate signature ID. This would look like: "KeyError: '0.0'"
+
+    INPUT:
+        inclusion = "tests/data/ambiguous/inclusion.fasta"
+        exclusion = "tests/data/ambiguous/exclusion.fasta"
+        output = "tests/output/neptune/temp.dir"
+
+    EXPECT:
+        >0.1 score=1.0000 in=1.0000 ex=0.0000 len=640 ref=inclusion1 pos=3497
+        CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTT..
+        >0.2 score=1.0000 in=1.0000 ex=0.0000 len=102 ref=inclusion1 pos=5205
+        CATGGCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTT..
+        >0.0 score=0.2039 in=0.2039 ex=0.0000 len=103 ref=inclusion1 pos=99
+        TAGTCTCCAGGATTCCCGGGGNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN..
+
+    # =========================================================================
+    """
+    def test_ambiguous_signature(self):
+
+        inclusion = getPath("tests/data/ambiguous/inclusion.fasta")
+        exclusion = getPath("tests/data/ambiguous/exclusion.fasta")
+        outputDirectoryLocation = getPath("tests/output/neptune/temp.dir")
+        consolidatedDirectoryLocation = os.path.join(outputDirectoryLocation, "consolidated")
+
+        sys.argv[1:] = [
+            ExtractSignatures.INCLUSION_LONG, str(inclusion),
+            ExtractSignatures.EXCLUSION_LONG, str(exclusion),
+            OUTPUT_LONG, str(outputDirectoryLocation)]
+
+        main()
+
+        # Normally, opening a consolidated file might cause problems because of
+        # race conditions, but with one inclusion and exclusion file, there
+        # will be no problem.
+        with open (os.path.join(consolidatedDirectoryLocation, "consolidated.fasta"), "r") as myfile:
+
+            contents = myfile.read()
+
+            expected = ">0.1 score=1.0000 in=1.0000 ex=0.0000 len=640 ref=inclusion1 pos=3497"
+            self.assertTrue(expected in contents)
+            expected = "CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAG" # trimming this one
+            self.assertTrue(expected in contents)
+
+            expected = ">0.2 score=1.0000 in=1.0000 ex=0.0000 len=102 ref=inclusion1 pos=5205"
+            self.assertTrue(expected in contents)
+            expected = "CATGGCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC"
+            self.assertTrue(expected in contents)
+
+            expected = ">0.0 score=0.2039 in=0.2039 ex=0.0000 len=103 ref=inclusion1 pos=99"
+            self.assertTrue(expected in contents)
+            expected = "TAGTCTCCAGGATTCCCGGGGNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAGCAGTGATGTAAGAAAA"
+            self.assertTrue(expected in contents)
 
         shutil.rmtree(outputDirectoryLocation)
 

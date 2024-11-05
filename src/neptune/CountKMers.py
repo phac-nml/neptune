@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2017
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -71,7 +71,7 @@ import argparse
 import os
 import operator
 
-import Utility
+import neptune.Utility as Utility
 
 """
 # =============================================================================

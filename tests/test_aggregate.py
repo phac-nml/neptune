@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,8 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.AggregateKMers import *
 
@@ -69,7 +67,7 @@ class TestFindSmallest(unittest.TestCase):
 
         result = findSmallest(strings, SENTINEL)
         expected = "a"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -94,7 +92,7 @@ class TestFindSmallest(unittest.TestCase):
 
         result = findSmallest(strings, SENTINEL)
         expected = SENTINEL
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -120,7 +118,7 @@ class TestFindSmallest(unittest.TestCase):
 
         result = findSmallest(strings, SENTINEL)
         expected = "a"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """
 # =============================================================================
@@ -187,7 +185,7 @@ class TestAggregate(unittest.TestCase):
 
             result = myfile.read()
             expected = "AAA 2 0\nCAA 1 1\nGAA 1 1\nTAA 2 1\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -238,7 +236,7 @@ class TestAggregate(unittest.TestCase):
 
             result = myfile.read()
             expected = "AAA 2 0\nCAA 1 0\nGAA 1 0\nTAA 2 0\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -285,7 +283,7 @@ class TestAggregate(unittest.TestCase):
 
             result = myfile.read()
             expected = "CAA 0 1\nGAA 0 1\nTAA 0 1\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
         
@@ -321,7 +319,7 @@ class TestAggregate(unittest.TestCase):
 
             result = myfile.read()
             expected = ""
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -391,7 +389,7 @@ class TestMain(unittest.TestCase):
 
             result = myfile.read()
             expected = "AAA 2 0\nCAA 1 1\nGAA 1 1\nTAA 2 1\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 

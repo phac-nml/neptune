@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -32,7 +32,7 @@ import sys
 def prepareSystemPath():
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print root
+    print(root)
 
     if root not in sys.path:
          sys.path.insert(0, root)

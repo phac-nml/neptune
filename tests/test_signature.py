@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.Signature import *
 from neptune.Utility import *
@@ -74,11 +73,11 @@ class TestReadSignatures(unittest.TestCase):
         fileLocation = getPath("tests/data/signature/multiple.fasta")
         signatures = readSignatures(fileLocation)
 
-        self.assertEquals(signatures["long1"].ID, "long1")
-        self.assertEquals(signatures["long1"].reference, "reference1")
+        self.assertEqual(signatures["long1"].ID, "long1")
+        self.assertEqual(signatures["long1"].reference, "reference1")
 
-        self.assertEquals(signatures["long2"].ID, "long2")
-        self.assertEquals(signatures["long2"].reference, "reference3")
+        self.assertEqual(signatures["long2"].ID, "long2")
+        self.assertEqual(signatures["long2"].reference, "reference3")
 
 """
 # =============================================================================
@@ -110,14 +109,14 @@ class TestWriteSignatures(unittest.TestCase):
     """
     def test_simple(self):
 
-        destination = StringIO.StringIO()
+        destination = io.StringIO()
         signature = Signature("0", 0.0, 0.0, 0.0, "ACGTACGT", "ref", "20")
 
         writeSignature(signature, destination)
         result = destination.getvalue()
 
         expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=8 ref=ref pos=20\nACGTACGT\n"
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """
 # =============================================================================
@@ -161,9 +160,9 @@ class TestSortSignatures(unittest.TestCase):
 
         sortedSignatures = sortSignatures(signatures)
 
-        self.assertEquals(sortedSignatures[0], signature2)
-        self.assertEquals(sortedSignatures[1], signature3)
-        self.assertEquals(sortedSignatures[2], signature1)
+        self.assertEqual(sortedSignatures[0], signature2)
+        self.assertEqual(sortedSignatures[1], signature3)
+        self.assertEqual(sortedSignatures[2], signature1)
 
 if __name__ == '__main__':
     

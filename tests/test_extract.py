@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2016
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -28,10 +28,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import sys
-import StringIO
+import io
 
-from TestingUtility import *
-prepareSystemPath()
+from tests.TestingUtility import *
 
 from neptune.ExtractSignatures import *
 
@@ -640,7 +639,7 @@ class TestExtract(unittest.TestCase):
         size = 2
         gap = 4
 
-        output = StringIO.StringIO()
+        output = io.StringIO()
 
         # 0: references = None, (...) -- no references
         with self.assertRaises(RuntimeError):
@@ -671,7 +670,7 @@ class TestExtract(unittest.TestCase):
             result = extract(references, k, inmers, exmers, size, gap, None)
 
         # normal
-        output = StringIO.StringIO()
+        output = io.StringIO()
         result = extract(references, k, inmers, exmers, size, gap, output)
         lines = output.getvalue().split("\n")
 
@@ -732,7 +731,7 @@ class TestExtract(unittest.TestCase):
 
         expected = ("AAAAA")
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         signature = output.getvalue().split("\n")[1]
         
@@ -792,7 +791,7 @@ class TestExtract(unittest.TestCase):
 
         expected = ("AAAAATAAAAA")
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         signature = output.getvalue().split("\n")[1]        
 
@@ -857,7 +856,7 @@ class TestExtract(unittest.TestCase):
         expected1 = ("AAA")
         expected2 = ("AAA")
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         signature1 = output.getvalue().split("\n")[1]
         signature2 = output.getvalue().split("\n")[3]    
@@ -919,7 +918,7 @@ class TestExtract(unittest.TestCase):
 
         expected = ("AAA")
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         signature = output.getvalue().split("\n")[1]
         
@@ -979,7 +978,7 @@ class TestExtract(unittest.TestCase):
 
         expected = ("AAA")
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         signature = output.getvalue().split("\n")[1]
         
@@ -1038,7 +1037,7 @@ class TestExtract(unittest.TestCase):
         size = 2
         gap = 4
         
-        output = StringIO.StringIO()
+        output = io.StringIO()
         extract(references, k, inmers, exmers, size, gap, output)
         
         self.assertEqual(output.getvalue(), "")
@@ -1077,7 +1076,7 @@ class TestEstimateSignatureSize(unittest.TestCase):
         expected = 204
         result = estimateSignatureSize(k)
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     """ 
     # =============================================================================
@@ -1102,7 +1101,7 @@ class TestEstimateSignatureSize(unittest.TestCase):
         expected = 0
         result = estimateSignatureSize(k)
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """
 # =============================================================================
@@ -1138,7 +1137,7 @@ class TestEstimateExclusionHits(unittest.TestCase):
         expected = 1
         result = estimateExclusionHits(totalExclusion, rate, kmerSize)
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """
 # =============================================================================
@@ -1188,7 +1187,7 @@ class TestEstimateInclusionHits(unittest.TestCase):
         result = estimateInclusionHits(
             totalInclusion, mutationRate, GC, kmerSize, confidence)
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
 """
 # =============================================================================
@@ -1217,14 +1216,14 @@ class TestEstimateK(unittest.TestCase):
     """
     def test_simple(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         buff.write("AAA 1 1\n")
         buff.seek(0)
 
         result = estimateK(buff)
         expected = 3
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
         buff.close()
 
@@ -1272,7 +1271,7 @@ class TestBuildKMers(unittest.TestCase):
     """
     def test_simple(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         buff.write("AAA 3 4\n")
         buff.write("ACA 4 3\n")
         buff.write("CAA 3 4\n")
@@ -1287,10 +1286,10 @@ class TestBuildKMers(unittest.TestCase):
         result = buildKMers(buff, inmers, exmers, inhits, exhits)
         
         expected_inmers = {'AAA': 3, 'ACA': 4, 'CAA': 3, 'CCA': 3}
-        self.assertEquals(inmers, expected_inmers)
+        self.assertEqual(inmers, expected_inmers)
 
         expected_exmers = {'AAA': 4, 'ACA': 3, 'CAA': 4, 'CCA': 3}
-        self.assertEquals(exmers, expected_exmers)
+        self.assertEqual(exmers, expected_exmers)
 
         buff.close()
 
@@ -1326,7 +1325,7 @@ class TestBuildKMers(unittest.TestCase):
     """
     def test_no_inclusion(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         buff.write("AAA 0 4\n")
         buff.write("ACA 0 3\n")
         buff.write("CAA 0 4\n")
@@ -1341,10 +1340,10 @@ class TestBuildKMers(unittest.TestCase):
         result = buildKMers(buff, inmers, exmers, inhits, exhits)
         
         expected_inmers = {}
-        self.assertEquals(inmers, expected_inmers)
+        self.assertEqual(inmers, expected_inmers)
 
         expected_exmers = {'AAA': 4, 'ACA': 3, 'CAA': 4, 'CCA': 3}
-        self.assertEquals(exmers, expected_exmers)
+        self.assertEqual(exmers, expected_exmers)
 
         buff.close()
 
@@ -1380,7 +1379,7 @@ class TestBuildKMers(unittest.TestCase):
     """
     def test_no_exclusion(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         buff.write("AAA 3 0\n")
         buff.write("ACA 4 0\n")
         buff.write("CAA 3 0\n")
@@ -1395,10 +1394,10 @@ class TestBuildKMers(unittest.TestCase):
         result = buildKMers(buff, inmers, exmers, inhits, exhits)
         
         expected_inmers = {'AAA': 3, 'ACA': 4, 'CAA': 3, 'CCA': 3}
-        self.assertEquals(inmers, expected_inmers)
+        self.assertEqual(inmers, expected_inmers)
 
         expected_exmers = {}
-        self.assertEquals(exmers, expected_exmers)
+        self.assertEqual(exmers, expected_exmers)
 
         buff.close()
 
@@ -1437,7 +1436,7 @@ class TestBuildKMers(unittest.TestCase):
     """
     def test_bounds(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
         buff.write("AAA 1 1\n")
         buff.write("ACA 2 2\n")
         buff.write("CAA 3 3\n")
@@ -1452,10 +1451,10 @@ class TestBuildKMers(unittest.TestCase):
         result = buildKMers(buff, inmers, exmers, inhits, exhits)
         
         expected_inmers = {'CAA': 3, 'CCA': 4}
-        self.assertEquals(inmers, expected_inmers)
+        self.assertEqual(inmers, expected_inmers)
 
         expected_exmers = {'ACA': 2, 'CAA': 3, 'CCA': 4}
-        self.assertEquals(exmers, expected_exmers)
+        self.assertEqual(exmers, expected_exmers)
 
         buff.close()
 
@@ -1487,7 +1486,7 @@ class TestReportParameters(unittest.TestCase):
     """
     def test_run(self):
 
-        buff = StringIO.StringIO()
+        buff = io.StringIO()
 
         reportParameters(buff, "A.fasta", 12, 0.01, 
 		    3, 3, 2, 2, 3, "some.kmers", 5, 6, 0.5)
@@ -1553,7 +1552,7 @@ class TestMain(unittest.TestCase):
 
             result = myfile.read()
             expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4\nACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -1700,7 +1699,7 @@ class TestMain(unittest.TestCase):
 
             result = myfile.read()
             expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=4 ref=0 pos=4\nACGT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 
@@ -1776,7 +1775,7 @@ class TestMain(unittest.TestCase):
 
             result = myfile.read()
             expected = ">0 score=0.0000 in=0.0000 ex=0.0000 len=12 ref=random pos=9\nTCTAAACTTCAT\n"
-            self.assertEquals(result, expected)
+            self.assertEqual(result, expected)
 
         os.remove(outputLocation)
 

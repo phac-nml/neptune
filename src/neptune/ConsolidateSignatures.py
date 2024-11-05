@@ -3,7 +3,7 @@
 """
 # =============================================================================
 
-Copyright Government of Canada 2015-2017
+Copyright Government of Canada 2015-2024
 
 Written by: Eric Marinier, Public Health Agency of Canada,
     National Microbiology Laboratory
@@ -39,9 +39,9 @@ attempts to avoid overlapping signatures. However, this is not guaranteed.
 import argparse
 import os
 
-import Signature
-import Database
-import Utility
+import neptune.Signature as Signature
+import neptune.Database as Database
+import neptune.Utility as Utility
 
 """
 # =============================================================================
@@ -203,6 +203,10 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
     hits = {}  # [SIGNATURE ID] -> [(SIGNATURE ID) LIST] // (alignments)
     outputSignatures = {}  # Collection of already-output signatures.
 
+    # Pre-populate hits map with empty lists:
+    for signature in sortedSignatures:
+        hits[signature.ID] = []
+
     # Build a list of all query hits.
     # This creates a dictionary mapping signatures that align to each other.
     # [SIGNATURE ID] -> [(SIGNATURE ID) LIST]
@@ -212,17 +216,9 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
 
         # We only keep the hit if the ratio of the signature-to-alignment
         # length is sufficiently long.
-        if (float(hit.alignmentLength) / float(hit.length) < float(0.50)):
-            continue
-
-        # Append the signature ID to the existing list of IDs.
-        if hit.ID in hits:
+        if (float(hit.alignmentLength) / float(hit.length) >= float(0.50)):
+            # Append the signature ID to the existing list of IDs.
             hits[hit.ID].append(hit.reference)
-
-        # Create a new list of signature IDs associated with specific
-        # signature ID.
-        else:
-            hits[hit.ID] = [hit.reference]
 
     # Write the signatures to output, while maintaining a dictionary of
     # signatures that were previously written to output. This attempts to
@@ -231,7 +227,7 @@ def produceSignatures(sortedSignatures, blastOutputFile, destination):
     for signature in sortedSignatures:
 
         # Is the signature close to anything already written to output?
-        if(all((ID not in outputSignatures) for ID in hits[signature.ID])):
+        if (all((ID not in outputSignatures) for ID in hits[signature.ID])):
 
             # The signature appears to be sufficiently unique.
             # Write the signature to output and update outputed signatures.
