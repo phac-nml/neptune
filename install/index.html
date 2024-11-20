@@ -60,19 +60,17 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Neptune</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#direct">Direct</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#python-3">Python 3</a>
+    <li class="toctree-l2"><a class="reference internal" href="#bioconda-installation">Bioconda Installation</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#pip">pip</a>
+    <li class="toctree-l2"><a class="reference internal" href="#direct-installation">Direct Installation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#python">Python</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#blast">BLAST</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#neptune-and-dependencies">Neptune and Dependencies</a>
     </li>
         </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#bioconda">Bioconda</a>
     </li>
     </ul>
                     </li>
@@ -136,7 +134,16 @@
               
                 <h1 id="installation">Installation</h1>
 <p>This installation guide assumes the use of the <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">BASH</a> Unix shell and a 64-bit Linux system.</p>
-<h2 id="direct">Direct</h2>
+<h2 id="bioconda-installation">Bioconda Installation</h2>
+<p>If you have <a href="https://bioconda.github.io/">Bioconda</a> installed, you may install Neptune directly into its own environment with the following:</p>
+<pre><code>conda create -n neptune neptune-signature
+conda activate neptune
+neptune -h
+</code></pre>
+<p>You can test the install with the provided <a href="https://github.com/phac-nml/neptune/tree/main/tests/data/example">test data</a>:</p>
+<pre><code>neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output/
+</code></pre>
+<h2 id="direct-installation">Direct Installation</h2>
 <p>The following instructions describe how to install Neptune directly. These instructions may require administrative privilages. Directly installing Neptune from the source files involves the following:</p>
 <ol>
 <li>Installing Python&gt;=3.10</li>
@@ -145,25 +152,36 @@
 <li>Installing Neptune (<code>pip install .</code>)</li>
 </ol>
 <p>More detailed instructions are provided below.</p>
-<h3 id="python-3">Python 3</h3>
+<h3 id="python">Python</h3>
 <p>Ensure your version of Python is compatible (python&gt;=3.10):</p>
-<p><code>python --version</code></p>
+<pre><code>python --version
+</code></pre>
 <p>You may wish to use <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html">Conda</a> to create an environment specifically for this purpose:</p>
-<p><code>conda create --name neptune 'python&gt;=3.10'</code><br />
-<code>conda activate neptune</code></p>
-<h3 id="pip">pip</h3>
+<pre><code>conda create --name neptune 'python&gt;=3.10'
+conda activate neptune
+</code></pre>
 <p>Ensure you can run pip:</p>
-<p><code>pip --version</code> or <code>python -m pip --version</code></p>
+<pre><code>pip --version
+</code></pre>
+<p>or</p>
+<pre><code>python -m pip --version
+</code></pre>
 <p>If pip is unavailable, please refer to <a href="https://packaging.python.org/en/latest/tutorials/installing-packages/">these instructions</a> on how to install pip.</p>
 <h3 id="blast">BLAST</h3>
 <p>Neptune requires BLAST to be manually installed and made available as a command-line program:</p>
-<p><code>sudo apt-get install ncbi-blast+</code></p>
+<pre><code>sudo apt-get install ncbi-blast+
+</code></pre>
 <p>You can verify BLAST was installed by ensuring the follow commands are available:</p>
-<p><code>makeblastdb -h</code><br />
-<code>blastn -h</code></p>
+<pre><code>makeblastdb -h
+blastn -h
+</code></pre>
 <h3 id="neptune-and-dependencies">Neptune and Dependencies</h3>
 <p>After downloading Neptune's source files, you can install Neptune and all of its pip dependencies with the following:</p>
-<p><code>pip install /path/to/neptune_directory/</code> or <code>pip install .</code></p>
+<pre><code>pip install /path/to/neptune_directory/
+</code></pre>
+<p>or</p>
+<pre><code>pip install .
+</code></pre>
 <p><strong>CAUTION</strong>: If you attempt <code>pip install neptune</code> (not interpreted as a file path), then you'll download a different package that's also named "neptune" that's available directly from pip.</p>
 <p>The following packages and their dependencies will be installed:</p>
 <ul>
@@ -173,15 +191,11 @@
 <li>neptune</li>
 </ul>
 <p>You can verify the installation was successful with the following:</p>
-<p><code>neptune --version</code></p>
-<p>And you can test the installation with simple test inputs with the following:</p>
-<p><code>neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output</code></p>
-<h2 id="bioconda">Bioconda</h2>
-<p>Currently, there is no <a href="https://bioconda.github.io/">Bioconda</a> package for Neptune v2.0.0. If you wish to install Neptune v1.2.5 with Bioconda, please use the following command to create an environment with Neptune installed:</p>
-<pre><code class="language-bash">conda create -n neptune bioconda::neptune -c conda-forge -c default
+<pre><code>neptune --version
 </code></pre>
-<p>Please note that specifying <code>bioconda::neptune</code> is necessary, because otherwise Conda is likely to resolve the name to different software that's also named <code>neptune</code>.</p>
-<p>You may also wish to review an <a href="https://github.com/phac-nml/neptune/blob/release/1.2/docs/install.md">older version</a> of these installation instructions for installing Neptune v1.2.5.</p>
+<p>You can test the install with the provided <a href="https://github.com/phac-nml/neptune/tree/main/tests/data/example">test data</a>:</p>
+<pre><code>neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output/
+</code></pre>
               
             </div>
           </div>

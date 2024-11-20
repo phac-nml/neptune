@@ -138,7 +138,7 @@
               
                 <h1 id="walkthrough">Walkthrough</h1>
 <h2 id="overview">Overview</h2>
-<p>The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.</p>
+<p>The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion input, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion inputs.</p>
 <h2 id="input-data">Input Data</h2>
 <p>We will be using very small, artificial genomes for this walkthrough. However, these small genomes will be sufficient to illustrate the operation of Neptune. The artificial genome sequence content is derived from <em>Escherichia coli</em> and has been modified to introduce simple variation between genomes.</p>
 <p>The example inclusion genomes are located in the following location:</p>
@@ -147,9 +147,9 @@
 <p>The example exclusion genomes are located in the following location:</p>
 <pre><code class="language-bash">neptune/tests/data/example/exclusion/
 </code></pre>
-<p>The inclusion and exclusion directories each contain three FASTA format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes primarily differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.</p>
+<p>The inclusion and exclusion directories each contain three FASTA-format genomes. The genomes all have some insertions and deletions that differentiate them from each other. However, the three inclusion genomes primarily differ from the three exclusion genomes in that they share large sequences that are absent from all exclusion genomes.</p>
 <h2 id="running-neptune">Running Neptune</h2>
-<p>Neptune will automatically calculate many of the parameters that might otherwise be specified by the user, such as the minimum number of targets signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires the user specify the inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA file genomes located within directories. The following command will run Neptune on the example data and output to the specified directory:</p>
+<p>Neptune will automatically calculate many of the parameters that might otherwise be specified by the user, such as the minimum number of inclusion inputs the signature sequence must be present within for it to be considered shared sequence. At minimum, Neptune requires the user specify the inclusion sequences, exclusion sequences, and an output directory. We will provide Neptune inclusion and exclusion sequences in the form of FASTA file genomes located within directories. The following command will run Neptune on the example data and output to the specified directory:</p>
 <pre><code class="language-bash">neptune
     --inclusion tests/data/example/inclusion/
     --exclusion tests/data/example/exclusion/
@@ -158,76 +158,77 @@
 <h2 id="output">Output</h2>
 <h3 id="standard-output">Standard Output</h3>
 <p>After running Neptune, very similar output will be printed to standard output, indicating that Neptune is starting and completing different stages of operation:</p>
-<pre><code class="language-text">Neptune v1.2.4
+<pre><code class="language-text">Neptune v2.0.0
 
 Estimating k-mer size ...
 k = 15
 
 k-mer Counting...
-Submitted 12 jobs.
-0.002063 seconds
+Submitted 6 jobs.
+0.04893639404326677 seconds
 
 k-mer Aggregation...
 Submitted 65 jobs.
-0.010473 seconds
+0.0374402878805995 seconds
 
 Signature Extraction...
-Submitted 6 jobs.
-0.000771 seconds
+Submitted 3 jobs.
+0.024856548057869077 seconds
 
 Signature Filtering...
 Submitted 2 jobs.
-Submitted 6 jobs.
-0.002498 seconds
+Submitted 3 jobs.
+1.965036110021174 seconds
 
 Consolidate Signatures...
 Submitted 1 jobs.
-0.000411 seconds
+0.21438432089053094 seconds
 
 Complete!
 </code></pre>
 <h3 id="consolidated-signatures">Consolidated Signatures</h3>
-<p>As we did not specify references from which to extract signatures, Neptune will automatically investigate all inclusion genomes for signatures and consolidate those signatures into a single consolidated signature file. The <code>output/consolidated/consolidated.fasta</code> file contains these consolidated signatures. This file may be understood as the final output of the application. The following FASTA output is from the consolidated signatures file produced from this example:</p>
-<pre><code class="language-text">&gt;1.0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion1 pos=99
-TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGC...
-&gt;1.1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion1 pos=3497
-CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAG...
-&gt;1.2 score=0.9966 in=0.9966 ex=0.0000 len=98 ref=inclusion1 pos=5209
-GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGA...
+<p>As we did not specify references from which to extract signatures, Neptune will automatically investigate all inclusion genomes for signatures and consolidate those signatures into a single consolidated signature file. The <code>output/consolidated/consolidated.fasta</code> file contains these consolidated signatures. This file may be understood as the final output of the application. The following FASTA-format output is from the consolidated signatures file produced from this example:</p>
+<pre><code class="language-text">&gt;0.0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion3 pos=99
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCATTTTCAAGCAGTGATGTAAGAAAA
+&gt;1.1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion2 pos=3494
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAGATCGCCCGTGAAGAGAAAGAGGCAGAACTGGCAGACACATGGAAAAAGGCCTGCCCCAGCACCTGTTTTGAATCGCTATGCATCGATCATTTGCAACGCCACGGGGCCAGCAAAAAAGCCATTACCCGTGCGTTTGATGACGATGTTGAGTTTCAGGAGCGCATGGCAGAACACATCCGGTACTGGTTAAACCATTGCTCACCACCAGGTTGATATTGATTCAGAGGTATAAAACGAATGAGTACAGCACTCGCAACGCTGGCAGGGAAGCTGGCTGAACGTGTCGGCATGGATTCTGTCGACCCACAGGAACTGATCACCACTCTTCGCCAGACGGCATTTAAAGGTGATGCCAGCGATGCGCAGTTCATCGCATTGCTGATCGTCGCCAACCAGTACGGTCTTAATCCGTGGACGAAAGAAATTTACGCCTTTCCTGATAAGCAGAACGGCATCGTTCCGGTGGTGGGCGTTGATGGCTGTCCCGTATCATCAATGAAAACCAGCAGTTTGAGGCATGGTACTTTGAGCAGGACA
+&gt;2.2 score=0.9966 in=0.9966 ex=0.0000 len=98 ref=inclusion1 pos=5209
+GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC
 </code></pre>
-<p>The FASTA header contains information relavent to the identified signature. A detailed explanation of this information is located within the <a href="output/#sorted-signatures">output section</a> of this documentation. The <code>score</code> is the sum of the <code>in</code> (inclusion/sensitivity) and <code>ex</code> (exclusion/specificity) scores, and represents a combined measure of sensitivity and specificity. The <code>length</code> describes the length of the signature in bases. The <code>ref</code> (reference) and <code>pos</code> (position) describe the location of the signature within the reference FASTA record it was extracted from.</p>
-<p>In this example, Neptune identified three signatures: 1.0, 1.1, and 1.2 of lengths 103, 640, and 98, respectively. We see that all of these signatures originated from the inclusion1 reference. These signatures were located at positions 99, 3497, and 5209 within the inclusion1 reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969, within the possible range of score values from -1.00 to +1.00.</p>
+<p>The FASTA header contains information relavent to the identified signature. A detailed explanation of this information is located within the <a href="../format">output section</a> of this documentation. The <code>score</code> is the sum of the <code>in</code> (inclusion/sensitivity) and <code>ex</code> (exclusion/specificity) scores, and represents a combined measure of sensitivity and specificity. The <code>length</code> describes the length of the signature in bases. The <code>ref</code> (reference) and <code>pos</code> (position) describe the location of the signature within the reference FASTA record it was extracted from.</p>
+<p>In this example, Neptune identified three signatures: <code>0.0</code>, <code>1.1</code>, and <code>2.2</code> of lengths 103, 640, and 98, respectively. These IDs (<code>0.0</code>, <code>1.1</code>, <code>2.2</code>) are arbitrarily assigned by Neptune and are only used to uniquely identify each signature. They have no other meaning.</p>
+<p>We can see that the <code>0.0</code> signature is derived from the <code>inclusion3</code> reference, the <code>1.1</code> from the <code>inclusion2</code> reference, and the <code>2.2</code> from the <code>inclusion1</code> reference. These signatures were located at positions 99, 3497, and 5209 within the inclusion1 reference. These signatures are of very high quality, within the context of our data set, with scores of 1.0000, 0.9979, and 0.9969, within the possible range of score values from -1.00 to +1.00.</p>
 <h3 id="sorted-signatures">Sorted Signatures</h3>
-<p>If we're interested in looking at the signatures produced from each individual inclusion target, we need to investigate the output in the <code>output/sorted</code> directory. The following are the signatures extracted exclusively from the inclusion1.fasta target:</p>
+<p>If we're interested in looking at the signatures produced from each individual inclusion input, we need to investigate the output in the <code>output/sorted</code> directory. The following are the signatures extracted exclusively from the <code>inclusion1.fasta</code> input:</p>
 <pre><code class="language-text">&gt;0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion1 pos=99
-TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGC...
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCATTTTCAAGCAGTGATGTAAGAAAA
 &gt;1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion1 pos=3497
-CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAG...
+CGCGGGCGATATTTTCACAGCCATTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAGATCGCCCGTGAAGAGAAAGAGGCAGAACTGGCAGACACATGGAAAAAGGCCTGCCCCAGCACCTGTTTGAATCGCTATGCATCGATCATTTGCAACGCCACGGGGCCAGCAAAAAAGCCATTACCCGTGCGTTTGATGACGATGTTGAGTTTCAGGAGCGCATGGCAGAACACATCCGGTACTGGTTGAAACCATTGCTCACCACCAGGTTGATATTGATTCAGAGGTATAAAACGAATGAGTACAGCACTCGCAACGCTGGCAGGGAAGCTGGCTGAACGTGTCGGCATGGATTCTGTCGACCCACAGGAACTGATCACCACTCTTCGCCAGACGGCATTTAAAGGTGATGCCAGCGATGCGCAGTTCATCGCATTGCTGATCGTCGCCAACCAGTACGGTCTTAATCCGTGGACGAAAGAAATTTACGCCTTTCCTGATAAGCAGAACGGCATCGTTCCGGTGGTGGGCGTTGATAGGCTGTCCCGTATCATCAATGAAAACCAGCAGTTTGAGGCATGGTACTTTGAGCAGGACA
 &gt;2 score=0.9966 in=0.9966 ex=0.0000 len=98 ref=inclusion1 pos=5209
-GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGA...
+GCGAGTTTTGCGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC
 </code></pre>
-<p>The following are the signatures extracted exclusively from the \textit{inclusion2.fasta} target:</p>
+<p>The following are the signatures extracted exclusively from the <code>inclusion2.fasta</code> input:</p>
 <pre><code class="language-text">&gt;0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion2 pos=99
-TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGC...
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCATTTTCAAGCAGTGATGTAAGAAAA
 &gt;1 score=0.9979 in=0.9979 ex=0.0000 len=640 ref=inclusion2 pos=3494
-CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCA...
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAGATCGCCCGTGAAGAGAAAGAGGCAGAACTGGCAGACACATGGAAAAAGGCCTGCCCCAGCACCTGTTTTGAATCGCTATGCATCGATCATTTGCAACGCCACGGGGCCAGCAAAAAAGCCATTACCCGTGCGTTTGATGACGATGTTGAGTTTCAGGAGCGCATGGCAGAACACATCCGGTACTGGTTAAACCATTGCTCACCACCAGGTTGATATTGATTCAGAGGTATAAAACGAATGAGTACAGCACTCGCAACGCTGGCAGGGAAGCTGGCTGAACGTGTCGGCATGGATTCTGTCGACCCACAGGAACTGATCACCACTCTTCGCCAGACGGCATTTAAAGGTGATGCCAGCGATGCGCAGTTCATCGCATTGCTGATCGTCGCCAACCAGTACGGTCTTAATCCGTGGACGAAAGAAATTTACGCCTTTCCTGATAAGCAGAACGGCATCGTTCCGGTGGTGGGCGTTGATGGCTGTCCCGTATCATCAATGAAAACCAGCAGTTTGAGGCATGGTACTTTGAGCAGGACA
 &gt;2 score=0.9933 in=0.9933 ex=0.0000 len=99 ref=inclusion2 pos=5206
-GCGAGTTTTGACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGG...
+GCGAGTTTTGACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC
 </code></pre>
-<p>The following are the signatures extracted exclusively from the \textit{inclusion3.fasta} target:</p>
+<p>The following are the signatures extracted exclusively from the <code>inclusion3.fasta</code> input:</p>
 <pre><code class="language-text">&gt;0 score=1.0000 in=1.0000 ex=0.0000 len=103 ref=inclusion3 pos=99
-TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGC...
+TAGTCTCCAGGATTCCCGGGGCGGTTCAGATAATCTTAGCATTGACCGCCTTTATATAGAAGCTGTTATTCAAGAAGCATTTTCAAGCAGTGATGTAAGAAAA
 &gt;2 score=0.9833 in=0.9833 ex=0.0000 len=100 ref=inclusion3 pos=5203
-GCGAGTTTTAACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACCGAGGCACTGCTGAAATTGGTTTTGTATTTGGG...
+GCGAGTTTTAACGAGATGGTGCCGGAGTTCATCGAAAAAATGGACCGAGGCACTGCTGAAATTGGTTTTGTATTTGGGGAGCAATGGCGATGAAGCATCC
 &gt;1 score=0.9792 in=0.9979 ex=0.0187 len=640 ref=inclusion3 pos=3492
-CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCA...
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAGATCGCCCGTGAAGAAAAGAGGCAGAACTGGCAGACACATGGAAAAAGGCCTGCCCCAGCACCTGTTTGAATCGCTATGCATCGATCATTTGCAACGCCACGGGGCCAGCAAAAAATGCCATTACCCGTGCGTTTGATGACGATGTTGAGTTTCAGGAGCGCATGGCAGAACACATCCGGTACTGGTTGAAACCATTGCTCACCACCAGGTTGATATTGATTCAGAGGTATAAAACGAATGAGTACAGCACTCGCAACGCTGGCAGGGAAGCTGGCTGAACGTGTCGGCATGGATTCTGTCGACCCACAGGAACTGATCACCACTCTTCGCCAGACGGCATTTAAAGGTGATGCCAGCGATGCGCAGTTCATCGCATTGCTGATCGTCGCCAACCAGTACGGTCTTAATCCGTGGACGAAAGAAATTTACGCCTTTCCTGATAAGCAGAACGGCATCGTTCCGGTGGTGGGCGTTGATGGCTGTCCCGTATCATCAATGAAAACCAGCAGTTTGAGGCATGGTACTTTGAGCAGGACA
 </code></pre>
-<p>The output from these files appears very similar, as is expected when Neptune identifies highly discriminatory signatures from a homogeneous data set. However, there are some slight differences between some of these signatures. For example, the signatures in each of these output files have corresponding ID numbers and some of these signatures have slight differences. However, because Neptune assigns signature IDs arbitrarily, this correspondence will usually never happen when using real data. Nonetheless, we see that signature ID 2 is slightly different sizes in all three inclusion targets (5209, 5206, and 5203) with slightly different scores (0.9966, 0.9933, 0.9833). Another slight difference between the signatures is the sequence similarity of signature ID 1 in inclusion3.fasta with exclusion sequence:</p>
+<p>The output from these files appears very similar, as is expected when Neptune identifies highly discriminatory signatures from a homogeneous data set. However, there are some slight differences between some of these signatures. For example, signature ID <code>2</code> in <code>inclusion1.fasta</code> corresponds to <code>2</code> in <code>inclusion2.fasta</code>, but corresponds to ID <code>1</code> in <code>inclusion3.fasta</code>. The lengths (98, 99, 100) and scores (0.9966, 0.9933, 0.9833) are slightly different. Another slight difference is the sequence similarity of signature ID <code>1</code> in <code>inclusion3.fasta</code> with exclusion sequence:</p>
 <pre><code class="language-text">&gt;1 score=0.9792 in=0.9979 ex=0.0187 len=640 ref=inclusion3 pos=3492
-CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCA...
+CGCGGGCGATATTTTCACAGCCATTTTCAGGAGTTCAGCCATGAACGCTTATTACATTCAGGATCGTCTTGAGGCTCAGAGCTGGGAGCGTCACTACCAGCAGATCGCCCGTGAAGAAAAGAGGCAGAACTGGCAGACACATGGAAAAAGGCCTGCCCCAGCACCTGTTTGAATCGCTATGCATCGATCATTTGCAACGCCACGGGGCCAGCAAAAAATGCCATTACCCGTGCGTTTGATGACGATGTTGAGTTTCAGGAGCGCATGGCAGAACACATCCGGTACTGGTTGAAACCATTGCTCACCACCAGGTTGATATTGATTCAGAGGTATAAAACGAATGAGTACAGCACTCGCAACGCTGGCAGGGAAGCTGGCTGAACGTGTCGGCATGGATTCTGTCGACCCACAGGAACTGATCACCACTCTTCGCCAGACGGCATTTAAAGGTGATGCCAGCGATGCGCAGTTCATCGCATTGCTGATCGTCGCCAACCAGTACGGTCTTAATCCGTGGACGAAAGAAATTTACGCCTTTCCTGATAAGCAGAACGGCATCGTTCCGGTGGTGGGCGTTGATGGCTGTCCCGTATCATCAATGAAAACCAGCAGTTTGAGGCATGGTACTTTGAGCAGGACA
 </code></pre>
-<p>This signature had some similarity with exclusion sequence, represented by the <code>ex=0.0187</code>, and indicates a small amount of imprecision in this signature. This example also illustrates that the <code>score</code> (0.9792) is the sum of the <code>in</code> (0.9979) and <code>ex</code> (0.0187) values.</p>
-<p>These differences in signatures from each inclusion target are a consequence of sequence differences. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.</p>
+<p>This signature had some similarity with exclusion sequence, represented by the <code>ex=0.0187</code>, and indicates a very small amount of imprecise discrimination in this signature. This example further illustrates that the <code>score</code> (0.9792) is the sum of the <code>in</code> (0.9979) and <code>ex</code> (0.0187) values.</p>
+<p>These differences in signatures from each inclusion target are a consequence of input sequence variation. The user's discretion will be required in determining which of these are most appropriate. Nonetheless, as described above, Neptune will attempt to consolidate these signatures into a single output file, if a single answer is desirable.</p>
               
             </div>
           </div>
