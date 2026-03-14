@@ -28,6 +28,7 @@ specific language governing permissions and limitations under the License.
 
 __version__ = '2.0.0'
 
+import sys
 import time
 
 import os
@@ -96,6 +97,12 @@ OUTPUT_HELP = "The directory to place all output."
 VERSION = "version"
 VERSION_LONG = LONG + VERSION
 VERSION_SHORT = SHORT + "V"
+
+# Check dependencies
+CHECK = "check"
+CHECK_LONG = LONG + CHECK
+CHECK_SHORT = SHORT + "c"
+CHECK_HELP = "Check that all dependencies (Python packages and BLAST) are installed, then exit."
 
 # Number of parallel threads to use
 PARALLELIZATION = "parallelization"
@@ -673,11 +680,57 @@ def parse(parameters):
 """
 # =============================================================================
 
+CHECK DEPENDENCIES
+
+# =============================================================================
+"""
+def check_dependencies():
+    """Verify all dependencies (Python packages and BLAST) are installed."""
+    print("Checking Neptune dependencies...\n")
+    all_ok = True
+
+    # Python packages
+    for pkg, name in [("numpy", "numpy"), ("scipy", "scipy"), ("Bio", "biopython")]:
+        try:
+            __import__(pkg)
+            print("  [OK] " + name)
+        except ImportError as e:
+            print("  [MISSING] " + name + ": " + str(e))
+            all_ok = False
+
+    # BLAST commands
+    for cmd in ["makeblastdb", "blastn"]:
+        if shutil.which(cmd):
+            print("  [OK] " + cmd)
+        else:
+            print("  [MISSING] " + cmd + " (not found in PATH)")
+            all_ok = False
+
+    print()
+    if all_ok:
+        print("All dependencies are installed.")
+    else:
+        print("Some dependencies are missing. See installation docs:")
+        print("  https://phac-nml.github.io/neptune/install/")
+        sys.exit(1)
+
+
+"""
+# =============================================================================
+
 MAIN
 
 # =============================================================================
 """
 def main():
+
+    # --- EARLY CHECK FOR --check --- #
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument(CHECK_SHORT, CHECK_LONG, action='store_true', dest=CHECK)
+    pre_args, _ = pre_parser.parse_known_args()
+    if getattr(pre_args, CHECK, False):
+        check_dependencies()
+        return
 
     # --- PARSER --- #
     parser = argparse.ArgumentParser(
@@ -690,6 +743,14 @@ def main():
         VERSION_LONG,
         action='version',
         version='%(prog)s ' + str(__version__))
+
+    # --- CHECK --- #
+    parser.add_argument(
+        CHECK_SHORT,
+        CHECK_LONG,
+        dest=CHECK,
+        help=CHECK_HELP,
+        action='store_true')
 
     # --- REQUIRED --- #
     required = parser.add_argument_group("REQUIRED")

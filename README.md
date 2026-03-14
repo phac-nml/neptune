@@ -110,6 +110,12 @@ You can verify the installation was successful with the following:
 neptune --version
 ```
 
+To check that all dependencies (Python packages and BLAST) are installed:
+
+```
+neptune --check
+```
+
 And you can test the installation with simple test inputs with the following:
 
 ```
