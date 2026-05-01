@@ -12,9 +12,9 @@ Neptune locates genomic signatures using an exact k-mer matching strategy while 
 
 # Release #
 
-**Neptune 2.0.0 - 2024-10-21**
+**Neptune 2.0.1 - 2026-05-01**
 
-This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
+This release updates only the Galaxy wrapper.
 
 # Installation #
 

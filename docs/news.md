@@ -6,6 +6,12 @@
 
 The [Bioconda package](https://bioconda.github.io/recipes/neptune-signature/README.html) for Neptune has been updated to version 2.0.0. The Bioconda package name has also been changed from `neptune` to `neptune-signature`.
 
+## Neptune v2.0.1
+
+2026-05-01
+
+This release updates only the Galaxy wrapper.
+
 ## Version 2.0.0
 
 2024-10-21
