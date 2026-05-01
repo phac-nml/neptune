@@ -18,41 +18,82 @@ This release updates Neptune to Python3, removes DRMAA support, fixes a crash wh
 
 # Installation #
 
-## Python 3
+## Bioconda Installation
+
+If you have [Bioconda](https://bioconda.github.io/) installed, you may install Neptune directly into its own environment with the following:
+
+```
+conda create -n neptune neptune-signature
+conda activate neptune
+neptune -h
+```
+
+You can test the install with the provided [test data](https://github.com/phac-nml/neptune/tree/main/tests/data/example):
+
+```
+neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output/
+```
+
+
+## Manual Installation
+
+### Python
 
 Ensure your version of Python is compatible (python>=3.10):
 
-`python --version`
+```
+python --version
+```
 
 You may wish to use [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html) to create an environment specifically for this purpose:
 
-`conda create --name neptune 'python>=3.10'`  
-`conda activate neptune`
-
-## pip
+```
+conda create --name neptune 'python>=3.10'
+conda activate neptune
+```
 
 Ensure you can run pip:
 
-`pip --version` or `python -m pip --version`
+```
+pip --version
+```
+
+or
+
+```
+python -m pip --version
+```
 
 If pip is unavailable, please refer to [these instructions](https://packaging.python.org/en/latest/tutorials/installing-packages/) on how to install pip.
 
-## BLAST
+### BLAST
 
 Neptune requires BLAST to be manually installed and made available as a command-line program:
 
-`sudo apt-get install ncbi-blast+`
+```
+sudo apt-get install ncbi-blast+
+```
 
 You can verify BLAST was installed by ensuring the follow commands are available:
 
-`makeblastdb -h`  
-`blastn -h`
+```
+makeblastdb -h
+blastn -h
+```
 
-## Neptune and Dependencies
+### Neptune and Dependencies
 
 After downloading Neptune's source files, you can install Neptune and all of its pip dependencies with the following:
 
-`pip install /path/to/neptune_directory/` or `pip install .`
+```
+pip install /path/to/neptune_directory/
+```
+
+or
+
+```
+pip install .
+```
 
 **CAUTION**: If you attempt `pip install neptune` (not interpreted as a file path), then you'll download a different package that's also named "neptune" that's available directly from pip.
 
@@ -65,24 +106,31 @@ The following packages and their dependencies will be installed:
 
 You can verify the installation was successful with the following:
 
-`neptune --version`
+```
+neptune --version
+```
 
 And you can test the installation with simple test inputs with the following:
 
-`neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output`
+```
+neptune -i tests/data/example/inclusion/ -e tests/data/example/exclusion/ -o output
+```
 
 # Running Neptune #
 
 Neptune's command line arguments can be found by running:
 
-    neptune --help
+```
+neptune --help
+```
 
 A simple example of running Neptune:
 
-    neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/
-            --output /path/to/output/
+```
+neptune --inclusion /path/to/inclusion/ --exclusion /path/to/exclusion/ --output /path/to/output/
+```
 
-Please refer to the [documentation](https://phac-nml.github.io/neptune/parameters/) for more details.
+Please refer to the [documentation](https://phac-nml.github.io/neptune/) for more details.
 
 # Contact #
 
