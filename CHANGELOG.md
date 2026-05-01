@@ -2,6 +2,16 @@
 
 All notable changes to Neptune will be documented in this file.
 
+## 2.0.1
+
+2026-05-01
+
+This release updates only the Galaxy wrapper.
+
+### Updated
+
+- The Galaxy wrapper for Neptune to support Galaxy 25.1.
+
 ## 2.0.0
 
 2024-10-21
