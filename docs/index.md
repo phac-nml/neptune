@@ -4,11 +4,11 @@ A genomic signature is a genomic locus that is sufficiently represented in an in
 
 Neptune locates genomic signatures using an exact *k*-mer matching strategy while accommodating *k*-mer mismatches. The software identifies sequences that are sufficiently represented within inclusion targets and sufficiently absent from exclusion targets. The signature discovery process is accomplished using probabilistic models instead of heuristic strategies. Neptune may be leveraged to reveal discriminatory signature sequences to uniquely delineate one group of organisms, such as isolates associated with a disease cluster or event, from unrelated sporadic or environmental microbes.
 
-## Neptune v2.0.0
+## Neptune v2.0.1
 
-2024-10-21
+2026-05-01
 
-This release updates Neptune to Python3, removes DRMAA support, fixes a crash when no signatures are produced, and updates the installation process.
+This release updates only the Galaxy wrapper.
 
 ## Resources
 
